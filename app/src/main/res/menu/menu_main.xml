@@ -1,0 +1,22 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/menu_home"
+        android:title="Remote"
+        android:enabled="true"
+        android:icon="@drawable/remote"/>
+    <item
+        android:id="@+id/menu_list"
+        android:title="App"
+        android:enabled="true"
+        android:icon="@drawable/app"/>
+    <item
+        android:id="@+id/menu_cast"
+        android:title="Cast"
+        android:icon="@drawable/ic_cast"/>
+    <item
+        android:id="@+id/menu_setting"
+        android:title="Setting"
+        android:enabled="true"
+        android:icon="@drawable/setting"/>
+</menu>

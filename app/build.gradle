@@ -1,0 +1,108 @@
+plugins {
+    alias(libs.plugins.androidApplication)
+    alias(libs.plugins.jetbrainsKotlinAndroid)
+    alias(libs.plugins.devtools.ksp)
+    id 'dagger.hilt.android.plugin'
+    id 'com.google.firebase.crashlytics'
+    id 'com.google.gms.google-services'
+}
+
+android {
+    namespace 'com.mentos_koder.remote_lg_tv'
+    compileSdk 36
+    defaultConfig {
+        applicationId "com.mentos_koder.remote_lg_tv"
+        minSdkVersion 28
+        targetSdk 34
+        versionCode 1
+        versionName "1.0"
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled true
+            shrinkResources true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+        debug {
+            minifyEnabled false
+            shrinkResources false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+    buildFeatures {
+        viewBinding true
+        buildConfig true
+    }
+    viewBinding {
+        enable = true
+    }
+    kotlinOptions {
+        jvmTarget = '1.8'
+    }
+}
+
+dependencies {
+    implementation project(':Connect-SDK-Android')
+    implementation project(':Java-WebSocket')
+    implementation project(':AndroidLGRemote')
+    implementation libs.androidx.core.ktx
+    implementation libs.androidx.appcompat
+    implementation libs.material
+    implementation libs.androidx.activity
+    implementation libs.androidx.constraintlayout
+    implementation libs.androidx.navigation.fragment
+    //SDK
+    implementation libs.play.services.cast.tv
+    implementation libs.play.services.measurement.api
+    implementation libs.billing.ktx
+    implementation libs.review.ktx
+    implementation libs.androidx.media3.datasource
+    implementation libs.androidx.media3.extractor
+    implementation libs.androidx.media3.exoplayer
+    testImplementation libs.junit
+    androidTestImplementation libs.androidx.junit
+    androidTestImplementation libs.androidx.espresso.core
+    //navigation
+    implementation (libs.androidx.navigation.fragment.ktx)
+    implementation (libs.androidx.navigation.ui.ktx)
+    //DI Dagger
+    implementation libs.hilt.android
+    ksp(libs.hilt.compiler)
+
+    //Retrofit
+    implementation libs.retrofit
+    implementation libs.converter.gson
+    //Room
+    implementation libs.androidx.room.runtime
+    ksp(libs.androidx.room.compiler)
+    implementation libs.androidx.room.ktx
+    implementation libs.androidx.fragment.ktx
+    //DPadView
+    implementation libs.dpadview
+    //SpinKitView
+    implementation (libs.android.spinkit)
+    //SDK connect
+    //glide
+    implementation (libs.glide)
+    //firebase
+    implementation libs.firebase.analytics.ktx
+    implementation(libs.firebase.crashlytics)
+    implementation(platform(libs.firebase.bom))
+    //SplashScreen
+    implementation (libs.androidx.core.splashscreen)
+    //workManager
+    implementation(libs.androidx.work.runtime.ktx)
+    //rating
+    implementation libs.app.update
+    implementation libs.jcodec
+    implementation(libs.clickshrinkeffectlibrary)
+    implementation libs.protobuf.java
+    implementation(libs.user.messaging.platform)
+}

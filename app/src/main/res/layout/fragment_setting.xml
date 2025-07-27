@@ -1,0 +1,311 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:background="@color/bgr_lg"
+    android:layout_height="match_parent"
+    android:fillViewport="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="16dp">
+
+            <TextView
+                android:id="@+id/title_setting"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/setting_title"
+                android:textColor="@color/white"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"/>
+
+            <ImageButton
+                android:id="@+id/btn_cast_setting"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end"
+                android:layout_marginBottom="18dp"
+                android:background="@drawable/ic_cast_pp"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <LinearLayout
+            android:layout_weight="7"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/background_gradient"
+                android:padding="10dp"
+                android:visibility="gone"
+                android:layout_margin="15dp"
+                android:gravity="center"
+                android:orientation="vertical">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/upgraded_to"
+                    android:textColor="@color/white"
+                    android:textSize="22sp"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/premium"
+                    android:textStyle="bold"
+                    android:textColor="@color/white"
+                    android:textSize="22sp"/>
+            </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginStart="25dp"
+                android:layout_marginEnd="25dp"
+                android:visibility="gone"
+                android:background="@color/background" />
+
+            <LinearLayout
+                android:id="@+id/HapticLayout"
+                android:layout_width="match_parent"
+                android:layout_height="30dp"
+                android:layout_marginBottom="10dp"
+                android:layout_weight="2"
+                android:gravity="center"
+                android:orientation="horizontal"
+                android:padding="15dp">
+                <ImageView
+                    android:layout_width="10dp"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center"
+                    android:layout_marginStart="10dp"
+                    android:layout_weight="1"
+                    android:src="@drawable/ic_haptic"
+                    tools:ignore="NestedWeights" />
+
+                <TextView
+                    android:layout_width="50dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="9"
+                    android:gravity="center|left"
+                    android:paddingStart="20dp"
+                    android:text="@string/haptic_feedback"
+                    android:textColor="@color/white"
+                    android:textSize="20sp"
+                    tools:ignore="RtlHardcoded,RtlSymmetry" />
+                <androidx.appcompat.widget.SwitchCompat
+                    android:id="@+id/switchRing"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:thumb="@drawable/thumb_color"
+                    app:track="@drawable/track_color" />
+            </LinearLayout>
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginStart="25dp"
+                android:layout_marginEnd="25dp"
+                android:background="@color/background" />
+
+            <LinearLayout
+                android:id="@+id/ShareAppLayout"
+                android:layout_width="match_parent"
+                android:layout_height="30dp"
+                android:layout_marginBottom="10dp"
+                android:layout_weight="2"
+                android:gravity="center"
+                android:orientation="horizontal"
+                android:padding="15dp">
+
+                <ImageView
+                    android:layout_width="10dp"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center"
+                    android:layout_marginStart="10dp"
+                    android:layout_weight="1"
+                    android:src="@drawable/ic_share"
+                    tools:ignore="NestedWeights" />
+
+                <TextView
+                    android:id="@+id/more_app_text"
+                    android:layout_width="50dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="9"
+                    android:gravity="center|left"
+                    android:paddingStart="20dp"
+                    android:text="@string/share_app"
+                    android:textColor="@color/white"
+                    android:textSize="20sp"
+                    tools:ignore="RtlHardcoded,RtlSymmetry" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/RateLayout"
+                android:layout_width="match_parent"
+                android:layout_height="30dp"
+                android:layout_marginBottom="10dp"
+                android:layout_weight="2"
+                android:gravity="center"
+                android:orientation="horizontal"
+                android:padding="15dp">
+
+                <ImageView
+                    android:layout_width="10dp"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center"
+                    android:layout_marginStart="10dp"
+                    android:layout_weight="1"
+                    android:src="@drawable/ic_like"
+                    tools:ignore="NestedWeights" />
+
+                <TextView
+                    android:id="@+id/rate_text"
+                    android:layout_width="50dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="9"
+                    android:gravity="center|left"
+                    android:paddingStart="20dp"
+                    android:text="@string/rate"
+                    android:textColor="@color/white"
+                    android:textSize="20sp"
+                    tools:ignore="RtlHardcoded,RtlSymmetry" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/FeedbackLayout"
+                android:layout_width="match_parent"
+                android:layout_height="30dp"
+                android:layout_marginBottom="10dp"
+                android:layout_weight="2"
+                android:gravity="center"
+                android:orientation="horizontal"
+                android:padding="15dp">
+
+                <ImageView
+                    android:layout_width="10dp"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center"
+                    android:layout_marginStart="10dp"
+                    android:layout_weight="1"
+                    android:src="@drawable/ic_feedback"
+                    tools:ignore="NestedWeights" />
+
+                <TextView
+                    android:id="@+id/feedback_text"
+                    android:layout_width="50dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="9"
+                    android:gravity="center|left"
+                    android:paddingStart="20dp"
+                    android:text="@string/feedback"
+                    android:textColor="@color/white"
+                    android:textSize="20sp"
+                    tools:ignore="RtlHardcoded,RtlSymmetry" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/HelpLayout"
+                android:layout_width="match_parent"
+                android:layout_height="30dp"
+                android:layout_marginBottom="10dp"
+                android:layout_weight="2"
+                android:gravity="center"
+                android:orientation="horizontal"
+                android:padding="15dp">
+
+                <ImageView
+                    android:layout_width="10dp"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center"
+                    android:layout_marginStart="10dp"
+                    android:layout_weight="1"
+                    android:src="@drawable/ic_help"
+                    tools:ignore="NestedWeights" />
+
+                <TextView
+                    android:id="@+id/help_text"
+                    android:layout_width="50dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="9"
+                    android:gravity="center|left"
+                    android:paddingStart="20dp"
+                    android:text="@string/help"
+                    android:textColor="@color/white"
+                    android:textSize="20sp"
+                    tools:ignore="RtlHardcoded,RtlSymmetry" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/PolicyLayout"
+                android:layout_width="match_parent"
+                android:layout_height="30dp"
+                android:layout_marginBottom="10dp"
+                android:layout_weight="2"
+                android:gravity="center"
+                android:orientation="horizontal"
+                android:padding="15dp">
+
+                <ImageView
+                    android:layout_width="10dp"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center"
+                    android:layout_marginStart="10dp"
+                    android:layout_weight="1"
+                    android:src="@drawable/ic_security"
+                    tools:ignore="NestedWeights" />
+
+                <TextView
+                    android:id="@+id/privacy_policy_text"
+                    android:layout_width="50dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="9"
+                    android:gravity="center|left"
+                    android:paddingStart="20dp"
+                    android:text="@string/privacy_policy"
+                    android:textColor="@color/white"
+                    android:textSize="20sp"
+                    tools:ignore="RtlHardcoded,RtlSymmetry" />
+            </LinearLayout>
+
+
+            <View
+                android:layout_marginTop="-10dp"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginStart="25dp"
+                android:layout_marginEnd="25dp"
+                android:background="@color/background" />
+
+            <TextView
+                android:id="@+id/version"
+                style="@style/normalText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:textColor="@color/white" />
+
+        </LinearLayout>
+<!--        <FrameLayout-->
+<!--            android:layout_weight="1"-->
+<!--            android:id="@+id/frameLayoutBannerAdmob"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"/>-->
+    </LinearLayout>
+
+</androidx.core.widget.NestedScrollView>

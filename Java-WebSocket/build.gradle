@@ -1,0 +1,40 @@
+plugins {
+    id 'java'
+    id 'idea'
+    id 'maven-publish'
+}
+
+group = 'org.java-websocket'
+version = '1.5.7-SNAPSHOT'
+
+compileJava {
+    options.compilerArgs += ['-encoding', 'UTF-8']
+}
+
+javadoc {
+    options.encoding = 'UTF-8'
+}
+
+publishing {
+    publications {
+        maven(MavenPublication) {
+            groupId = project.group
+            artifactId = 'Java-WebSocket'
+            version = project.version
+
+            from components.java
+        }
+    }
+}
+
+dependencies {
+    implementation libs.slf4j.api
+    testImplementation libs.slf4j.simple
+    testImplementation libs.junit
+    testImplementation libs.json
+}
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
+}

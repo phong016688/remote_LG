@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "794901801800",
+    "project_id": "lg-remote-d5000",
+    "storage_bucket": "lg-remote-d5000.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:794901801800:android:1d2a5ca9dbb798d52a217d",
+        "android_client_info": {
+          "package_name": "com.mentos_koder.remote_lg_tv"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDyddksqll-S3rJIYY_icwSzwwnrJGVNLI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

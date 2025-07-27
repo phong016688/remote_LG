@@ -1,0 +1,90 @@
+<resources>
+    <string name="app_name">LG Remote</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="ok">OK</string>
+    <string name="content_description">""</string>
+    <string name="setting_title">"Setting"</string>
+    <string name="help">Help</string>
+    <string name="share_app">Share App</string>
+    <string name="rate">Rate</string>
+    <string name="feedback">Feedback</string>
+    <string name="privacy_policy">Privacy Policy</string>
+    <string name="term_of_use">Term of Use</string>
+    <string name="version_app">Version 1.0</string>
+    <string name="finder_required">Make sure your Smart TV connected to the same WiFi Network as your device.</string>
+    <string name="finder_unable_device">Unable to find device? Enter IP address manually</string>
+    <string name="connected_device">Connected device</string>
+    <string name="cancel">Cancel</string>
+    <string name="disconnect">Disconnect</string>
+    <string name="_1_tab_here_for_ok_button">1. Tab here for OK button</string>
+    <string name="_2_swipe_in_any_direction_for_arrow_button">2.Swipe in any direction for arrow button</string>
+    <string name="note_not_support_youtube_and_nextflix_app">Note: Not support Youtube and NextFlix app</string>
+    <string name="smart_tv">Smart TV</string>
+    <string name="favourite_channels">Favourite Channels</string>
+    <string name="all_channels">All Channels</string>
+    <string name="favourite_apps">Favourite Apps</string>
+    <string name="all_apps">All Apps</string>
+    <string name="favourite_channelss">Favourite Channels</string>
+    <string name="all_channelss">All Channels</string>
+    <string name="device">Device</string>
+    <string name="full_access">Start Your Subscription</string>
+    <string name="mirror_screen_to_tv">Unlimited remote control</string>
+    <string name="tv_keyboard_input_voice_search">Unlimited cast photos, video</string>
+    <string name="unlock_channels_switching">Unlimited channels switching</string>
+    <string name="_100_no_ads">100% No Ads</string>
+    <string name="try_3_days_for_free">Try 3 days for free</string>
+    <string name="then_750_000_year_after_trial_ands">Then ₫699,000/year per year.</string>
+    <string name="start_free_trial">Start Free Trial</string>
+    <string name="monthly">1 Month | ₫229.000/month</string>
+    <string name="lifetime">Lifetime | ₫499.000/lifetime</string>
+    <string name="image_count">Number of Images: %1$d</string>
+    <string name="quantity_image">%1$d of %2$d</string>
+
+
+    <!--    key debug-->
+    <string name="keyBanner_debug" translatable="false">ca-app-pub-3940256099942544/9214589741</string>
+    <string name="keyNative_debug" translatable="false">ca-app-pub-3940256099942544/2247696110</string>
+    <string name="keyInterstitialAd_debug" translatable="false">ca-app-pub-3940256099942544/1033173712</string>
+    <string name="keyOpenAds_debug" translatable="false">ca-app-pub-3940256099942544/9257395921</string>
+    <!--    key release-->
+    <string name="keyBanner_release" translatable="false">aaaaaaaaaaaaaaaaaaaaaa</string>
+    <string name="keyNative_release" translatable="false">aaaaaaaaaaaaaaaaaaaaaaaaaa</string>
+    <string name="keyInterstitialAd_release" translatable="false">aaaaaaaaaaaaaaaaaaaaaaaaaaaaa</string>
+    <string name="keyOpenAds_release" translatable="false">aaaaaaaaaaaaaaaaaaaaaaaaaaa</string>
+
+
+    <string name="haptic_feedback">Haptic Feedback</string>
+    <string name="subscriptions_are_managed_via_your_google_play_billing_and_will_renew_automatically_unless_canceled_at_least_24_hours_befoce_the_end_of_the_current_period_you_can_manage_your_subscriptions_in_account_setting_after_purchase">Subscriptions are managed via your Google Play Billing and will renew automatically unless canceled at least 24 hours befoce the end of the current period. You can manage your subscriptions in Account Setting after purchase</string>
+    <string name="pin_code">Pin Code</string>
+    <string name="enter_the_pin_code_to_connect">Enter the pin code to connect</string>
+    <string name="audio_name">Audio Name</string>
+    <string name="image_action">image_action</string>
+    <string name="_32_tcl_roku_tv"> 32” TCL Roku TV</string>
+
+    <string name="vol">VOL</string>
+    <string name="ch">CH</string>
+    <string name="ch_list">CH LIST</string>
+    <string name="a">A</string>
+    <string name="b">B</string>
+    <string name="c">C</string>
+    <string name="d">D</string>
+    <string name="img_content_description">img content description</string>
+    <string name="text_ok">OK</string>
+    <string name="select_a_tv_device">Select a TV device</string>
+    <string name="cast_text">Cast %1$s</string>
+    <string name="premium">PREMIUM</string>
+    <string name="upgraded_to">Upgraded to</string>
+    <string name="storage_permission_is_required_to_access_this_feature_please_grant_permission_to_continue">Storage permission is required to access this feature. Please grant permission to continue</string>
+    <string name="_1_tap_quot_go_to_settings_quot_to_open_the_app">1. Tap \"<font color="#C8135C">Go to Settings</font>\" to open the App Info page</string>
+    <string name="_2_choose_permissions">2. Choose \"<font color="#C8135C">Permissions</font>\"</string>
+    <string name="_3_tap_photo_and_video">3. Tap \"<font color="#C8135C">Photo and video</font>\"</string>
+    <string name="_3_tap_microphone">3. Tap \"<font color="#C8135C">Microphone</font>\"</string>
+    <string name="_4_tap_music_and_audio">4. Tap \"<font color="#C8135C">Music and audio</font>\"</string>
+    <string name="once_permission_is_granted_return_to_the_app">Once permission is granted, return to the app to resume using the feature.</string>
+    <string name="speak_to_text">Speak to text</string>
+    <string name="send_text">Send Text</string>
+    <string name="click_the_micro_to_speak">Click the micro to speak</string>
+    <string name="no_speech_detected_please_try_again">No speech detected. Please try again.</string>
+
+</resources>

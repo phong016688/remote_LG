@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@drawable/background">
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <VideoView
+            android:id="@+id/video_viewVideo"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+        <Toolbar
+            android:background="@android:color/transparent"
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize">
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <ImageView
+                    android:id="@+id/img_back"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_alignParentStart="true"
+                    android:layout_marginEnd="20dp"
+                    android:src="@drawable/back" />
+                <TextView
+                    android:id="@+id/tv_quantity_img"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:layout_centerVertical="true"
+                    android:text="Device"
+                    android:textColor="@color/white"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
+                <ImageView
+                    android:id="@+id/img_share"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_alignParentEnd="true"
+                    android:layout_marginEnd="20dp"
+                    android:src="@drawable/ic_cast_pp" />
+            </RelativeLayout>
+        </Toolbar>
+    </FrameLayout>
+
+    <SeekBar
+        android:id="@+id/seekbar_time_play"
+        android:layout_centerHorizontal="true"
+        android:layout_above="@id/relativeLayout_media"
+        android:layout_marginBottom="10dp"
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"/>
+    <RelativeLayout
+        android:id="@+id/relativeLayout_media"
+        android:layout_centerHorizontal="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="60dp"
+        android:orientation="horizontal"
+        android:layout_width="250dp"
+        android:layout_height="wrap_content">
+
+        <ImageView
+            android:layout_alignParentStart="true"
+            android:src="@drawable/backward_fill_icon"
+            android:id="@+id/img_backward"
+            android:layout_width="30dp"
+            android:layout_height="30dp"/>
+        <ImageView
+            android:layout_centerHorizontal="true"
+            android:src="@drawable/resume_icon"
+            android:id="@+id/img_play"
+            android:layout_width="30dp"
+            android:layout_height="30dp"/>
+        <ImageView
+            android:layout_alignParentEnd="true"
+            android:src="@drawable/forward_fill_icon"
+            android:id="@+id/img_forward"
+            android:layout_width="30dp"
+            android:layout_height="30dp"/>
+    </RelativeLayout>
+<!--    <FrameLayout-->
+<!--        android:layout_alignParentBottom="true"-->
+<!--        android:id="@+id/frameLayoutBannerAdmob"-->
+<!--        android:layout_marginStart="2dp"-->
+<!--        android:layout_marginEnd="2dp"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="0dp"/>-->
+</RelativeLayout>

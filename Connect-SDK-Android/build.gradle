@@ -1,0 +1,131 @@
+buildscript {
+    repositories {
+        google()
+        mavenCentral()
+    }
+    dependencies {
+        classpath libs.build.gradle.v401
+        classpath libs.android.maven.gradle.plugin
+        classpath libs.kotlin.gradle.plugin
+    }
+}
+
+apply plugin: 'com.android.library'
+apply plugin: 'jacoco'
+
+jacoco {
+    toolVersion = "0.7.1.201405082137"
+}
+
+task jacocoTestReport(type:JacocoReport, dependsOn: "check") {
+    group = "Reporting"
+
+    description = "Generate Jacoco coverage reports"
+
+    getClassDirectories().setFrom(
+            dir: 'build/intermediates/classes/debug',
+            excludes: ['**/R.class',
+                       '**/R$*.class',
+                       '**/*$ViewInjector*.*',
+                       '**/BuildConfig.*',
+                       '**/Manifest*.*']
+    )
+
+    additionalSourceDirs.from = android.sourceSets.main.java.srcDirs
+    sourceDirectories.from = android.sourceSets.main.java.srcDirs
+    executionData.from = 'build/jacoco/testDebug.exec'
+}
+
+build.dependsOn jacocoTestReport
+
+android {
+    compileSdkVersion 36
+    buildToolsVersion '30.0.3'
+    namespace 'com.connectsdk'
+    defaultConfig {
+        minSdkVersion 28
+        targetSdkVersion 34
+    }
+
+    packagingOptions {
+        exclude 'LICENSE.txt'
+        exclude 'META-INF/LICENSE'
+        exclude 'META-INF/LICENSE.txt'
+        exclude 'META-INF/NOTICE'
+    }
+
+    sourceSets {
+        main {
+            manifest.srcFile 'AndroidManifest.xml'
+            java.srcDirs = [
+                    'src',
+                    'core/src',
+                    'modules/google_cast/src',
+                    'modules/firetv/src',
+            ]
+            resources.srcDirs = ['src']
+            aidl.srcDirs = ['src']
+            renderscript.srcDirs = ['src']
+            res.srcDirs = ['core/res']
+            assets.srcDirs = ['assets']
+            jniLibs.srcDirs = ['core/jniLibs']
+        }
+        test {
+            java.srcDirs = [
+                    'core/test/src',
+                    'modules/google_cast/test/src',
+                    'modules/firetv/test/src',
+            ]
+        }
+    }
+    buildTypes {
+        debug {
+            testCoverageEnabled = true
+        }
+        release {
+            minifyEnabled false
+        }
+    }
+    android {
+        lintOptions {
+            abortOnError false
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+    useLibrary 'org.apache.http.legacy'
+    ndkVersion "22.1.7171670"
+}
+
+android.testOptions.unitTests.all {
+    include '**/*Test.class'
+}
+
+dependencies {
+    implementation libs.java.websocket.v160
+    implementation libs.jmdns
+    implementation fileTree(dir: 'modules/firetv/libs', include: '*.jar')
+    implementation libs.androidx.mediarouter.v160
+    implementation libs.androidx.annotation.v171
+    implementation libs.androidx.preference
+    implementation libs.appcompat.v131  // 1.4.1 version doesn't support compile sdk 30
+    implementation libs.dd.plist
+    implementation libs.srp6a
+    implementation libs.eddsa
+    implementation libs.play.services.cast.framework.v2140
+    implementation files('core/libs/lgcast-android-lib.jar')
+    implementation libs.androidx.localbroadcastmanager
+    implementation files('modules/firetv/libs/AmazonFling.jar')
+    implementation files('modules/firetv/libs/WhisperPlay.jar')
+    testImplementation libs.maven.ant.tasks
+    testImplementation libs.junit.v412
+    testImplementation libs.robolectric.v4151
+    testImplementation libs.mockito.all
+    testImplementation libs.powermock.api.mockito
+    testImplementation libs.xmlunit
+}
+
+apply from: 'maven-push.gradle'

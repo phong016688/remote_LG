@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_marginBottom="20dp"
+    android:layout_marginEnd="10dp"
+    android:layout_height="wrap_content">
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/cv_item_app"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        app:cardCornerRadius="12dp">
+        <RelativeLayout
+            android:id="@+id/relativeLayoutImg"
+            android:layout_width="100dp"
+            android:layout_height="100dp">
+            <ImageView
+                android:id="@+id/img_Channel"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:src="@drawable/youtube_icon" />
+            <ImageView
+                android:layout_marginTop="7dp"
+                android:layout_marginEnd="7dp"
+                android:layout_alignParentEnd="true"
+                android:id="@+id/img_favourite"
+                android:layout_width="26dp"
+                android:clickable="true"
+                android:layout_height="26dp"
+                android:src="@drawable/favorite_button_selector" />
+            <ImageView
+                android:visibility="gone"
+                android:layout_marginTop="4dp"
+                android:layout_marginEnd="4dp"
+                android:layout_alignParentEnd="true"
+                android:id="@+id/img_download"
+                android:layout_width="26dp"
+                android:clickable="true"
+                android:layout_height="26dp"
+                android:src="@drawable/download_icon" />
+        </RelativeLayout>
+    </androidx.cardview.widget.CardView>
+
+
+    <TextView
+        android:layout_marginTop="3dp"
+        android:id="@+id/txt_NameChannel"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:textColor="@color/white"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@id/cv_item_app"
+        android:text="564645645"
+        android:maxLines="1"
+        android:ellipsize="end"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"/>
+</RelativeLayout>
