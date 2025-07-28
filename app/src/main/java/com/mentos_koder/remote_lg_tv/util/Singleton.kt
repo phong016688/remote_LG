@@ -26,7 +26,7 @@ import com.mentos_koder.AndroidTvListener
 import com.mentos_koder.remote.Remotemessage
 import com.mentos_koder.remote_lg_tv.database.AppDatabase
 import com.mentos_koder.remote_lg_tv.database.DeviceDao
-import com.mentos_koder.remote_lg_tv.database.SamsungApiService
+import com.mentos_koder.remote_lg_tv.database.LGApiService
 import com.mentos_koder.remote_lg_tv.model.Device
 import com.mentos_koder.remote_lg_tv.notifiSocket.AutoConnectWebSocket
 import com.mentos_koder.remote_lg_tv.notifiSocket.RelationshipWebSocket
@@ -375,10 +375,11 @@ class Singleton {
     }
 
 
-    object SamsungApiClient {
+    object LGApiClient {
         private var retrofit: Retrofit? = null
         lateinit var ipAdd: String
         lateinit var idApp: String
+
         fun getClient(ipAddress: String, appid: String): Retrofit {
             if (retrofit == null) {
                 ipAdd = ipAddress
@@ -398,8 +399,8 @@ class Singleton {
             return retrofit!!
         }
 
-        val service: SamsungApiService by lazy {
-            getClient(ipAdd, idApp).create(SamsungApiService::class.java)
+        val service: LGApiService by lazy {
+            getClient(ipAdd, idApp).create(LGApiService::class.java)
         }
 
     }
@@ -500,7 +501,7 @@ class Singleton {
         deviceConnected?.addListener(deviceListener)
         setNameDevice(deviceConnected?.friendlyName ?: "")
         Log.d("###", "handelTypeTV: $type")
-        deviceConnected?.let { SamsungApiClient.getClient(it.ipAddress, "") }
+        deviceConnected?.let { LGApiClient.getClient(it.ipAddress, "") }
         setIpAddressFlag(deviceConnected!!.ipAddress)
         Log.d("handelTypeTV", "handelTypeTV: " + type)
         Log.d("handelTypeTV", "handelTypeTV: " + deviceConnected!!.ipAddress)

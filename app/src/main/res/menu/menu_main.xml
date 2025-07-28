@@ -2,21 +2,21 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
         android:id="@+id/menu_home"
-        android:title="Remote"
+        android:title="@string/remote"
         android:enabled="true"
         android:icon="@drawable/remote"/>
     <item
         android:id="@+id/menu_list"
-        android:title="App"
+        android:title="@string/app"
         android:enabled="true"
-        android:icon="@drawable/app"/>
+        android:icon="@drawable/ic_app"/>
     <item
         android:id="@+id/menu_cast"
-        android:title="Cast"
+        android:title="@string/cast"
         android:icon="@drawable/ic_cast"/>
     <item
         android:id="@+id/menu_setting"
-        android:title="Setting"
+        android:title="@string/setting"
         android:enabled="true"
         android:icon="@drawable/setting"/>
 </menu>

@@ -21,5 +21,6 @@
     <color name="bgr_btn_lg">#222222</color>
     <color name="icon_menu">#6D6D6D</color>
     <color name="transparent">#00000000</color>
+    <color name="color_app">#A50034</color>
 
 </resources>

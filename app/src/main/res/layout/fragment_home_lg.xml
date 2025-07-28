@@ -49,7 +49,8 @@
         android:id="@+id/cv_power"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:backgroundTint="@color/pink"
+        android:backgroundTint="@color/color_app"
+        android:elevation="5dp"
         app:cardCornerRadius="100dp"
         app:layout_constraintBottom_toTopOf="@id/view_below_off"
         app:layout_constraintDimensionRatio="1:1"
@@ -60,8 +61,8 @@
         <ImageView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:padding="15dp"
             android:contentDescription="@string/img_content_description"
+            android:padding="15dp"
             android:src="@drawable/ic_power_white"
             app:tint="@color/white" />
     </androidx.cardview.widget.CardView>
@@ -71,6 +72,7 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:backgroundTint="@color/white"
+        android:elevation="5dp"
         app:cardCornerRadius="100dp"
         app:layout_constraintBottom_toBottomOf="@id/cv_power"
         app:layout_constraintDimensionRatio="1:1"
@@ -80,9 +82,9 @@
         <ImageView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:padding="15dp"
             android:contentDescription="@string/img_content_description"
-            android:src="@drawable/ic_cast_pp"
+            android:padding="15dp"
+            android:src="@drawable/ic_cast"
             app:tint="@color/pink" />
     </androidx.cardview.widget.CardView>
 
@@ -229,7 +231,7 @@
             android:layout_height="0dp"
             android:layout_weight="1"
             android:contentDescription="@string/img_content_description"
-            android:src="@drawable/ic_ch_up" />
+            android:src="@drawable/ic_up" />
 
         <TextView
             android:layout_width="match_parent"
@@ -237,8 +239,8 @@
             android:layout_weight="1"
             android:gravity="center"
             android:text="@string/ch"
-            android:textSize="14sp"
             android:textColor="@color/white"
+            android:textSize="14sp"
             android:textStyle="bold" />
 
         <ImageView
@@ -246,9 +248,9 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
-            android:rotation="180"
             android:contentDescription="@string/img_content_description"
-            android:src="@drawable/ic_ch_up" />
+            android:rotation="180"
+            android:src="@drawable/ic_up" />
     </LinearLayout>
 
     <View
@@ -350,9 +352,9 @@
         android:id="@+id/constraint_view"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        app:layout_constraintHeight_percent="0.292"
         app:layout_constraintBottom_toTopOf="@id/view_below_control"
         app:layout_constraintEnd_toStartOf="@id/view_end"
+        app:layout_constraintHeight_percent="0.292"
         app:layout_constraintStart_toEndOf="@id/view_start"
         app:layout_constraintTop_toBottomOf="@id/view_below_menu">
 
@@ -370,14 +372,15 @@
                 android:background="@drawable/background_button_lg"
                 android:gravity="center"
                 app:layout_constraintHeight_percent="0.2118"
-                app:layout_constraintWidth_percent="0.2083"
+                app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintStart_toStartOf="parent">
+                app:layout_constraintWidth_percent="0.2083">
+
                 <ImageView
                     android:layout_width="25dp"
                     android:layout_height="25dp"
-                    android:src="@drawable/return_icon"
-                    android:contentDescription="@string/img_content_description"/>
+                    android:contentDescription="@string/img_content_description"
+                    android:src="@drawable/return_icon" />
             </LinearLayout>
 
             <LinearLayout
@@ -386,16 +389,16 @@
                 android:layout_height="0dp"
                 android:background="@drawable/background_button_lg"
                 android:gravity="center"
-                app:layout_constraintHeight_percent="0.2118"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toStartOf="@id/linear_back"
-                app:layout_constraintEnd_toEndOf="@id/linear_back">
+                app:layout_constraintEnd_toEndOf="@id/linear_back"
+                app:layout_constraintHeight_percent="0.2118"
+                app:layout_constraintStart_toStartOf="@id/linear_back">
 
                 <ImageView
                     android:layout_width="25dp"
                     android:layout_height="25dp"
-                    android:src="@drawable/ic_settings"
-                    android:contentDescription="@string/img_content_description"/>
+                    android:contentDescription="@string/img_content_description"
+                    android:src="@drawable/ic_settings" />
             </LinearLayout>
 
             <LinearLayout
@@ -404,10 +407,10 @@
                 android:layout_height="0dp"
                 android:background="@drawable/background_button_lg"
                 android:gravity="center"
-                app:layout_constraintWidth_percent="0.2083"
-                app:layout_constraintTop_toTopOf="@id/linear_back"
+                app:layout_constraintBottom_toBottomOf="@id/linear_back"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintBottom_toBottomOf="@id/linear_back">
+                app:layout_constraintTop_toTopOf="@id/linear_back"
+                app:layout_constraintWidth_percent="0.2083">
 
                 <ImageView
                     android:layout_width="25dp"
@@ -422,10 +425,10 @@
                 android:layout_height="0dp"
                 android:background="@drawable/background_button_lg"
                 android:gravity="center"
-                app:layout_constraintTop_toTopOf="@id/linear_setting"
-                app:layout_constraintStart_toStartOf="@id/linear_exit"
                 app:layout_constraintBottom_toBottomOf="@id/linear_setting"
-                app:layout_constraintEnd_toEndOf="@id/linear_exit">
+                app:layout_constraintEnd_toEndOf="@id/linear_exit"
+                app:layout_constraintStart_toStartOf="@id/linear_exit"
+                app:layout_constraintTop_toTopOf="@id/linear_setting">
 
                 <ImageView
                     android:layout_width="25dp"
@@ -439,12 +442,13 @@
                 android:layout_width="0dp"
                 android:layout_height="0dp"
                 android:backgroundTint="#9523AF"
+                android:elevation="5dp"
                 app:cardCornerRadius="300dp"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintDimensionRatio="1:1"
-                app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintEnd_toStartOf="@id/linear_exit"
                 app:layout_constraintStart_toEndOf="@id/linear_back"
-                app:layout_constraintBottom_toBottomOf="parent">
+                app:layout_constraintTop_toTopOf="parent">
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
@@ -466,65 +470,68 @@
                         android:id="@+id/tv_ok"
                         android:layout_width="0dp"
                         android:layout_height="0dp"
-                        app:layout_constraintWidth_percent="0.4"
-                        app:layout_constraintDimensionRatio="1:1"
+                        android:gravity="center"
                         android:text="@string/text_ok"
                         android:textColor="@color/white"
-                        android:textStyle="bold"
-                        android:gravity="center"
                         android:textSize="20sp"
-                        app:layout_constraintStart_toStartOf="parent"
+                        android:textStyle="bold"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintDimensionRatio="1:1"
                         app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent"
-                        app:layout_constraintBottom_toBottomOf="parent"/>
+                        app:layout_constraintWidth_percent="0.4" />
 
                     <ImageView
                         android:id="@+id/img_top"
                         android:layout_width="0dp"
                         android:layout_height="0dp"
-                        android:padding="20dp"
-                        app:layout_constraintStart_toStartOf="@id/tv_ok"
-                        app:layout_constraintEnd_toEndOf="@id/tv_ok"
-                        app:layout_constraintTop_toTopOf="parent"
-                        app:layout_constraintBottom_toTopOf="@id/tv_ok"
                         android:contentDescription="@string/img_content_description"
-                        android:src="@drawable/arrowtriangle_up_fill_icon" />
+                        android:padding="20dp"
+                        android:src="@drawable/ic_up"
+                        app:layout_constraintBottom_toTopOf="@id/tv_ok"
+                        app:layout_constraintEnd_toEndOf="@id/tv_ok"
+                        app:layout_constraintStart_toStartOf="@id/tv_ok"
+                        app:layout_constraintTop_toTopOf="parent" />
 
                     <ImageView
                         android:id="@+id/img_right"
                         android:layout_width="0dp"
                         android:layout_height="0dp"
-                        android:padding="20dp"
-                        app:layout_constraintStart_toEndOf="@id/tv_ok"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintTop_toTopOf="@id/tv_ok"
-                        app:layout_constraintBottom_toBottomOf="@id/tv_ok"
                         android:contentDescription="@string/img_content_description"
-                        android:src="@drawable/arrowtriangle_right_fill_icon" />
+                        android:padding="20dp"
+                        android:rotation="90"
+                        android:src="@drawable/ic_up"
+                        app:layout_constraintBottom_toBottomOf="@id/tv_ok"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toEndOf="@id/tv_ok"
+                        app:layout_constraintTop_toTopOf="@id/tv_ok" />
 
                     <ImageView
                         android:id="@+id/img_bottom"
                         android:layout_width="0dp"
                         android:layout_height="0dp"
-                        android:padding="20dp"
-                        app:layout_constraintStart_toStartOf="@id/tv_ok"
-                        app:layout_constraintEnd_toEndOf="@id/tv_ok"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintTop_toBottomOf="@id/tv_ok"
                         android:contentDescription="@string/img_content_description"
-                        android:src="@drawable/arrowtriangle_icon" />
+                        android:padding="20dp"
+                        android:rotation="180"
+                        android:src="@drawable/ic_up"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="@id/tv_ok"
+                        app:layout_constraintStart_toStartOf="@id/tv_ok"
+                        app:layout_constraintTop_toBottomOf="@id/tv_ok" />
 
                     <ImageView
                         android:id="@+id/img_left"
                         android:layout_width="0dp"
                         android:layout_height="0dp"
+                        android:contentDescription="@string/img_content_description"
                         android:padding="20dp"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="@id/tv_ok"
+                        android:rotation="270"
+                        android:src="@drawable/ic_up"
                         app:layout_constraintBottom_toBottomOf="@id/tv_ok"
                         app:layout_constraintEnd_toStartOf="@id/tv_ok"
-                        android:contentDescription="@string/img_content_description"
-                        android:src="@drawable/arrowtriangle_left" />
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="@id/tv_ok" />
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -532,8 +539,8 @@
                 <View
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:visibility="gone"
-                    android:background="@drawable/ic_control" />
+                    android:background="@drawable/ic_control"
+                    android:visibility="gone" />
             </androidx.cardview.widget.CardView>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
@@ -561,9 +568,9 @@
                     android:layout_height="match_parent"
                     android:gravity="center"
                     android:text="@string/a"
-                    android:textStyle="bold"
                     android:textColor="@color/white"
-                    android:textSize="16sp" />
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
             </androidx.cardview.widget.CardView>
 
             <androidx.cardview.widget.CardView
@@ -582,9 +589,9 @@
                     android:layout_height="match_parent"
                     android:gravity="center"
                     android:text="@string/b"
-                    android:textStyle="bold"
                     android:textColor="@color/white"
-                    android:textSize="16sp" />
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
             </androidx.cardview.widget.CardView>
 
             <androidx.cardview.widget.CardView
@@ -604,9 +611,9 @@
                     android:layout_height="match_parent"
                     android:gravity="center"
                     android:text="@string/c"
-                    android:textStyle="bold"
                     android:textColor="@color/white"
-                    android:textSize="16sp" />
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
             </androidx.cardview.widget.CardView>
 
             <androidx.cardview.widget.CardView
@@ -626,9 +633,9 @@
                     android:layout_height="match_parent"
                     android:gravity="center"
                     android:text="@string/d"
-                    android:textStyle="bold"
                     android:textColor="@color/white"
-                    android:textSize="16sp" />
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
             </androidx.cardview.widget.CardView>
 
             <LinearLayout
@@ -637,11 +644,11 @@
                 android:layout_height="0dp"
                 android:background="@drawable/background_button_lg"
                 android:gravity="center"
-                app:layout_constraintWidth_percent="0.2083"
+                app:layout_constraintBottom_toBottomOf="@id/cv_a"
+                app:layout_constraintEnd_toStartOf="@id/linear_two"
                 app:layout_constraintStart_toEndOf="@id/cv_a"
                 app:layout_constraintTop_toTopOf="@id/cv_a"
-                app:layout_constraintBottom_toBottomOf="@id/cv_a"
-                app:layout_constraintEnd_toStartOf="@id/linear_two">
+                app:layout_constraintWidth_percent="0.2083">
 
                 <TextView
                     android:layout_width="match_parent"
@@ -658,11 +665,11 @@
                 android:layout_height="0dp"
                 android:background="@drawable/background_button_lg"
                 android:gravity="center"
-                app:layout_constraintWidth_percent="0.2083"
+                app:layout_constraintBottom_toBottomOf="@id/linear_one"
+                app:layout_constraintEnd_toStartOf="@id/linear_three"
                 app:layout_constraintStart_toEndOf="@id/linear_one"
                 app:layout_constraintTop_toTopOf="@id/linear_one"
-                app:layout_constraintBottom_toBottomOf="@id/linear_one"
-                app:layout_constraintEnd_toStartOf="@id/linear_three">
+                app:layout_constraintWidth_percent="0.2083">
 
                 <TextView
                     android:layout_width="match_parent"
@@ -679,11 +686,11 @@
                 android:layout_height="0dp"
                 android:background="@drawable/background_button_lg"
                 android:gravity="center"
-                app:layout_constraintWidth_percent="0.2083"
+                app:layout_constraintBottom_toBottomOf="@id/linear_two"
+                app:layout_constraintEnd_toStartOf="@id/cv_b"
                 app:layout_constraintStart_toEndOf="@id/linear_two"
                 app:layout_constraintTop_toTopOf="@id/linear_two"
-                app:layout_constraintBottom_toBottomOf="@id/linear_two"
-                app:layout_constraintEnd_toStartOf="@id/cv_b">
+                app:layout_constraintWidth_percent="0.2083">
 
                 <TextView
                     android:layout_width="match_parent"
@@ -700,11 +707,11 @@
                 android:layout_height="0dp"
                 android:background="@drawable/background_button_lg"
                 android:gravity="center"
+                app:layout_constraintBottom_toTopOf="@id/linear_seven"
+                app:layout_constraintEnd_toEndOf="@id/linear_one"
                 app:layout_constraintHeight_percent="0.2118"
                 app:layout_constraintStart_toStartOf="@id/linear_one"
-                app:layout_constraintTop_toBottomOf="@id/linear_one"
-                app:layout_constraintEnd_toEndOf="@id/linear_one"
-                app:layout_constraintBottom_toTopOf="@id/linear_seven">
+                app:layout_constraintTop_toBottomOf="@id/linear_one">
 
                 <TextView
                     android:layout_width="match_parent"
@@ -721,10 +728,10 @@
                 android:layout_height="0dp"
                 android:background="@drawable/background_button_lg"
                 android:gravity="center"
-                app:layout_constraintStart_toStartOf="@id/linear_two"
+                app:layout_constraintBottom_toBottomOf="@id/linear_four"
                 app:layout_constraintEnd_toEndOf="@id/linear_two"
-                app:layout_constraintTop_toTopOf="@id/linear_four"
-                app:layout_constraintBottom_toBottomOf="@id/linear_four">
+                app:layout_constraintStart_toStartOf="@id/linear_two"
+                app:layout_constraintTop_toTopOf="@id/linear_four">
 
                 <TextView
                     android:layout_width="match_parent"
@@ -741,10 +748,10 @@
                 android:layout_height="0dp"
                 android:background="@drawable/background_button_lg"
                 android:gravity="center"
-                app:layout_constraintStart_toStartOf="@id/linear_three"
+                app:layout_constraintBottom_toBottomOf="@id/linear_five"
                 app:layout_constraintEnd_toEndOf="@id/linear_three"
-                app:layout_constraintTop_toTopOf="@id/linear_five"
-                app:layout_constraintBottom_toBottomOf="@id/linear_five">
+                app:layout_constraintStart_toStartOf="@id/linear_three"
+                app:layout_constraintTop_toTopOf="@id/linear_five">
 
                 <TextView
                     android:layout_width="match_parent"
@@ -761,11 +768,11 @@
                 android:layout_height="0dp"
                 android:background="@drawable/background_button_lg"
                 android:gravity="center"
+                app:layout_constraintBottom_toTopOf="@id/linear_zero"
+                app:layout_constraintEnd_toEndOf="@id/linear_four"
                 app:layout_constraintHeight_percent="0.2118"
                 app:layout_constraintStart_toStartOf="@id/linear_four"
-                app:layout_constraintTop_toBottomOf="@id/linear_four"
-                app:layout_constraintEnd_toEndOf="@id/linear_four"
-                app:layout_constraintBottom_toTopOf="@id/linear_zero">
+                app:layout_constraintTop_toBottomOf="@id/linear_four">
 
                 <TextView
                     android:layout_width="match_parent"
@@ -782,10 +789,10 @@
                 android:layout_height="0dp"
                 android:background="@drawable/background_button_lg"
                 android:gravity="center"
-                app:layout_constraintStart_toStartOf="@id/linear_five"
+                app:layout_constraintBottom_toBottomOf="@id/linear_seven"
                 app:layout_constraintEnd_toEndOf="@id/linear_five"
-                app:layout_constraintTop_toTopOf="@id/linear_seven"
-                app:layout_constraintBottom_toBottomOf="@id/linear_seven">
+                app:layout_constraintStart_toStartOf="@id/linear_five"
+                app:layout_constraintTop_toTopOf="@id/linear_seven">
 
                 <TextView
                     android:layout_width="match_parent"
@@ -802,10 +809,10 @@
                 android:layout_height="0dp"
                 android:background="@drawable/background_button_lg"
                 android:gravity="center"
-                app:layout_constraintStart_toStartOf="@id/linear_six"
+                app:layout_constraintBottom_toBottomOf="@id/linear_eight"
                 app:layout_constraintEnd_toEndOf="@id/linear_six"
-                app:layout_constraintTop_toTopOf="@id/linear_eight"
-                app:layout_constraintBottom_toBottomOf="@id/linear_eight">
+                app:layout_constraintStart_toStartOf="@id/linear_six"
+                app:layout_constraintTop_toTopOf="@id/linear_eight">
 
                 <TextView
                     android:layout_width="match_parent"
@@ -822,11 +829,11 @@
                 android:layout_height="0dp"
                 android:background="@drawable/background_button_lg"
                 android:gravity="center"
+                app:layout_constraintBottom_toBottomOf="@id/cv_c"
+                app:layout_constraintEnd_toEndOf="@id/linear_eight"
                 app:layout_constraintHeight_percent="0.2118"
                 app:layout_constraintStart_toStartOf="@id/linear_eight"
-                app:layout_constraintTop_toTopOf="@id/cv_c"
-                app:layout_constraintBottom_toBottomOf="@id/cv_c"
-                app:layout_constraintEnd_toEndOf="@id/linear_eight">
+                app:layout_constraintTop_toTopOf="@id/cv_c">
 
                 <TextView
                     android:layout_width="match_parent"
@@ -844,9 +851,8 @@
             android:id="@+id/constraint_touch_pad"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:visibility="gone"
-            android:background="@drawable/border_white_bgr_gray">
-        </androidx.constraintlayout.widget.ConstraintLayout>
+            android:background="@drawable/border_white_bgr_gray"
+            android:visibility="gone"></androidx.constraintlayout.widget.ConstraintLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -921,8 +927,8 @@
                     android:id="@+id/img_tab_touch_pad"
                     android:layout_width="25dp"
                     android:layout_height="25dp"
-                    android:contentDescription="@string/img_content_description"
                     android:layout_gravity="center"
+                    android:contentDescription="@string/img_content_description"
                     android:src="@drawable/ic_touchpad" />
             </androidx.cardview.widget.CardView>
         </LinearLayout>
@@ -973,7 +979,7 @@
             android:layout_width="20dp"
             android:layout_height="20dp"
             android:contentDescription="@string/img_content_description"
-            android:src="@drawable/arrowtriangle_right_fill_icon" />
+            android:src="@drawable/ic_resume" />
     </LinearLayout>
 
     <LinearLayout
@@ -1038,8 +1044,8 @@
         <ImageView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:scaleType="fitXY"
             android:contentDescription="@string/img_content_description"
+            android:scaleType="fitXY"
             android:src="@drawable/youtube_icon" />
     </androidx.cardview.widget.CardView>
 
@@ -1057,8 +1063,8 @@
         <ImageView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:scaleType="fitXY"
             android:contentDescription="@string/img_content_description"
+            android:scaleType="fitXY"
             android:src="@drawable/netflix_app_icon" />
     </androidx.cardview.widget.CardView>
 
@@ -1075,8 +1081,8 @@
         <ImageView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:scaleType="fitXY"
             android:contentDescription="@string/img_content_description"
+            android:scaleType="fitXY"
             android:src="@drawable/prime_video_app_icon" />
     </androidx.cardview.widget.CardView>
 

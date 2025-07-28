@@ -86,5 +86,15 @@
     <string name="send_text">Send Text</string>
     <string name="click_the_micro_to_speak">Click the micro to speak</string>
     <string name="no_speech_detected_please_try_again">No speech detected. Please try again.</string>
+    <string name="back_button">Back Button</string>
+    <string name="private_policy">Private Policy</string>
+    <string name="apps">Apps</string>
+    <string name="cast">Cast</string>
+    <string name="no_connected_device">No Connected Device</string>
+    <string name="click_connect">Click Connect</string>
+    <string name="go_to_settings">Go to settings</string>
+    <string name="remote">Remote</string>
+    <string name="app">App</string>
+    <string name="setting">Setting</string>
 
 </resources>

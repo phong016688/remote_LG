@@ -4,60 +4,67 @@
     android:id="@+id/swipe_refresh_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:background="@color/bgr_lg"
         android:orientation="vertical"
-        android:padding="10dp"
-        android:background="@color/bgr_lg">
+        android:padding="10dp">
+
         <Toolbar
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
+
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
+
                 <TextView
                     android:id="@+id/nameDV"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerHorizontal="true"
                     android:layout_centerVertical="true"
-                    android:text="Cast"
+                    android:text="@string/cast"
                     android:textColor="@color/white"
                     android:textSize="18sp"
                     android:textStyle="bold" />
+
                 <ImageView
                     android:id="@+id/img_cast"
                     android:layout_width="30dp"
                     android:layout_height="30dp"
                     android:layout_alignParentEnd="true"
                     android:layout_marginEnd="20dp"
-                    android:src="@drawable/ic_cast_pp" />
+                    android:src="@drawable/ic_cast" />
             </RelativeLayout>
         </Toolbar>
+
         <LinearLayout
             android:id="@+id/liner_cast"
-            android:layout_marginTop="20dp"
-            android:orientation="vertical"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:layout_marginTop="20dp"
+            android:orientation="vertical">
+
             <androidx.recyclerview.widget.RecyclerView
-                android:layout_marginTop="10dp"
                 android:id="@+id/recycler_cast"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
                 android:layout_marginStart="10dp"
+                android:layout_marginTop="10dp"
                 android:orientation="vertical"
                 app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
-                app:spanCount="3"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"/>
+                app:spanCount="3" />
         </LinearLayout>
 
         <LinearLayout
             android:id="@+id/viewPagerContainer"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="vertical"
             android:background="@color/white"
+            android:orientation="vertical"
             android:visibility="gone">
 
             <androidx.viewpager.widget.ViewPager
@@ -65,26 +72,29 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent" />
         </LinearLayout>
+
         <LinearLayout
             android:id="@+id/linear_no_connect"
-            android:orientation="vertical"
-            android:gravity="center"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:orientation="vertical">
+
             <TextView
-                android:textSize="30sp"
-                android:textColor="@color/white"
-                android:gravity="center"
-                android:text="No Connected Device"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="@string/no_connected_device"
+                android:textColor="@color/white"
+                android:textSize="30sp" />
+
             <Button
                 android:id="@+id/btn_connect"
+                android:layout_width="170dp"
+                android:layout_height="60dp"
                 android:layout_marginTop="10dp"
                 android:background="@drawable/border_img_logo"
-                android:text="Click Connect"
-                android:layout_width="170dp"
-                android:layout_height="60dp"/>
+                android:text="@string/click_connect" />
         </LinearLayout>
     </LinearLayout>
 </LinearLayout>

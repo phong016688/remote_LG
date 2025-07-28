@@ -26,7 +26,7 @@ import com.mentos_koder.remote_lg_tv.adapter.AppAdapter
 import com.mentos_koder.remote_lg_tv.adapter.AppLGAdapter
 import com.mentos_koder.remote_lg_tv.adapter.FavouriteAppAdapter
 import com.mentos_koder.remote_lg_tv.database.AppDatabase
-import com.mentos_koder.remote_lg_tv.model.AppInfoSamsung
+import com.mentos_koder.remote_lg_tv.model.LGAppInfo
 import com.mentos_koder.remote_lg_tv.model.Favourite
 import com.mentos_koder.remote_lg_tv.util.Singleton
 import com.mentos_koder.remote_lg_tv.util.Singleton.GetImageCallback
@@ -275,7 +275,7 @@ class AppsFragment : Fragment(), OnItemClickListener {
     }
 
 
-    private fun saveDataToSharedPreferences(appInfoList: MutableList<AppInfoSamsung>) {
+    private fun saveDataToSharedPreferences(appInfoList: MutableList<LGAppInfo>) {
         val gson = Gson()
         val jsonString = gson.toJson(appInfoList)
 
@@ -286,14 +286,14 @@ class AppsFragment : Fragment(), OnItemClickListener {
         editor.apply()
     }
 
-    private fun loadDataFromSharedPreferences(): MutableList<AppInfoSamsung>? {
+    private fun loadDataFromSharedPreferences(): MutableList<LGAppInfo>? {
         val sharedPreferences =
             requireContext().getSharedPreferences("MyPrefs", Context.MODE_PRIVATE)
         val jsonString = sharedPreferences.getString("appInfoList", null)
 
         if (jsonString != null) {
             val gson = Gson()
-            val type = object : TypeToken<MutableList<AppInfoSamsung>>() {}.type
+            val type = object : TypeToken<MutableList<LGAppInfo>>() {}.type
             return gson.fromJson(jsonString, type)
 
         }

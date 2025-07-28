@@ -1,4 +1,5 @@
 package com.mentos_koder.remote_lg_tv.view.fragment
+
 import android.content.Context
 import android.net.wifi.WifiManager
 import android.os.Bundle
@@ -43,12 +44,11 @@ class PlayAudioFragment : Fragment() {
     var isCheckVisibleToolbar = false
     var isCheckPlay = false
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
+        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View? {
         val view = inflater.inflate(R.layout.fragment_play_audio, container, false)
         setUI(view)
-        viewModel.audioList.observe(viewLifecycleOwner, Observer{ list ->
+        viewModel.audioList.observe(viewLifecycleOwner, Observer { list ->
             Log.d("audioAList##", "onCreate: $list")
             audioList = list
         })
@@ -57,34 +57,29 @@ class PlayAudioFragment : Fragment() {
         return view
     }
 
-    private fun showAudio(){
-        viewModel.getSelectedAudio().observe(viewLifecycleOwner, Observer { audioFile ->
+    private fun showAudio() {
+        viewModel.getSelectedAudio().observe(viewLifecycleOwner) { audioFile ->
             if (audioFile != null) {
-                Log.d("audioA##", "onCreate: $audioFile")
                 val imgViewAudio = audioFile.albumArt
                 tv_quantity_img.text = audioFile.name
                 if (imgViewAudio != null) {
                     context?.let {
-                        Glide.with(it)
-                            .load(File(imgViewAudio))
-                            .apply(RequestOptions().placeholder(R.drawable.app).error(R.drawable.setting))
-                            .diskCacheStrategy(DiskCacheStrategy.ALL)
-                            .into(img_view_audio)
+                        Glide.with(it).load(File(imgViewAudio)).apply(
+                            RequestOptions().placeholder(R.drawable.ic_app)
+                                .error(R.drawable.setting)
+                        ).diskCacheStrategy(DiskCacheStrategy.ALL).into(img_view_audio)
                     }
                 } else {
-                    img_view_audio.setImageResource(R.drawable.audioimg)
+                    img_view_audio.setImageResource(R.drawable.ic_audio)
                 }
                 position = audioList.indexOfFirst { it.id == audioFile.id }
-                Log.d("audioA##", "position: " + position)
                 playAudio(audioFile)
                 setEvent()
-            } else {
-                Log.d("audioA##", "onCreate: audioFile is null")
             }
-        })
+        }
     }
 
-    private fun startConnect(audioFile: AudioFile,title : String,description : String){
+    private fun startConnect(audioFile: AudioFile, title: String, description: String) {
         if (!server.isRunning) {
             Util.runInBackground {
                 server.start(audioFile.data, context)
@@ -98,7 +93,7 @@ class PlayAudioFragment : Fragment() {
                 )
             }
 
-        }else{
+        } else {
             server.stop()
             server.start(audioFile.data, context)
             Singleton.getInstance().showMediaVideoAndAudio(
@@ -111,7 +106,8 @@ class PlayAudioFragment : Fragment() {
             )
         }
     }
-    private fun playAudio(audioFile: AudioFile){
+
+    private fun playAudio(audioFile: AudioFile) {
         val ipAddress = getLocalIpAddress()
         val title = audioFile.name
         var description = audioFile.artist
@@ -119,13 +115,15 @@ class PlayAudioFragment : Fragment() {
         if (description == null) {
             description = "<unknown>"
         }
-        startConnect(audioFile,title,description)
+        startConnect(audioFile, title, description)
     }
-    private fun getListAudioForPosition(pos: Int) : AudioFile{
+
+    private fun getListAudioForPosition(pos: Int): AudioFile {
         Log.d("audioA##", "getListAudioForPosition: " + audioList[pos])
         tv_quantity_img.text = audioList[pos].name
-         return audioList[pos]
+        return audioList[pos]
     }
+
     private fun setEvent() {
         val ipAddress = getLocalIpAddress()
         UtilsHttp.setIpAddress(ipAddress)
@@ -136,17 +134,17 @@ class PlayAudioFragment : Fragment() {
             requireActivity().supportFragmentManager.popBackStack()
         }
         img_play.setOnClickListener {
-            if(isCheckPlay){
+            if (isCheckPlay) {
                 Singleton.getInstance().playAudio()
                 isCheckPlay = false
-            }else{
+            } else {
                 Singleton.getInstance().stopAudio()
                 isCheckPlay = true
             }
 
         }
         img_backward.setOnClickListener {
-            if (currentIndex > 0){
+            if (currentIndex > 0) {
                 currentIndex--
                 Log.d("audioA", "setEvent: " + currentIndex)
                 val audio = getListAudioForPosition(currentIndex)
@@ -172,7 +170,7 @@ class PlayAudioFragment : Fragment() {
         }
     }
 
-    private fun setUI(view:View) {
+    private fun setUI(view: View) {
         img_view_audio = view.findViewById(R.id.img_view_audio)
         seekbar_time_play = view.findViewById(R.id.seekbar_time_play)
         seekbar_time_play.visibility = View.GONE
@@ -184,17 +182,20 @@ class PlayAudioFragment : Fragment() {
         tv_quantity_img = view.findViewById(R.id.tv_quantity_img)
         img_share = view.findViewById(R.id.img_share)
     }
+
     private fun getLocalIpAddress(): String {
-        val wifiManager =
-            context?.getSystemService(Context.WIFI_SERVICE) as WifiManager
+        val wifiManager = context?.getSystemService(Context.WIFI_SERVICE) as WifiManager
         val wifiInfo = wifiManager.connectionInfo
         val ipAddress = wifiInfo.getIpAddress()
         return String.format(
             "%d.%d.%d.%d",
-            ipAddress and 0xff, ipAddress shr 8 and 0xff,
-            ipAddress shr 16 and 0xff, ipAddress shr 24 and 0xff
+            ipAddress and 0xff,
+            ipAddress shr 8 and 0xff,
+            ipAddress shr 16 and 0xff,
+            ipAddress shr 24 and 0xff
         )
     }
+
     override fun onDestroy() {
         super.onDestroy()
         if (server.isRunning) {

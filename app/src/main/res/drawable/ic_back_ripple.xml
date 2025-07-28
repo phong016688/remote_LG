@@ -2,7 +2,7 @@
 <ripple xmlns:android="http://schemas.android.com/apk/res/android"
     android:color="@color/cardview_dark_background">
     <item
-        android:drawable="@drawable/ic_back">
+        android:drawable="@drawable/ic_return">
         <shape android:shape="oval">
             <solid android:color="#1AFFFFFF"/>
         </shape>

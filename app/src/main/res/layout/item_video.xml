@@ -2,15 +2,15 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
-
     <ImageView
-        android:src="@drawable/app"
         android:id="@+id/img_video"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:scaleType="fitCenter"
+        android:layout_gravity="center"
+        android:layout_margin="16dp"
         android:adjustViewBounds="true"
-        android:layout_gravity="center"/>
+        android:scaleType="fitCenter"
+        android:src="@drawable/ic_video" />
 
     <ImageView
         android:id="@+id/img_play"

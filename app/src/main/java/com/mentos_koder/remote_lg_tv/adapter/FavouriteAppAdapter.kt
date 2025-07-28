@@ -17,7 +17,7 @@ import com.bumptech.glide.Glide
 import com.mentos_koder.remote_lg_tv.R
 import com.mentos_koder.remote_lg_tv.database.AppDatabase
 import android.util.Base64
-import com.mentos_koder.remote_lg_tv.model.AppInfoSamsung
+import com.mentos_koder.remote_lg_tv.model.LGAppInfo
 import com.mentos_koder.remote_lg_tv.model.Favourite
 import com.mentos_koder.remote_lg_tv.util.ImageLoader
 import com.mentos_koder.remote_lg_tv.util.Singleton
@@ -157,12 +157,12 @@ class FavouriteAppAdapter(private val context: Context, private val listApp: Mut
         }
     }
     private fun postAppInfo(appId: String) {
-        val call = Singleton.SamsungApiClient.service.postAppInfo(appId)
+        val call = Singleton.LGApiClient.service.postAppInfo(appId)
 
-        call.enqueue(object : Callback<AppInfoSamsung> {
+        call.enqueue(object : Callback<LGAppInfo> {
             override fun onResponse(
-                call: Call<AppInfoSamsung>,
-                response: retrofit2.Response<AppInfoSamsung>
+                call: Call<LGAppInfo>,
+                response: retrofit2.Response<LGAppInfo>
             ) {
                 Log.d("SamsungApiClient", "onResponse: " + response)
                 if (response.isSuccessful) {
@@ -172,7 +172,7 @@ class FavouriteAppAdapter(private val context: Context, private val listApp: Mut
                 }
             }
 
-            override fun onFailure(call: Call<AppInfoSamsung>, t: Throwable) {
+            override fun onFailure(call: Call<LGAppInfo>, t: Throwable) {
                 Log.d("SamsungApiClient", "onFailure: "+t.toString() )
             }
         })

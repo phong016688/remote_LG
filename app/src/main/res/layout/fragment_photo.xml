@@ -18,14 +18,14 @@
                 android:layout_height="30dp"
                 android:layout_alignParentStart="true"
                 android:layout_marginEnd="20dp"
-                android:src="@drawable/back" />
+                android:src="@drawable/ic_back" />
             <TextView
                 android:id="@+id/nameDV"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerHorizontal="true"
                 android:layout_centerVertical="true"
-                android:text="Device"
+                android:text="@string/device"
                 android:textColor="@color/white"
                 android:textSize="18sp"
                 android:textStyle="bold" />
@@ -35,7 +35,7 @@
                 android:layout_height="30dp"
                 android:layout_alignParentEnd="true"
                 android:layout_marginEnd="20dp"
-                android:src="@drawable/ic_cast_pp" />
+                android:src="@drawable/ic_cast" />
         </RelativeLayout>
     </Toolbar>
     <androidx.recyclerview.widget.RecyclerView

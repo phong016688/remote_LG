@@ -37,7 +37,7 @@ class PhotoAdapter(private var images: MutableList<String>?, val context: Contex
         val imageBitmap = images?.get(position)
         Glide.with(holder.itemView.context)
             .load(imageBitmap)
-            .apply(RequestOptions().placeholder(R.drawable.app).error(R.drawable.setting))
+            .apply(RequestOptions().placeholder(R.drawable.ic_app).error(R.drawable.setting))
             .diskCacheStrategy(DiskCacheStrategy.ALL)
             .into(holder.imageView)
 

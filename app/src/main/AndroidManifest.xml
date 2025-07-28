@@ -29,20 +29,13 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.LgRemote">
+
         <activity
             android:name="com.mentos_koder.remote_lg_tv.view.PlayVideoActivity"
             android:exported="false" />
         <activity
             android:name="com.mentos_koder.remote_lg_tv.view.PlayImageActivity"
             android:exported="false" />
-        <activity
-            android:name="com.mentos_koder.remote_lg_tv.appPurchases.PurchasesActivity"
-            android:exported="false" />
-
-        <meta-data
-            android:name="com.google.android.gms.version"
-            android:value="@integer/google_play_services_version" />
-
         <activity
             android:name="com.mentos_koder.remote_lg_tv.view.KeyboardActivity"
             android:exported="false"
@@ -63,6 +56,9 @@
             </intent-filter>
         </activity>
 
+        <meta-data
+            android:name="com.google.android.gms.version"
+            android:value="@integer/google_play_services_version" />
     </application>
 
 </manifest>

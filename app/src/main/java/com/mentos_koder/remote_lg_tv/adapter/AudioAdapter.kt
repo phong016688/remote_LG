@@ -37,7 +37,7 @@ class AudioAdapter(
         if (audio.albumArt != null) {
             Glide.with(holder.itemView.context)
                 .load(File(audio.albumArt))
-                .apply(RequestOptions().placeholder(R.drawable.app).error(R.drawable.setting))
+                .apply(RequestOptions().placeholder(R.drawable.ic_app).error(R.drawable.setting))
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
                 .into(holder.audioAlbumArt)
         } else {
