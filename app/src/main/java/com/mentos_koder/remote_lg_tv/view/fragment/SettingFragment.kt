@@ -40,15 +40,15 @@ class SettingFragment : Fragment() {
     private var tvVersion: TextView? = null
     private lateinit var ring: SwitchCompat
     private val VIBRATE_PERMISSION_REQUEST_CODE = 1001
-    private  val SHARED_PREFS_NAME = "MyPrefs"
+    private val SHARED_PREFS_NAME = "MyPrefs"
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
+        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
         val view: View = inflater.inflate(R.layout.fragment_setting, container, false)
         setUpUI(view)
         ring.isChecked = context?.let { restoreSwitchState(it) } == true
-        val sharedPreferences = requireContext().getSharedPreferences("MyPrefs", Context.MODE_PRIVATE)
+        val sharedPreferences =
+            requireContext().getSharedPreferences("MyPrefs", Context.MODE_PRIVATE)
         val switchState = sharedPreferences.getBoolean("switchState", true)
         ring.isChecked = switchState
         VersionName()
@@ -59,21 +59,24 @@ class SettingFragment : Fragment() {
     private fun setUpUI(rootView: View) {
         ring = rootView.findViewById(R.id.switchRing)
         castSettingButton = rootView.findViewById(R.id.btn_cast_setting)
-        linearShareApp = rootView.findViewById(R.id.ShareAppLayout)
-        linearRate = rootView.findViewById(R.id.RateLayout)
-        linearFeedback = rootView.findViewById(R.id.FeedbackLayout)
-        linearPolicy = rootView.findViewById(R.id.PolicyLayout)
-        linearHelp = rootView.findViewById(R.id.HelpLayout)
+        linearShareApp = rootView.findViewById(R.id.linear_shareAppLayout)
+        linearRate = rootView.findViewById(R.id.linear_rateLayout)
+        linearFeedback = rootView.findViewById(R.id.linear_feedbackLayout)
+        linearPolicy = rootView.findViewById(R.id.linear_policyLayout)
+        linearHelp = rootView.findViewById(R.id.linear_helpLayout)
         tvVersion = rootView.findViewById(R.id.version)
     }
+
     private fun performVibrateAction() {
         val vibrator = requireContext().getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
         if (ring.isChecked) {
             vibrator.vibrate(100)
         }
     }
+
     private fun saveSwitchState(isChecked: Boolean) {
-        val sharedPreferences = requireContext().getSharedPreferences(SHARED_PREFS_NAME, Context.MODE_PRIVATE)
+        val sharedPreferences =
+            requireContext().getSharedPreferences(SHARED_PREFS_NAME, Context.MODE_PRIVATE)
         sharedPreferences.edit().putBoolean("switchState", isChecked).apply()
     }
 
@@ -101,19 +104,21 @@ class SettingFragment : Fragment() {
         }
         linearFeedback!!.setOnClickListener {
             performVibrateAction()
-            sendEmail() }
+            sendEmail()
+        }
         linearRate!!.setOnClickListener {
             performVibrateAction()
-            openPlayStore() }
+            openPlayStore()
+        }
         linearShareApp!!.setOnClickListener {
             performVibrateAction()
-            shareApp() }
+            shareApp()
+        }
         linearPolicy!!.setOnClickListener {
             performVibrateAction()
             startActivity(
                 Intent(
-                    activity,
-                    PrivatePolicyActivity::class.java
+                    activity, PrivatePolicyActivity::class.java
                 )
             )
         }
@@ -121,8 +126,7 @@ class SettingFragment : Fragment() {
             performVibrateAction()
             startActivity(
                 Intent(
-                    activity,
-                    HelpActivity::class.java
+                    activity, HelpActivity::class.java
                 )
             )
         }
@@ -130,34 +134,33 @@ class SettingFragment : Fragment() {
 
     private fun requestVibratePermissionIfNeeded() {
         if (ContextCompat.checkSelfPermission(
-                requireContext(),
-                Manifest.permission.VIBRATE
+                requireContext(), Manifest.permission.VIBRATE
             ) != PackageManager.PERMISSION_GRANTED
         ) {
             requestPermissions(
-                arrayOf(Manifest.permission.VIBRATE),
-                VIBRATE_PERMISSION_REQUEST_CODE
+                arrayOf(Manifest.permission.VIBRATE), VIBRATE_PERMISSION_REQUEST_CODE
             )
         }
     }
 
     @Deprecated("Deprecated in Java")
     override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<out String>,
-        grantResults: IntArray
+        requestCode: Int, permissions: Array<out String>, grantResults: IntArray
     ) {
         if (requestCode == VIBRATE_PERMISSION_REQUEST_CODE) {
             if (grantResults.isNotEmpty() && grantResults[0] != PackageManager.PERMISSION_GRANTED) {
-                Toast.makeText(activity, "Ứng dụng cần quyền rung để thực hiện chức năng này", Toast.LENGTH_SHORT).show()
+                Toast.makeText(
+                    activity,
+                    "Ứng dụng cần quyền rung để thực hiện chức năng này",
+                    Toast.LENGTH_SHORT
+                ).show()
             }
         }
     }
 
     private fun revokeVibratePermission() {
         if (ContextCompat.checkSelfPermission(
-                requireContext(),
-                Manifest.permission.VIBRATE
+                requireContext(), Manifest.permission.VIBRATE
             ) == PackageManager.PERMISSION_GRANTED
         ) {
             ActivityCompat.requestPermissions(
@@ -171,7 +174,8 @@ class SettingFragment : Fragment() {
 
     private fun VersionName() {
         try {
-            val packageInfo = requireActivity().packageManager.getPackageInfo(requireContext().packageName, 0)
+            val packageInfo =
+                requireActivity().packageManager.getPackageInfo(requireContext().packageName, 0)
             versionName = packageInfo.versionName
             tvVersion!!.text = "Version: $versionName"
             Log.d("456464", "VersionName: $versionName")
@@ -181,15 +185,12 @@ class SettingFragment : Fragment() {
     }
 
     private fun showFragmentDevice() {
-                val deviceFrag = DeviceFragment()
-                requireActivity().supportFragmentManager.beginTransaction()
-                    .setCustomAnimations(
-                        R.anim.slide_in_right,  // enter
-                        R.anim.slide_out_left // exit
-                    )
-                    .replace(R.id.fragment_container, deviceFrag, "findThisFragment")
-                    .addToBackStack("findThisFragment")
-                    .commit()
+        val deviceFrag = DeviceFragment()
+        requireActivity().supportFragmentManager.beginTransaction().setCustomAnimations(
+                R.anim.slide_in_right,  // enter
+                R.anim.slide_out_left // exit
+            ).replace(R.id.fragment_container, deviceFrag, "findThisFragment")
+            .addToBackStack("findThisFragment").commit()
     }
 
     private fun showAlertDialogDisconnected(): AlertDialog {
@@ -204,8 +205,7 @@ class SettingFragment : Fragment() {
         textName.text = "TV Device"
         val alertDialog = alertDialogBuilder.create()
         btnDisconnect.setOnClickListener {
-            val singleton: Singleton =
-                Singleton.getInstance()
+            val singleton: Singleton = Singleton.getInstance()
             singleton.setConnected(false)
             singleton.disconnect()
             alertDialog.dismiss()
@@ -223,13 +223,12 @@ class SettingFragment : Fragment() {
 
     private fun sendEmail() {
         val appName = getString(R.string.app_name)
-        val emailSubject =
-            "Report Bug issue & suggested - Version: $versionName $appName"
+        val emailSubject = "Report Bug issue & suggested - Version: $versionName $appName"
         val emailBody = "Please describe your issue or suggested here"
         val uri = Uri.parse(
-            "mailto:@gmail.com" +
-                    "?subject=" + Uri.encode(emailSubject) +
-                    "&body=" + Uri.encode(emailBody)
+            "mailto:@gmail.com" + "?subject=" + Uri.encode(emailSubject) + "&body=" + Uri.encode(
+                emailBody
+            )
         )
         val emailIntent = Intent(Intent.ACTION_SENDTO, uri)
         try {
@@ -244,8 +243,7 @@ class SettingFragment : Fragment() {
         val appName = getString(R.string.app_name)
         val emailSubject = appName
         val emailBody =
-            ("I am using " + appName + "to plan my day, It's really a convenientnt to-do list. Share it with you now." +
-                    "Download it here:" + " https://play.google.com/store/apps/details?id=" + packageName)
+            ("I am using " + appName + "to plan my day, It's really a convenientnt to-do list. Share it with you now." + "Download it here:" + " https://play.google.com/store/apps/details?id=" + packageName)
         val emailIntent = Intent(Intent.ACTION_SEND)
         emailIntent.setType("message/rfc822")
         emailIntent.putExtra(Intent.EXTRA_EMAIL, arrayOf(" "))

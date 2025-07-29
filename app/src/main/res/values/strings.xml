@@ -96,5 +96,15 @@
     <string name="remote">Remote</string>
     <string name="app">App</string>
     <string name="setting">Setting</string>
-
+    <string name="universal_remote">Universal Remote</string>
+    <string name="menu">MENU</string>
+    <string name="mute">MUTE</string>
+    <string name="info">INFO</string>
+    <string name="search">Search</string>
+    <string name="search_">Search...</string>
+    <string name="upgrade_to_n_b_premium_b">Upgrade to <b>PREMIUM</b></string>
+    <string name="restore_purchases">Restore Purchases</string>
+    <string name="wait_for_allowance">Wait for allowance</string>
+    <string name="language">Language</string>
+    <string name="tv_device">TV Device</string>
 </resources>

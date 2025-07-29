@@ -14,7 +14,7 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.fragment.app.Fragment
-import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager.widget.ViewPager
 import com.mentos_koder.remote_lg_tv.R
@@ -23,6 +23,7 @@ import com.mentos_koder.remote_lg_tv.adapter.ViewPagerAdapter
 import com.mentos_koder.remote_lg_tv.model.Cast
 import com.mentos_koder.remote_lg_tv.util.PermissionUtils
 import com.mentos_koder.remote_lg_tv.util.Singleton
+import com.mentos_koder.remote_lg_tv.util.clicks
 import com.mentos_koder.remote_lg_tv.util.restoreSwitchState
 
 class CastFragment : Fragment()  {
@@ -45,24 +46,20 @@ class CastFragment : Fragment()  {
         viewPager = view.findViewById(R.id.viewpager)
         viewPagerContainer = view.findViewById(R.id.viewPagerContainer)
         linerCast = view.findViewById(R.id.liner_cast)
-        castRecyclerView.setLayoutManager(LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false))
-        adapterCast = CastAdapter(getDataCast(), requireContext())
+        castRecyclerView.setLayoutManager(GridLayoutManager(context, 2))
+        adapterCast = CastAdapter()
+        adapterCast.submitList(getDataCast())
         castRecyclerView.adapter = adapterCast
 
-        adapterCast.setOnItemClickListener(object : CastAdapter.OnItemClickListener {
-            override fun onItemClick(typeCast: String) {
-                if(PermissionUtils.checkAndRequestPermissions(mActivity)){
-                    viewPagerContainer.visibility = View.VISIBLE
-                    linerCast.visibility = View.GONE
-                    setupViewPager(typeCast)
-                    Log.d("35343", "onItemClick: if ")
-                }else{
-                    Log.d("35343", "onItemClick: else")
-                }
+        adapterCast.clickItem = {
+            if (PermissionUtils.checkAndRequestPermissions(mActivity)) {
+                viewPagerContainer.visibility = View.VISIBLE
+                linerCast.visibility = View.GONE
+                setupViewPager(it.name)
             }
-        })
+        }
 
-        imgCast!!.setOnClickListener {
+        imgCast?.clicks {
             performVibrateAction()
             if (isConnected) {
                 showAlertDialogDisconnected()
@@ -120,9 +117,9 @@ class CastFragment : Fragment()  {
 
     private fun getDataCast(): List<Cast> {
         return listOf(
-            Cast("Photo", R.drawable.img_photo),
-            Cast("Video", R.drawable.img_video),
-            Cast("Audio", R.drawable.img_audio)
+            Cast("Photo", R.drawable.ic_photo),
+            Cast("Video", R.drawable.ic_video),
+            Cast("Audio", R.drawable.ic_audio1)
         )
     }
 
@@ -146,7 +143,7 @@ class CastFragment : Fragment()  {
         val textName = view.findViewById<TextView>(R.id.textNameDevice)
         val btnDisconnect = view.findViewById<Button>(R.id.btnDisconnect)
         val btnCancel = view.findViewById<Button>(R.id.btn_cancel)
-        textName.text = "TV Device"
+        textName.text = getString(R.string.tv_device)
         val alertDialog = alertDialogBuilder.create()
         btnDisconnect.setOnClickListener {
             val singleton: Singleton =

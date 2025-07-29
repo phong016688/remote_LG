@@ -66,7 +66,7 @@ class PlayAudioFragment : Fragment() {
                     context?.let {
                         Glide.with(it).load(File(imgViewAudio)).apply(
                             RequestOptions().placeholder(R.drawable.ic_app)
-                                .error(R.drawable.setting)
+                                .error(R.drawable.ic_setting)
                         ).diskCacheStrategy(DiskCacheStrategy.ALL).into(img_view_audio)
                     }
                 } else {

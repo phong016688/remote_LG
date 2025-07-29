@@ -37,11 +37,11 @@ class AudioAdapter(
         if (audio.albumArt != null) {
             Glide.with(holder.itemView.context)
                 .load(File(audio.albumArt))
-                .apply(RequestOptions().placeholder(R.drawable.ic_app).error(R.drawable.setting))
+                .apply(RequestOptions().placeholder(R.drawable.ic_app).error(R.drawable.ic_setting))
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
                 .into(holder.audioAlbumArt)
         } else {
-            holder.audioAlbumArt.setImageResource(R.drawable.img_audio)
+            holder.audioAlbumArt.setImageResource(R.drawable.ic_audio)
         }
 
         holder.itemView.setOnClickListener {

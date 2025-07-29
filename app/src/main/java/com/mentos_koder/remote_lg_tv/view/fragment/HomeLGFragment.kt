@@ -1,5 +1,6 @@
 package com.mentos_koder.remote_lg_tv.view.fragment
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.AlertDialog
 import android.content.Context
@@ -14,6 +15,7 @@ import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
@@ -24,21 +26,25 @@ import androidx.cardview.widget.CardView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import com.codertainment.dpadview.DPadView
 import com.mentos_koder.remote_lg_tv.R
 import com.mentos_koder.remote_lg_tv.database.AppDatabase
 import com.mentos_koder.remote_lg_tv.util.KeycodeLG
 import com.mentos_koder.remote_lg_tv.util.PermissionUtils
 import com.mentos_koder.remote_lg_tv.util.Singleton
+import com.mentos_koder.remote_lg_tv.util.clicks
 import com.mentos_koder.remote_lg_tv.util.restoreSwitchState
 import com.mentos_koder.remote_lg_tv.view.KeyboardActivity
 import java.util.Locale
 import kotlin.math.abs
+import androidx.core.content.edit
 
 
 class HomeLGFragment : Fragment(), GestureDetector.OnGestureListener {
 
-    private lateinit var cvPower: CardView
-    private lateinit var cvCast: CardView
+    private lateinit var dpadView: DPadView
+    private lateinit var cvPower: FrameLayout
+    private lateinit var cvCast: FrameLayout
     private lateinit var imgVolumeUp: ImageView
     private lateinit var imgVolumeDown: ImageView
     private lateinit var linearChList: LinearLayout
@@ -55,9 +61,9 @@ class HomeLGFragment : Fragment(), GestureDetector.OnGestureListener {
     private lateinit var linearPlay: LinearLayout
     private lateinit var linearStop: LinearLayout
     private lateinit var linearForward: LinearLayout
-    private lateinit var cvYoutube: CardView
-    private lateinit var cvNetflix: CardView
-    private lateinit var cvPrimeVideo: CardView
+    private lateinit var cvYoutube: FrameLayout
+    private lateinit var cvNetflix: FrameLayout
+    private lateinit var cvPrimeVideo: FrameLayout
     private lateinit var cvTabControl: CardView
     private lateinit var cvTabNumber: CardView
     private lateinit var cvTabTouchPad: CardView
@@ -68,11 +74,6 @@ class HomeLGFragment : Fragment(), GestureDetector.OnGestureListener {
     private lateinit var linearExit: LinearLayout
     private lateinit var linearSetting: LinearLayout
     private lateinit var linearTv: LinearLayout
-    private lateinit var tvOk: TextView
-    private lateinit var imgLeft: ImageView
-    private lateinit var imgRight: ImageView
-    private lateinit var imgTop: ImageView
-    private lateinit var imgBottom: ImageView
     private lateinit var cvA: CardView
     private lateinit var cvB: CardView
     private lateinit var cvC: CardView
@@ -90,7 +91,6 @@ class HomeLGFragment : Fragment(), GestureDetector.OnGestureListener {
     private lateinit var constraintControl: ConstraintLayout
     private lateinit var constraintNumber: ConstraintLayout
     private lateinit var constraintTouchPad: ConstraintLayout
-
     private lateinit var gestureDetector: GestureDetector
 
     private var isAutoConnectCalled = true
@@ -99,8 +99,7 @@ class HomeLGFragment : Fragment(), GestureDetector.OnGestureListener {
     private val youtubeIdString = "youtube.leanback.v4"
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
+        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
         val view: View = inflater.inflate(R.layout.fragment_home_lg, container, false)
         setupUI(view)
@@ -134,8 +133,7 @@ class HomeLGFragment : Fragment(), GestureDetector.OnGestureListener {
         val type = getTypeDevice()
         when (type) {
             "lg" -> {
-                Singleton.getInstance()
-                    .openAppOnTV(keyLG)
+                Singleton.getInstance().openAppOnTV(keyLG)
             }
         }
     }
@@ -145,7 +143,6 @@ class HomeLGFragment : Fragment(), GestureDetector.OnGestureListener {
             val singleton = Singleton.getInstance()
             val eventName = key.value
             singleton.getService(eventName)
-            //  isAutoConnectCalled = false;
         } else {
             showFragmentDevice()
         }
@@ -157,6 +154,7 @@ class HomeLGFragment : Fragment(), GestureDetector.OnGestureListener {
             return singleton.isConnectedCustom
         }
 
+    @SuppressLint("UseKtx")
     private fun autoConnect() {
         try {
             val deviceDao = AppDatabase.getDatabase(requireActivity()).deviceDao()
@@ -167,12 +165,10 @@ class HomeLGFragment : Fragment(), GestureDetector.OnGestureListener {
                 val name = device.typeDevice
                 val token = device.token
                 singleton.AutoConnectURI(name, ip, token)
-                //tvNameDevice.text = device.name
-                val sharedPref =
-                    requireActivity().getSharedPreferences("MyPreferences", Context.MODE_PRIVATE)
-                val editor = sharedPref.edit()
-                editor.putString("nameDevice", device.name)
-                editor.apply()
+                val sharedPref = requireActivity().getSharedPreferences("MyPreferences", Context.MODE_PRIVATE)
+                sharedPref.edit {
+                    putString("nameDevice", device.name)
+                }
                 singleton.setConnected(true)
             } else {
                 singleton.setConnected(false)
@@ -219,11 +215,6 @@ class HomeLGFragment : Fragment(), GestureDetector.OnGestureListener {
         linearExit = view.findViewById(R.id.linear_exit)
         linearSetting = view.findViewById(R.id.linear_setting)
         linearTv = view.findViewById(R.id.linear_tv)
-        tvOk = view.findViewById(R.id.tv_ok)
-        imgLeft = view.findViewById(R.id.img_left)
-        imgRight = view.findViewById(R.id.img_right)
-        imgTop = view.findViewById(R.id.img_top)
-        imgBottom = view.findViewById(R.id.img_bottom)
 
         cvA = view.findViewById(R.id.cv_a)
         cvB = view.findViewById(R.id.cv_b)
@@ -243,8 +234,11 @@ class HomeLGFragment : Fragment(), GestureDetector.OnGestureListener {
         constraintControl = view.findViewById(R.id.constraint_control)
         constraintNumber = view.findViewById(R.id.constraint_number)
         constraintTouchPad = view.findViewById(R.id.constraint_touch_pad)
+
+        dpadView = view.findViewById(R.id.dPadView_remote_control)
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     private fun setUpListener() {
         constraintTouchPad.setOnTouchListener { v: View?, event: MotionEvent? ->
             performVibrateAction()
@@ -252,6 +246,48 @@ class HomeLGFragment : Fragment(), GestureDetector.OnGestureListener {
                 event!!
             )
             true
+        }
+
+        dpadView.isHapticFeedbackEnabled = false
+        dpadView.onDirectionPressListener = { direction, action ->
+            when (action) {
+                MotionEvent.ACTION_DOWN -> {
+                    when (direction?.name) {
+                        "LEFT" -> {
+                            dpadView.setBackgroundResource(R.drawable.ic_pad_right)
+                            performVibrateAction()
+                            handleEventButton(KeycodeLG.LEFT)
+                        }
+
+                        "UP" -> {
+                            dpadView.setBackgroundResource(R.drawable.ic_pad_top)
+                            performVibrateAction()
+                            handleEventButton(KeycodeLG.UP)
+                        }
+
+                        "RIGHT" -> {
+                            dpadView.setBackgroundResource(R.drawable.ic_pad_left)
+                            performVibrateAction()
+                            handleEventButton(KeycodeLG.RIGHT)
+                        }
+
+                        "DOWN" -> {
+                            dpadView.setBackgroundResource(R.drawable.ic_pad_bottom)
+                            performVibrateAction()
+                            handleEventButton(KeycodeLG.DOWN)
+                        }
+
+                        "CENTER" -> {
+                            performVibrateAction()
+                            handleEventButton(KeycodeLG.ENTER)
+                        }
+                    }
+                }
+
+                MotionEvent.ACTION_UP -> {
+                    dpadView.setBackgroundResource(R.drawable.ic_pad)
+                }
+            }
         }
 
         setViewClickListener(cvPower, KeycodeLG.POWER)
@@ -267,11 +303,6 @@ class HomeLGFragment : Fragment(), GestureDetector.OnGestureListener {
         setViewClickListener(imgChUp, KeycodeLG.CHANNELUP)
         setViewClickListener(imgChDown, KeycodeLG.CHANNELDOWN)
         setViewClickListener(linearChList, KeycodeLG.LIST)
-        setViewClickListener(imgLeft, KeycodeLG.LEFT)
-        setViewClickListener(imgRight, KeycodeLG.RIGHT)
-        setViewClickListener(imgTop, KeycodeLG.UP)
-        setViewClickListener(imgBottom, KeycodeLG.DOWN)
-        setViewClickListener(tvOk, KeycodeLG.ENTER)
         setViewClickListener(linearRewind, KeycodeLG.LEFT)
         setViewClickListener(linearForward, KeycodeLG.RIGHT)
         setViewClickListener(linearPlay, KeycodeLG.PLAY)
@@ -291,7 +322,7 @@ class HomeLGFragment : Fragment(), GestureDetector.OnGestureListener {
         setViewClickListener(linearEight, KeycodeLG.EIGHT)
         setViewClickListener(linearNine, KeycodeLG.NINE)
         setViewClickListener(linearZero, KeycodeLG.ZERO)
-        linearMic.setOnClickListener {
+        linearMic.clicks {
             performVibrateAction()
             if (isConnected) {
                 handleMicro()
@@ -300,7 +331,7 @@ class HomeLGFragment : Fragment(), GestureDetector.OnGestureListener {
             }
         }
 
-        cvYoutube.setOnClickListener {
+        cvYoutube.clicks {
             performVibrateAction()
             if (isConnected) {
                 handleApp(youtubeIdString)
@@ -308,7 +339,7 @@ class HomeLGFragment : Fragment(), GestureDetector.OnGestureListener {
                 showFragmentDevice()
             }
         }
-        cvPrimeVideo.setOnClickListener {
+        cvPrimeVideo.clicks {
             performVibrateAction()
             if (isConnected) {
                 handleApp(primeVideoIdString)
@@ -317,7 +348,7 @@ class HomeLGFragment : Fragment(), GestureDetector.OnGestureListener {
             }
         }
 
-        cvNetflix.setOnClickListener {
+        cvNetflix.clicks {
             performVibrateAction()
             if (isConnected) {
                 handleApp(netflixIdString)
@@ -326,7 +357,7 @@ class HomeLGFragment : Fragment(), GestureDetector.OnGestureListener {
             }
         }
 
-        cvCast.setOnClickListener {
+        cvCast.clicks {
             performVibrateAction()
             if (isConnected) {
                 showAlertDialogDisconnected("LG")
@@ -335,7 +366,7 @@ class HomeLGFragment : Fragment(), GestureDetector.OnGestureListener {
             }
         }
 
-        linearKeyboard.setOnClickListener {
+        linearKeyboard.clicks {
             performVibrateAction()
             if (isConnected) {
                 val intent = Intent(activity, KeyboardActivity::class.java)
@@ -347,7 +378,7 @@ class HomeLGFragment : Fragment(), GestureDetector.OnGestureListener {
     }
 
     private fun setViewClickListener(view: View, key: KeycodeLG) {
-        view.setOnClickListener {
+        view.clicks {
             performVibrateAction()
             handleEventButton(key)
         }
@@ -355,10 +386,16 @@ class HomeLGFragment : Fragment(), GestureDetector.OnGestureListener {
 
     private fun handleMicro() {
         if (!PermissionUtils.isNetworkAvailable(requireContext())) {
-            Toast.makeText(requireContext(), "No internet connection. Please try again later.", Toast.LENGTH_SHORT).show()
+            Toast.makeText(
+                requireContext(),
+                "No internet connection. Please try again later.",
+                Toast.LENGTH_SHORT
+            ).show()
         }
         val intent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH).apply {
-            putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM)
+            putExtra(
+                RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM
+            )
             putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault())
             putExtra(RecognizerIntent.EXTRA_PROMPT, "Speak to text")
         }
@@ -372,70 +409,102 @@ class HomeLGFragment : Fragment(), GestureDetector.OnGestureListener {
     private val speechResultLauncher = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult(), ActivityResultCallback { result ->
             if (result.resultCode == Activity.RESULT_OK && result.data != null) {
-                val speechResult = result.data?.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS)
+                val speechResult =
+                    result.data?.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS)
                 if (!speechResult.isNullOrEmpty()) {
                     val singleton = Singleton.getInstance()
                     singleton.sendText(speechResult[0])
                 }
             }
-        }
-    )
+        })
 
     private fun setEvenListenVisibility() {
-        cvTabControl.setOnClickListener {
+        cvTabControl.clicks {
             constraintControl.visibility = View.VISIBLE
             constraintNumber.visibility = View.GONE
             constraintTouchPad.visibility = View.GONE
 
-            cvTabControl.setCardBackgroundColor(ContextCompat.getColor(requireContext(), R.color.white))
+            cvTabControl.setCardBackgroundColor(
+                ContextCompat.getColor(
+                    requireContext(), R.color.white
+                )
+            )
             imgTabControl.setColorFilter(ContextCompat.getColor(requireContext(), R.color.pink))
 
-            cvTabNumber.setCardBackgroundColor(ContextCompat.getColor(requireContext(), R.color.bgr_btn_lg))
+            cvTabNumber.setCardBackgroundColor(
+                ContextCompat.getColor(
+                    requireContext(), R.color.bgr_btn_lg
+                )
+            )
             imgTabNumber.setColorFilter(ContextCompat.getColor(requireContext(), R.color.white))
 
-            cvTabTouchPad.setCardBackgroundColor(ContextCompat.getColor(requireContext(), R.color.bgr_btn_lg))
+            cvTabTouchPad.setCardBackgroundColor(
+                ContextCompat.getColor(
+                    requireContext(), R.color.bgr_btn_lg
+                )
+            )
             imgTabTouchPad.setColorFilter(ContextCompat.getColor(requireContext(), R.color.white))
         }
-        cvTabNumber.setOnClickListener {
+        cvTabNumber.clicks {
             constraintControl.visibility = View.GONE
             constraintNumber.visibility = View.VISIBLE
             constraintTouchPad.visibility = View.GONE
 
-            cvTabControl.setCardBackgroundColor(ContextCompat.getColor(requireContext(), R.color.bgr_btn_lg))
+            cvTabControl.setCardBackgroundColor(
+                ContextCompat.getColor(
+                    requireContext(), R.color.bgr_btn_lg
+                )
+            )
             imgTabControl.setColorFilter(ContextCompat.getColor(requireContext(), R.color.white))
 
-            cvTabNumber.setCardBackgroundColor(ContextCompat.getColor(requireContext(), R.color.white))
+            cvTabNumber.setCardBackgroundColor(
+                ContextCompat.getColor(
+                    requireContext(), R.color.white
+                )
+            )
             imgTabNumber.setColorFilter(ContextCompat.getColor(requireContext(), R.color.pink))
 
-            cvTabTouchPad.setCardBackgroundColor(ContextCompat.getColor(requireContext(), R.color.bgr_btn_lg))
+            cvTabTouchPad.setCardBackgroundColor(
+                ContextCompat.getColor(
+                    requireContext(), R.color.bgr_btn_lg
+                )
+            )
             imgTabTouchPad.setColorFilter(ContextCompat.getColor(requireContext(), R.color.white))
         }
-        cvTabTouchPad.setOnClickListener {
+        cvTabTouchPad.clicks {
             constraintControl.visibility = View.GONE
             constraintNumber.visibility = View.GONE
             constraintTouchPad.visibility = View.VISIBLE
 
-            cvTabControl.setCardBackgroundColor(ContextCompat.getColor(requireContext(), R.color.bgr_btn_lg))
+            cvTabControl.setCardBackgroundColor(
+                ContextCompat.getColor(
+                    requireContext(), R.color.bgr_btn_lg
+                )
+            )
             imgTabControl.setColorFilter(ContextCompat.getColor(requireContext(), R.color.white))
 
-            cvTabNumber.setCardBackgroundColor(ContextCompat.getColor(requireContext(), R.color.bgr_btn_lg))
+            cvTabNumber.setCardBackgroundColor(
+                ContextCompat.getColor(
+                    requireContext(), R.color.bgr_btn_lg
+                )
+            )
             imgTabNumber.setColorFilter(ContextCompat.getColor(requireContext(), R.color.white))
 
-            cvTabTouchPad.setCardBackgroundColor(ContextCompat.getColor(requireContext(), R.color.white))
+            cvTabTouchPad.setCardBackgroundColor(
+                ContextCompat.getColor(
+                    requireContext(), R.color.white
+                )
+            )
             imgTabTouchPad.setColorFilter(ContextCompat.getColor(requireContext(), R.color.pink))
         }
     }
 
     private fun showFragmentDevice() {
         val deviceFrag = DeviceFragment()
-        requireActivity().supportFragmentManager.beginTransaction()
-            .setCustomAnimations(
-                R.anim.slide_in_right,
-                R.anim.slide_out_left
-            )
-            .replace(R.id.fragment_container, deviceFrag, "findThisFragment")
-            .addToBackStack("findThisFragment")
-            .commit()
+        requireActivity().supportFragmentManager.beginTransaction().setCustomAnimations(
+                R.anim.slide_in_right, R.anim.slide_out_left
+            ).replace(R.id.fragment_container, deviceFrag, "findThisFragment")
+            .addToBackStack("findThisFragment").commit()
     }
 
     private fun showAlertDialogDisconnected(txtDevice: String): AlertDialog {
@@ -449,15 +518,14 @@ class HomeLGFragment : Fragment(), GestureDetector.OnGestureListener {
         val btnCancel = view.findViewById<Button>(R.id.btn_cancel)
         textName.text = txtDevice
         val alertDialog = alertDialogBuilder.create()
-        btnDisconnect.setOnClickListener {
-            val singleton =
-                Singleton.getInstance()
+        btnDisconnect.clicks {
+            val singleton = Singleton.getInstance()
             singleton.setConnected(false)
             singleton.disconnect()
             //txtDevice.text = ""
             alertDialog.dismiss()
         }
-        btnCancel.setOnClickListener { alertDialog.dismiss() }
+        btnCancel.clicks { alertDialog.dismiss() }
         alertDialog.show()
         return alertDialog
     }

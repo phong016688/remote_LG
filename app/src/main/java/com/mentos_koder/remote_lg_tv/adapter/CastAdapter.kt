@@ -1,71 +1,72 @@
 package com.mentos_koder.remote_lg_tv.adapter
 
-
-import android.content.Context
-import android.content.res.ColorStateList
-import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
-import android.widget.TextView
-import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.mentos_koder.remote_lg_tv.R
+import com.mentos_koder.remote_lg_tv.databinding.ItemDeviceCastBinding
 import com.mentos_koder.remote_lg_tv.model.Cast
+import com.mentos_koder.remote_lg_tv.util.clicks
 
+abstract class BaseListAdapter<T, VH : RecyclerView.ViewHolder>(
+    diffCallback: DiffUtil.ItemCallback<T>
+) : ListAdapter<T, VH>(diffCallback) {
 
-class CastAdapter(
-    private val mData: List<Cast>,
-    val context: Context,
-) :
-    RecyclerView.Adapter<CastAdapter.ViewHolder>() {
+    abstract override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): VH
 
-    private var listener: OnItemClickListener? = null
-
-    interface OnItemClickListener {
-        fun onItemClick(typeCast : String)
+    override fun onBindViewHolder(holder: VH, position: Int) {
+        bind(holder, getItem(position), position)
     }
 
-    fun setOnItemClickListener(listener: OnItemClickListener) {
-        this.listener = listener
+    abstract fun bind(holder: VH, item: T, position: Int)
+
+    fun inflateLayout(parent: ViewGroup, layoutRes: Int): View {
+        return LayoutInflater.from(parent.context).inflate(layoutRes, parent, false)
     }
+}
+
+class CastAdapter :
+    BaseListAdapter<Cast, CastAdapter.ViewHolder>(TaskDiffCallbackCast()) {
+    var clickItem: ((Cast) -> Unit)? = null
+
+    inner class ViewHolder(itemView: ItemDeviceCastBinding) :
+        RecyclerView.ViewHolder(itemView.root) {
+        var item: Cast? = null
+        private val name = itemView.tvCast
+        private val imgCast = itemView.imgCast
+
+        init {
+            itemView.root.clicks {
+                item?.let { it1 -> clickItem?.invoke(it1) }
+            }
+        }
+
+        fun bind(item: Cast) {
+            this.item = item
+            name.text = item.name
+            imgCast.setImageResource(item.img)
+        }
+    }
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val view: View =
-            LayoutInflater.from(parent.context).inflate(R.layout.item_cast_device, parent, false)
+        val inflater = LayoutInflater.from(parent.context)
+        val view = ItemDeviceCastBinding.inflate(inflater, parent, false)
         return ViewHolder(view)
     }
 
-    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val (name, img) = mData[position]
-        holder.tvCast.text = name
-        holder.tvCast2.text = holder.itemView.context.getString(R.string.cast_text,name)
-        holder.imgCast.setImageResource(img)
-        holder.constraintCast.setOnClickListener {
-            listener?.onItemClick(name)
-//            if (Singleton.getInstance().isConnected()){
-//                listener?.onItemClick(name)
-//            }else{
-//                listenerFragment.onCastItemClick()
-//            }
-        }
+    override fun bind(holder: ViewHolder, item: Cast, position: Int) {
+        holder.bind(item)
+    }
+}
 
-        when (position) {
-            0 -> holder.itemView.backgroundTintList = ColorStateList.valueOf(Color.parseColor("#FF91AD"))
-            1 -> holder.itemView.backgroundTintList = ColorStateList.valueOf(Color.parseColor("#E45285"))
-            2 -> holder.itemView.backgroundTintList = ColorStateList.valueOf(Color.parseColor("#C8135C"))
-        }
+class TaskDiffCallbackCast : DiffUtil.ItemCallback<Cast>() {
+    override fun areItemsTheSame(oldItem: Cast, newItem: Cast): Boolean {
+        return oldItem.name == newItem.name
     }
 
-
-    override fun getItemCount(): Int {
-        return mData.size
-    }
-
-    inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        var imgCast: ImageView = itemView.findViewById(R.id.img_cast)
-        var tvCast: TextView = itemView.findViewById(R.id.tv_cast)
-        var tvCast2: TextView = itemView.findViewById(R.id.tv_cast_2)
-        var constraintCast: ConstraintLayout = itemView.findViewById(R.id.constraint_cast)
+    override fun areContentsTheSame(oldItem: Cast, newItem: Cast): Boolean {
+        return oldItem == newItem
     }
 }

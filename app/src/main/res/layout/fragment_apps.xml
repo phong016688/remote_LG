@@ -28,7 +28,7 @@
                     android:layout_centerVertical="true"
                     android:text="@string/apps"
                     android:textColor="@color/white"
-                    android:textSize="18sp"
+                    android:textSize="24sp"
                     android:textStyle="bold" />
 
                 <ImageView
@@ -120,7 +120,7 @@
                 android:layout_height="60dp"
                 android:layout_marginTop="10dp"
                 android:background="@drawable/border_img_logo"
-                android:text="Click Connect"
+                android:text="@string/click_connect"
                 android:textColor="@color/white" />
         </LinearLayout>
     </LinearLayout>

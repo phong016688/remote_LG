@@ -4,7 +4,7 @@
         android:id="@+id/menu_home"
         android:title="@string/remote"
         android:enabled="true"
-        android:icon="@drawable/remote"/>
+        android:icon="@drawable/ic_remote"/>
     <item
         android:id="@+id/menu_list"
         android:title="@string/app"
@@ -18,5 +18,5 @@
         android:id="@+id/menu_setting"
         android:title="@string/setting"
         android:enabled="true"
-        android:icon="@drawable/setting"/>
+        android:icon="@drawable/ic_setting"/>
 </menu>

@@ -22,5 +22,10 @@
     <color name="icon_menu">#6D6D6D</color>
     <color name="transparent">#00000000</color>
     <color name="color_app">#A50034</color>
+    <color name="color_202020">#202020</color>
+    <color name="color_26a0ff">#26A0FF</color>
+    <color name="color_bb3fff">#BB3FFF</color>
+    <color name="color_4d4d4d">#4D4D4D</color>
+    <color name="color_f8f9fb">#f8f9fb</color>
 
 </resources>

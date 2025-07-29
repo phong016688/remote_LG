@@ -4,5 +4,5 @@
         android:width="1dp"
         android:color="@color/white" />
     <corners android:radius="10dp" />
-    <solid android:color="@color/bgr_btn_lg"/>
+    <solid android:color="@color/bgr_btn_lg" />
 </shape>

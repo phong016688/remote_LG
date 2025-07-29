@@ -67,9 +67,9 @@ class DeviceAdapter(private val context: Context, private val listDevice: Mutabl
                 )
             )
         ) {
-            device.logo = R.drawable.iconsamsung
+            device.logo = R.drawable.ic_tv
         } else {
-            device.logo = R.drawable.ic_tv_logo
+            device.logo = R.drawable.ic_tv
         }
     }
 
@@ -96,12 +96,12 @@ class DeviceAdapter(private val context: Context, private val listDevice: Mutabl
         val serviceName: String = device.serviceName?.lowercase(Locale.ROOT) ?: ""
         val manufacturer: String = device.manufacturer?.lowercase(Locale.ROOT) ?: ""
 
-        holder.txtIpAddress!!.text = "Universal Remote"
+        holder.txtIpAddress!!.text = view?.context?.getString(R.string.universal_remote)
         holder.txtBrand!!.text = device.friendlyName
         checkSS(device)
 
         if ( name.contains("lg") || serviceName.contains("lg") || manufacturer.contains("lg")){
-            device.logo = R.drawable.lg_logo
+            device.logo = R.drawable.ic_tv
             holder.txtIpAddress!!.text = device.ipAddress
         }
 

@@ -48,7 +48,6 @@ import com.google.android.ump.ConsentRequestParameters
 import com.google.android.ump.UserMessagingPlatform
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.mentos_koder.remote_lg_tv.R
-import com.mentos_koder.remote_lg_tv.util.InApp
 import com.mentos_koder.remote_lg_tv.util.NotificationWorker
 import com.mentos_koder.remote_lg_tv.util.OnBack
 import com.mentos_koder.remote_lg_tv.util.PermissionUtils
@@ -63,6 +62,7 @@ import java.time.temporal.ChronoUnit
 import java.util.Date
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicBoolean
+import androidx.core.content.edit
 
 
 class MainActivity : AppCompatActivity(), OnBack {
@@ -77,8 +77,6 @@ class MainActivity : AppCompatActivity(), OnBack {
     private var mPairingCodeDialog: AlertDialog? = null
     private var mDevicePicker: DevicePicker? = null
     private val PREF_NAME = "MyPrefs"
-    private val PREF_FIRST_LAUNCH_DATETIME = "firstLaunchDateTime"
-    private var inAppUpdate: InApp? = null
     private lateinit var consentInformation: ConsentInformation
     private var isMobileAdsInitializeCalled = AtomicBoolean(false)
     private lateinit var firebaseAnalytics: FirebaseAnalytics
@@ -148,7 +146,6 @@ class MainActivity : AppCompatActivity(), OnBack {
         setContentView(R.layout.activity_main)
         requestFormGDPR()
         firebaseAnalytics = FirebaseAnalytics.getInstance(this)
-        inAppUpdate = InApp(this@MainActivity)
         saveFirstTime()
         showRating()
         initializeFragments()
@@ -158,7 +155,6 @@ class MainActivity : AppCompatActivity(), OnBack {
         displayDefaultFragment()
         setupPicker()
         getDiscoveryManager()
-        inAppUpdate!!.checkForAppUpdate()
         Singleton.getInstance().setActivity(this)
         LogEventFirebase()
 
@@ -256,7 +252,6 @@ class MainActivity : AppCompatActivity(), OnBack {
 
     override fun onResume() {
         super.onResume()
-        inAppUpdate!!.onResume()
     }
 
 
@@ -268,13 +263,10 @@ class MainActivity : AppCompatActivity(), OnBack {
         if (mConnectableDevice != null) {
             mConnectableDevice!!.disconnect()
         }
-        inAppUpdate!!.onDestroy()
-
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        inAppUpdate!!.onActivityResult(requestCode, resultCode)
     }
 
     fun hConnectToggle() {
@@ -539,17 +531,13 @@ class MainActivity : AppCompatActivity(), OnBack {
             val reviewRequested365 = sharedPreferences.getBoolean("reviewRequested365", false)
 
             if (daysDifference in 2L..8L && !reviewRequested3) {
-                inAppUpdate!!.requestReview(this)
-                sharedPreferences.edit().putBoolean("reviewRequested3", true).apply()
+                sharedPreferences.edit() { putBoolean("reviewRequested3", true) }
             }else if(daysDifference in 9L..43L && !reviewRequested10){
-                inAppUpdate!!.requestReview(this)
-                sharedPreferences.edit().putBoolean("reviewRequested10", true).apply()
+                sharedPreferences.edit() { putBoolean("reviewRequested10", true)}
             }else if(daysDifference in 44L..363L && !reviewRequested45){
-                inAppUpdate!!.requestReview(this)
-                sharedPreferences.edit().putBoolean("reviewRequested45", true).apply()
+                sharedPreferences.edit() { putBoolean("reviewRequested45", true)}
             } else if(daysDifference >= 364 && !reviewRequested365){
-                inAppUpdate!!.requestReview(this)
-                sharedPreferences.edit().putBoolean("reviewRequested365", true).apply()
+                sharedPreferences.edit() { putBoolean("reviewRequested365", true) }
             }
         }
     }

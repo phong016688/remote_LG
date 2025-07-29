@@ -58,7 +58,7 @@ object NotificationScheduler {
             }
             val builder: NotificationCompat.Builder =
                 NotificationCompat.Builder(context, CHANNEL_ID)
-                    .setSmallIcon(R.drawable.logo)
+                    .setSmallIcon(R.drawable.ic_logo_app)
                     .setContentTitle("Remote")
                     .setContentText("Control$url are simple and easy to use,Open Channel now!")
                     .setPriority(NotificationCompat.PRIORITY_DEFAULT)
