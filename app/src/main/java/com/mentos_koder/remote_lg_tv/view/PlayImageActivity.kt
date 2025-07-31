@@ -28,7 +28,7 @@ class PlayImageActivity : AppCompatActivity() {
     private lateinit var forward: LinearLayout
     private lateinit var play: LinearLayout
     private lateinit var imgShare: ImageView
-    private lateinit var imgBack: ImageView
+    private lateinit var backButton: ImageView
     private lateinit var toolbar: Toolbar
     private val Duration = 8000
     private val UPDATE_INTERVAL = 1000
@@ -44,7 +44,7 @@ class PlayImageActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_play_image)
+        setContentView(R.layout.activity_image)
         setUI()
         observeBitmap()
         setEvent()
@@ -58,7 +58,7 @@ class PlayImageActivity : AppCompatActivity() {
         forward = findViewById(R.id.liner_forward)
         play = findViewById(R.id.liner_resume)
         toolbar = findViewById(R.id.toolbar)
-        imgBack = findViewById(R.id.img_back)
+        backButton = findViewById(R.id.img_back)
         tvQuantityImg = findViewById(R.id.tv_quantity_img)
         imgShare = findViewById(R.id.img_share)
     }
@@ -133,7 +133,7 @@ class PlayImageActivity : AppCompatActivity() {
         }
     }
     private fun setEvent() {
-        imgBack.setOnClickListener {onBackPressed() }
+        backButton.setOnClickListener {onBackPressed() }
         currentIndex = position
         Log.d("nextSocket", "setEvent: " + position)
         play.setOnClickListener {

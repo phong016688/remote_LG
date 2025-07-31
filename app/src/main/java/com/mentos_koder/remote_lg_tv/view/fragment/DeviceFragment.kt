@@ -56,8 +56,8 @@ class DeviceFragment : Fragment(), DiscoveryManagerListener {
     ): View {
         val rootView: View = inflater.inflate(R.layout.fragment_device, container, false)
         onBack()
-        setUpUI(rootView)
-        setUpListener()
+        initializeViews(rootView)
+        setupEventListeners()
         singletonInstance = Singleton.getInstance()
         val sortedDevices = sortDevices(
             getDeviceMap().values.toList()
@@ -67,7 +67,7 @@ class DeviceFragment : Fragment(), DiscoveryManagerListener {
         return rootView
     }
 
-    private fun setUpUI(rootView: View) {
+    private fun initializeViews(rootView: View) {
         closeButton = rootView.findViewById(R.id.btn_close_device)
         deviceList = rootView.findViewById(R.id.device_list)
     }
@@ -79,7 +79,7 @@ class DeviceFragment : Fragment(), DiscoveryManagerListener {
         })
     }
 
-    private fun setUpListener() {
+    private fun setupEventListeners() {
         closeButton!!.setOnClickListener {
             requireActivity().supportFragmentManager.popBackStack()
         }

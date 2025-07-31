@@ -19,21 +19,21 @@ class PhotoFragment : Fragment() {
 
     private lateinit var recyclerPhoto : RecyclerView
     private lateinit var folderImageAdapter: FolderImageAdapter
-    private lateinit var imgBack: ImageView
+    private lateinit var backButton: ImageView
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         val rootView = inflater.inflate(R.layout.fragment_photo, container, false)
         recyclerPhoto = rootView.findViewById(R.id.recycler_photo)
-        imgBack = rootView.findViewById(R.id.img_back)
+        backButton = rootView.findViewById(R.id.img_back)
         loadPhotoFolders()
         folderImageAdapter.setOnFolderClickListener(object : OnFolderClickListener{
             override fun onFolderClick(imageFolder: ImageFolder) {
                 loadImagesForFolder(imageFolder)
             }
         })
-        imgBack.setOnClickListener{
+        backButton.setOnClickListener{
             requireActivity().supportFragmentManager.popBackStack()
         }
         return rootView

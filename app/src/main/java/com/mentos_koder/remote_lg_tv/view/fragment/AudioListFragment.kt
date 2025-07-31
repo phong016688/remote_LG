@@ -20,13 +20,13 @@ class AudioListFragment : Fragment(){
     private lateinit var audioAdapter: AudioAdapter
     private var audioList: List<AudioFile> = listOf()
     private val viewModel: AudioViewModel by activityViewModels()
-    private lateinit var imgBack: ImageView
+    private lateinit var backButton: ImageView
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val view = inflater.inflate(R.layout.fragment_audio_list, container, false)
+        val view = inflater.inflate(R.layout.fragment_audio, container, false)
         audioRecyclerView = view.findViewById(R.id.recycler_audio)
         audioRecyclerView.layoutManager = LinearLayoutManager(context)
         context?.let {
@@ -36,8 +36,8 @@ class AudioListFragment : Fragment(){
         viewModel.setAudioList(audioList)
         audioRecyclerView.adapter = audioAdapter
 
-        imgBack = view.findViewById(R.id.img_back)
-        imgBack.setOnClickListener {
+        backButton = view.findViewById(R.id.img_back)
+        backButton.setOnClickListener {
             requireActivity().supportFragmentManager.popBackStack()
         }
         return view

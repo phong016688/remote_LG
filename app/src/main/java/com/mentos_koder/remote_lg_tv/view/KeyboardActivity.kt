@@ -30,22 +30,22 @@ import kotlin.math.abs
 
 
 class KeyboardActivity : AppCompatActivity(), GestureDetector.OnGestureListener {
-    private lateinit var edtHandelDevice: EditText
-    private lateinit var imgBack: ImageView
-    private lateinit var imgCast: ImageView
-    private lateinit var linerBack: LinearLayout
-    private lateinit var linerHome: LinearLayout
-    private lateinit var linerPower: LinearLayout
+    private lateinit var deviceNameEditText: EditText
+    private lateinit var backButton: ImageView
+    private lateinit var castButton: ImageView
+    private lateinit var backLayout: LinearLayout
+    private lateinit var homeLayout: LinearLayout
+    private lateinit var powerLayout: LinearLayout
     private lateinit var tabLayout: TabLayout
     private lateinit var gestureDetector: GestureDetector
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_keyboard)
-        setupUI()
-        setUpListener()
+        initializeViews()
+        setupEventListeners()
         gestureDetector = GestureDetector(this, this)
-        edtHandelDevice.inputType =
+        deviceNameEditText.inputType =
             InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_FLAG_CAP_CHARACTERS
 
     }
@@ -63,19 +63,19 @@ class KeyboardActivity : AppCompatActivity(), GestureDetector.OnGestureListener 
 
     override fun onResume() {
         super.onResume()
-        edtHandelDevice.requestFocus()
+        deviceNameEditText.requestFocus()
         val imm = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
-        imm.showSoftInput(edtHandelDevice, InputMethodManager.SHOW_IMPLICIT)
+        imm.showSoftInput(deviceNameEditText, InputMethodManager.SHOW_IMPLICIT)
     }
 
-    private fun setupUI() {
-        imgBack = findViewById(R.id.img_back)
-        imgCast = findViewById(R.id.img_cast)
-        linerBack = findViewById(R.id.liner_back)
-        linerHome = findViewById(R.id.liner_home)
-        linerPower = findViewById(R.id.liner_power)
+    private fun initializeViews() {
+        backButton = findViewById(R.id.img_back)
+        castButton = findViewById(R.id.img_cast)
+        backLayout = findViewById(R.id.liner_back)
+        homeLayout = findViewById(R.id.liner_home)
+        powerLayout = findViewById(R.id.liner_power)
         tabLayout = findViewById(R.id.tabLayout)
-        edtHandelDevice = findViewById(R.id.edt_handel_device)
+        deviceNameEditText = findViewById(R.id.edt_handel_device)
     }
 
     override fun onDown(motionEvent: MotionEvent): Boolean {
@@ -151,7 +151,7 @@ class KeyboardActivity : AppCompatActivity(), GestureDetector.OnGestureListener 
         }
     }
 
-    fun setUpListener() {
+    fun setupEventListeners() {
         tabLayout.setOnTouchListener { v: View?, event: MotionEvent? ->
             performVibrateAction()
             gestureDetector.onTouchEvent(
@@ -159,19 +159,19 @@ class KeyboardActivity : AppCompatActivity(), GestureDetector.OnGestureListener 
             )
             true
         }
-        linerBack.setOnClickListener {
+        backLayout.setOnClickListener {
             performVibrateAction()
             handleType(KeycodeLG.BACK)
         }
-        linerHome.setOnClickListener {
+        homeLayout.setOnClickListener {
             performVibrateAction()
             handleType(KeycodeLG.HOME)
         }
-        linerPower.setOnClickListener {
+        powerLayout.setOnClickListener {
             performVibrateAction()
             handleType(KeycodeLG.POWER)
         }
-        edtHandelDevice.addTextChangedListener(object : TextWatcher {
+        deviceNameEditText.addTextChangedListener(object : TextWatcher {
             var previousText = ""
             override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {
                 previousText = s.toString()
@@ -179,7 +179,7 @@ class KeyboardActivity : AppCompatActivity(), GestureDetector.OnGestureListener 
 
             override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
                 try {
-                    val key = edtHandelDevice.text.toString()
+                    val key = deviceNameEditText.text.toString()
                     performVibrateAction()
                     if (key.isNotEmpty()) {
                         handleTextInput(key)
@@ -190,7 +190,7 @@ class KeyboardActivity : AppCompatActivity(), GestureDetector.OnGestureListener 
             }
 
             override fun afterTextChanged(s: Editable) {
-                edtHandelDevice.setOnKeyListener { _: View?, keyCode: Int, event: KeyEvent ->
+                deviceNameEditText.setOnKeyListener { _: View?, keyCode: Int, event: KeyEvent ->
                     if (keyCode == KeyEvent.KEYCODE_DEL && event.action == KeyEvent.ACTION_DOWN) {
                         try {
                             handleTextDelete()
@@ -204,8 +204,8 @@ class KeyboardActivity : AppCompatActivity(), GestureDetector.OnGestureListener 
 
             }
         })
-        imgCast.setOnClickListener { showAlertDialogDisconnected() }
-        imgBack.setOnClickListener { finish() }
+        castButton.setOnClickListener { showAlertDialogDisconnected() }
+        backButton.setOnClickListener { finish() }
     }
 
     fun handleTextInput(key: String) {
@@ -214,7 +214,7 @@ class KeyboardActivity : AppCompatActivity(), GestureDetector.OnGestureListener 
             "samsung" -> textInputSamsung(key)
             "roku", "lg" -> {
                 textInput(key)
-                edtHandelDevice.setText("")
+                deviceNameEditText.setText("")
             }
 
             else -> Log.d("######", "handleType: Smart ")

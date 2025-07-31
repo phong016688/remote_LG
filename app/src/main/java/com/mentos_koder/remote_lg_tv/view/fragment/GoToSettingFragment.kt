@@ -20,19 +20,19 @@ class GoToSettingFragment(private val name: String) : Fragment(){
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        val view: View = inflater.inflate(R.layout.fragment_go_to_setting, container, false)
+        val view: View = inflater.inflate(R.layout.fragment_settings_guide, container, false)
 
         val tvGoToSetting = view.findViewById<TextView>(R.id.tv_go_to_settings)
         val tvStep3 = view.findViewById<TextView>(R.id.tv_step_3)
         val tvStep4 = view.findViewById<TextView>(R.id.tv_step_4)
         val tvStepMicro = view.findViewById<TextView>(R.id.tv_step_micro)
-        val imgBack = view.findViewById<ImageView>(R.id.img_back)
+        val backButton = view.findViewById<ImageView>(R.id.img_back)
 
         if(name == "micro"){
             tvStep3.visibility = View.GONE
             tvStep4.visibility = View.GONE
             tvStepMicro.visibility = View.VISIBLE
-            fragment = HomeLGFragment()
+            fragment = homeFragment()
         }else if(name == "photo") {
             fragment = CastFragment()
         }
@@ -44,7 +44,7 @@ class GoToSettingFragment(private val name: String) : Fragment(){
             startActivity(intent)
         }
 
-        imgBack.setOnClickListener {
+        backButton.setOnClickListener {
             parentFragmentManager.beginTransaction()
                 .setCustomAnimations(
                     R.anim.slide_in_right,

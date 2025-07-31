@@ -3,9 +3,9 @@ package com.mentos_koder.remote_lg_tv.util
 import android.app.Activity
 import android.app.AlertDialog
 import android.content.Context
-import android.content.Intent
 import android.content.SharedPreferences
 import android.util.Log
+import android.widget.Toast
 import com.connectsdk.core.AppInfo
 import com.connectsdk.core.MediaInfo
 import com.connectsdk.core.SubtitleInfo
@@ -21,16 +21,12 @@ import com.connectsdk.service.capability.MediaPlayer.MediaLaunchObject
 import com.connectsdk.service.capability.listeners.ResponseListener
 import com.connectsdk.service.command.ServiceCommandError
 import com.connectsdk.service.sessions.LaunchSession
-import com.mentos_koder.AndroidRemoteTv
-import com.mentos_koder.AndroidTvListener
-import com.mentos_koder.remote.Remotemessage
 import com.mentos_koder.remote_lg_tv.database.AppDatabase
 import com.mentos_koder.remote_lg_tv.database.DeviceDao
 import com.mentos_koder.remote_lg_tv.database.LGApiService
 import com.mentos_koder.remote_lg_tv.model.Device
 import com.mentos_koder.remote_lg_tv.notifiSocket.AutoConnectWebSocket
 import com.mentos_koder.remote_lg_tv.notifiSocket.RelationshipWebSocket
-import com.mentos_koder.remote_lg_tv.view.MainActivity
 import com.mentos_koder.remote_lg_tv.view.MainApplication
 import okhttp3.OkHttpClient
 import org.json.JSONArray
@@ -38,9 +34,7 @@ import org.json.JSONException
 import org.json.JSONObject
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-import java.io.BufferedReader
 import java.io.IOException
-import java.io.InputStreamReader
 import java.net.URI
 import java.net.URISyntaxException
 import java.nio.charset.StandardCharsets
@@ -60,6 +54,8 @@ import javax.net.ssl.KeyManagerFactory
 import javax.net.ssl.SSLContext
 import javax.net.ssl.TrustManager
 import javax.net.ssl.X509TrustManager
+import androidx.core.content.edit
+import com.mentos_koder.remote_lg_tv.R
 
 class Singleton {
     private var relationshipWebSocket: RelationshipWebSocket? = null
@@ -490,9 +486,6 @@ class Singleton {
 
     fun handelTypeTV(
         device: ConnectableDevice?,
-        deviceDao: DeviceDao,
-        deviceCount: Int,
-        showCustomDialog: Runnable,
         context: Context,
         onBack: OnBack?
     ) {
@@ -500,101 +493,23 @@ class Singleton {
         val type = getTypeTV(deviceConnected).lowercase(Locale.ROOT)
         deviceConnected?.addListener(deviceListener)
         setNameDevice(deviceConnected?.friendlyName ?: "")
-        Log.d("###", "handelTypeTV: $type")
         deviceConnected?.let { LGApiClient.getClient(it.ipAddress, "") }
         setIpAddressFlag(deviceConnected!!.ipAddress)
-        Log.d("handelTypeTV", "handelTypeTV: " + type)
-        Log.d("handelTypeTV", "handelTypeTV: " + deviceConnected!!.ipAddress)
         when (type) {
-
-            "samsung" -> checkTokenSamsung(
-                device,
-                deviceDao,
-                deviceCount,
-                showCustomDialog,
-                context
-            )
-
             "lg" -> {
                 sharedPreferences = context.getSharedPreferences("pinCheck", Context.MODE_PRIVATE)
                 val isFirstLogin = sharedPreferences.getBoolean("is_first_login", true)
                 if (isFirstLogin) {
                     deviceConnected!!.setPairingType(PairingType.PIN_CODE)
                     connectDeviceHandle(type, onBack)
-                    val editor = sharedPreferences.edit()
-                    editor.putBoolean("is_first_login", false)
-                    editor.apply()
+                    sharedPreferences.edit {
+                        putBoolean("is_first_login", false)
+                    }
                 } else {
                     connectDeviceHandle(type, onBack)
                 }
             }
-
-            "android" -> {
-                connectAndroidTv(deviceConnected!!.ipAddress)
-            }
-
-            else -> {
-                connectDeviceHandle(type, null)
-            }
         }
-    }
-
-    private fun connectAndroidTv(ip: String) {
-        Thread {
-            try {
-                val androidTV = AndroidRemoteTv()
-                androidTV.connect(ip, androidTvListener)
-            } catch (e: Exception) {
-                Log.e("AndroidRemoteTv", "testI: " + e.message)
-            }
-        }.start()
-    }
-
-    val androidTvListener = object : AndroidTvListener {
-        val androidRemoteTv = AndroidRemoteTv()
-        override fun onSessionCreated() {
-            Log.d("AndroidRemoteTv", "onSessionCreated: ")
-        }
-
-        override fun onSecretRequested() {
-            val reader = BufferedReader(
-                InputStreamReader(System.`in`)
-            )
-
-            try {
-                val name = reader.readLine()
-                androidRemoteTv.sendSecret(name)
-                Log.d("AndroidRemoteTv", "onSecretRequested: $name")
-            } catch (e: IOException) {
-                Log.e("AndroidRemoteTv", "onSecretRequested: " + e.message)
-                throw RuntimeException(e)
-            }
-        }
-
-        override fun onPaired() {
-            Log.d("AndroidRemoteTv", "onPaired ")
-        }
-
-        override fun onConnectingToRemote() {
-            Log.d("AndroidRemoteTv", "onConnectingToRemote ")
-        }
-
-        override fun onConnected() {
-            Log.d("AndroidRemoteTv", "onConnected ")
-            androidRemoteTv.sendCommand(
-                Remotemessage.RemoteKeyCode.KEYCODE_POWER,
-                Remotemessage.RemoteDirection.SHORT
-            )
-        }
-
-        override fun onDisconnect() {
-            Log.d("AndroidRemoteTv", "onDisconnect ")
-        }
-
-        override fun onError(error: String) {
-            Log.e("AndroidRemoteTv", "onError $error")
-        }
-
     }
 
 
@@ -618,50 +533,13 @@ class Singleton {
         }
     }
 
-    private fun checkTokenSamsung(
-        device: ConnectableDevice?,
-        deviceDao: DeviceDao,
-        deviceCount: Int,
-        showCustomDialog: Runnable,
-        context: Context
-    ) {
-        device?.let {
-            if (deviceCount > 0) {
-                val deviceDB = deviceDao.getDeviceByAddress(it.ipAddress)
-                if (deviceDB != null) {
-                    deviceDB.typeDevice?.let { it1 ->
-                        AutoConnectURI(
-                            it1,
-                            deviceDB.address,
-                            deviceDB.token
-                        )
-                    }
-                }
-                val intent = Intent(context, MainActivity::class.java)
-                context.startActivity(intent)
-
-            } else {
-                ConnectURI(
-                    device.modelName ?: "",
-                    device.friendlyName ?: "",
-                    device.manufacturer ?: "",
-                    device.ipAddress ?: "",
-                    null
-                )
-                showCustomDialog.run()
-            }
-        }
-    }
-
     fun getService(keycode: String?) {
         val key = deviceConnected!!.keyControl
         key.sendKeyCodeString(keycode, object : ResponseListener<Any?> {
             override fun onError(error: ServiceCommandError) {
-                Log.e("####", "onError: ", error)
             }
 
             override fun onSuccess(`object`: Any?) {
-                Log.d("####", "onSuccess")
             }
         })
     }
@@ -669,11 +547,9 @@ class Singleton {
     fun sendText(text: String) {
         val key = deviceConnected!!.textInputControl
         key.sendText(text)
-        Log.d("909023", "sendText: $text")
     }
 
     fun deleteText() {
-        Log.d("sendDelete", "sendDelete: ")
         val key = deviceConnected!!.textInputControl
         key.sendDelete()
     }

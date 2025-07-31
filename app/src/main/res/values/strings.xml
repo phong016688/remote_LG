@@ -107,4 +107,6 @@
     <string name="wait_for_allowance">Wait for allowance</string>
     <string name="language">Language</string>
     <string name="tv_device">TV Device</string>
+    <string name="please_use_your_physical_remote_control_to_accept_the_connection_to_the_tv">Please use your physical remote control to accept the connection to the TV</string>
+    <string name="tv_is_not_lg">TV is not LG</string>
 </resources>

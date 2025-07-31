@@ -35,7 +35,7 @@ class CastAdapter :
         RecyclerView.ViewHolder(itemView.root) {
         var item: Cast? = null
         private val name = itemView.tvCast
-        private val imgCast = itemView.imgCast
+        private val castButton = itemView.imgCast
 
         init {
             itemView.root.clicks {
@@ -46,7 +46,7 @@ class CastAdapter :
         fun bind(item: Cast) {
             this.item = item
             name.text = item.name
-            imgCast.setImageResource(item.img)
+            castButton.setImageResource(item.img)
         }
     }
 

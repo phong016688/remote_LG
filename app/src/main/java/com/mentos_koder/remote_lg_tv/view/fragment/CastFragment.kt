@@ -33,7 +33,7 @@ class CastFragment : Fragment()  {
     private lateinit var viewPagerContainer: LinearLayout
     private lateinit var linerCast: LinearLayout
     private lateinit var mActivity: Activity
-    private var imgCast: ImageView? = null
+    private var castButton: ImageView? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -42,7 +42,7 @@ class CastFragment : Fragment()  {
         val view: View = inflater.inflate(R.layout.fragment_cast, container, false)
 
         castRecyclerView = view.findViewById(R.id.recycler_cast)
-        imgCast = view.findViewById(R.id.img_cast)
+        castButton = view.findViewById(R.id.img_cast)
         viewPager = view.findViewById(R.id.viewpager)
         viewPagerContainer = view.findViewById(R.id.viewPagerContainer)
         linerCast = view.findViewById(R.id.liner_cast)
@@ -59,7 +59,7 @@ class CastFragment : Fragment()  {
             }
         }
 
-        imgCast?.clicks {
+        castButton?.clicks {
             performVibrateAction()
             if (isConnected) {
                 showAlertDialogDisconnected()

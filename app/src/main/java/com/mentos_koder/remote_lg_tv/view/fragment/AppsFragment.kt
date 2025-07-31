@@ -44,7 +44,7 @@ class AppsFragment : Fragment(), OnItemClickListener {
     private var nameDV: TextView? = null
     private var tvChannel: TextView? = null
     private var tvFavourite: TextView? = null
-    private var imgCast: ImageView? = null
+    private var castButton: ImageView? = null
     private var linerFavourite: LinearLayout? = null
     private var linearNoConnect: LinearLayout? = null
     private var linearChannel: LinearLayout? = null
@@ -56,7 +56,7 @@ class AppsFragment : Fragment(), OnItemClickListener {
         savedInstanceState: Bundle?
     ): View {
         val view: View = inflater.inflate(R.layout.fragment_apps, container, false)
-        setupUI(view)
+        initializeViews(view)
         val singleton = Singleton.getInstance()
         ipAddress = Singleton.getInstance().getIpAddress()
         setupRecyclerViews()
@@ -101,12 +101,12 @@ class AppsFragment : Fragment(), OnItemClickListener {
         linerFavourite!!.visibility = View.VISIBLE
     }
 
-    private fun setupUI(view: View) {
+    private fun initializeViews(view: View) {
         channelRecyclerView = view.findViewById(R.id.recycler_channel)
         favouriteRecyclerView = view.findViewById(R.id.recycler_favourite)
         progressBar = view.findViewById(R.id.progress_bar)
         nameDV = view.findViewById(R.id.nameDV)
-        imgCast = view.findViewById(R.id.img_cast)
+        castButton = view.findViewById(R.id.img_cast)
         linerFavourite = view.findViewById(R.id.linear_favourite)
         tvChannel = view.findViewById(R.id.tv_Channel)
         tvFavourite = view.findViewById(R.id.tv_favourite)
@@ -116,7 +116,7 @@ class AppsFragment : Fragment(), OnItemClickListener {
     }
 
     private fun setDisconnect(singleton: Singleton) {
-        imgCast?.setOnClickListener {
+        castButton?.setOnClickListener {
             if (singleton.isConnectedCustom) {
                 showAlertDialogDisconnected(nameDV)
             } else {

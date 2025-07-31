@@ -15,7 +15,7 @@ class PrivatePolicyActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_help)
+        setContentView(R.layout.activity_policy)
 
         webViewHelp = findViewById(R.id.webViewHelp)
         btnBack = findViewById(R.id.btn_back)

@@ -29,7 +29,7 @@ import com.mentos_koder.remote_lg_tv.view.HelpActivity
 import com.mentos_koder.remote_lg_tv.view.PrivatePolicyActivity
 
 
-class SettingFragment : Fragment() {
+class settingsFragment : Fragment() {
     private var castSettingButton: ImageButton? = null
     private var linearShareApp: LinearLayout? = null
     private var linearFeedback: LinearLayout? = null
@@ -44,19 +44,19 @@ class SettingFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
-        val view: View = inflater.inflate(R.layout.fragment_setting, container, false)
-        setUpUI(view)
+        val view: View = inflater.inflate(R.layout.fragment_config, container, false)
+        initializeViews(view)
         ring.isChecked = context?.let { restoreSwitchState(it) } == true
         val sharedPreferences =
             requireContext().getSharedPreferences("MyPrefs", Context.MODE_PRIVATE)
         val switchState = sharedPreferences.getBoolean("switchState", true)
         ring.isChecked = switchState
         VersionName()
-        setUpListener()
+        setupEventListeners()
         return view
     }
 
-    private fun setUpUI(rootView: View) {
+    private fun initializeViews(rootView: View) {
         ring = rootView.findViewById(R.id.switchRing)
         castSettingButton = rootView.findViewById(R.id.btn_cast_setting)
         linearShareApp = rootView.findViewById(R.id.linear_shareAppLayout)
@@ -81,7 +81,7 @@ class SettingFragment : Fragment() {
     }
 
 
-    private fun setUpListener() {
+    private fun setupEventListeners() {
 
         ring.setOnCheckedChangeListener { _, isChecked ->
             saveSwitchState(isChecked)

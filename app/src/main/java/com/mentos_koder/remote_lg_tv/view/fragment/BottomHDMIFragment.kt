@@ -20,14 +20,14 @@ class BottomHDMIFragment : BottomSheetDialogFragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        val view: View = inflater.inflate(R.layout.fragment_bottom_h_d_m_i, container, false)
-        setupUI(view)
+        val view: View = inflater.inflate(R.layout.fragment_hdmi, container, false)
+        initializeViews(view)
         return view
     }
 
 
 
-    private fun setupUI(view: View) {
+    private fun initializeViews(view: View) {
         btn_d_bottom_AV = view.findViewById(R.id.btn_d_bottom_AV)
         btn_d_bottom_HDMI4 = view.findViewById(R.id.btn_d_bottom_HDMI4)
         btn_d_bottom_HDMI3 = view.findViewById(R.id.btn_d_bottom_HDMI3)

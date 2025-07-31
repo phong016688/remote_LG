@@ -19,31 +19,31 @@ import java.util.Locale
 
 
 class RelationshipWebSocket : WebSocketClient {
-    private var model: String? = null
-    private var Name: String? = null
-    private var ipAddress: String? = null
-    private var friendlyName: String? = null
-    var context = MainApplication.getAppContext()
+    private var deviceModel: String? = null
+    private var deviceName: String? = null
+    private var deviceIpAddress: String? = null
+    private var deviceFriendlyName: String? = null
+    private val appContext = MainApplication.getAppContext()
 
     constructor(
         serverUri: URI,
-        model: String?,
-        friendlyName: String?,
+        deviceModel: String?,
+        deviceFriendlyName: String?,
         deviceName: String?,
-        ipAddress: String?
+        deviceIpAddress: String?
     ) : super(serverUri) {
         Log.d("####", "ConnectURI: $serverUri")
-        Name = deviceName
-        this.model = model
-        this.ipAddress = ipAddress
-        this.friendlyName = friendlyName
+        this.deviceName = deviceName
+        this.deviceModel = deviceModel
+        this.deviceIpAddress = deviceIpAddress
+        this.deviceFriendlyName = deviceFriendlyName
     }
 
     constructor(serverUri: URI) : super(serverUri) {
         Log.d("####", "ConnectURI: $serverUri")
     }
 
-    override fun onOpen(handshakedata: ServerHandshake) {
+    override fun onOpen(handshakeData: ServerHandshake) {
         Log.d("#####", "Connection opened")
     }
 
@@ -51,40 +51,40 @@ class RelationshipWebSocket : WebSocketClient {
         Log.d("####", "onMessage: $message")
         val gson = Gson()
         try {
-            val json = gson.fromJson(message, JsonObject::class.java)
-            val data = json.getAsJsonObject("data")
-            val token = data["token"].asString
+            val jsonObject = gson.fromJson(message, JsonObject::class.java)
+            val dataObject = jsonObject.getAsJsonObject("data")
+            val token = dataObject["token"].asString
             if (token.isNotEmpty()) {
-                val deviceDao = AppDatabase.getDatabase(context).deviceDao()
-                val deviceCount = ipAddress?.let { deviceDao.countDevicesWithAddress(it) }
+                val deviceDao = AppDatabase.getDatabase(appContext).deviceDao()
+                val deviceCount = deviceIpAddress?.let { deviceDao.countDevicesWithAddress(it) }
                 val singleton = Singleton.getInstance()
                 singleton.setConnected(true)
                 if (deviceCount == 0) {
                     val device = Device()
-                    device.address = ipAddress!!
-                    device.model = model
+                    device.address = deviceIpAddress!!
+                    device.model = deviceModel
                     device.token = token
-                    device.firstDateConnect = currentTime
-                    device.lastDateConnect = currentTime
-                    device.name = friendlyName
-                    device.typeDevice = Name
+                    device.firstDateConnect = getCurrentTime()
+                    device.lastDateConnect = getCurrentTime()
+                    device.name = deviceFriendlyName
+                    device.typeDevice = deviceName
                     device.typeConnect = "handwork"
                     deviceDao.insert(device)
                     Log.d("#####", "Device saved successfully")
-                    val intent = Intent(context, MainActivity::class.java)
-                    intent.putExtra("name", friendlyName)
+                    val intent = Intent(appContext, MainActivity::class.java)
+                    intent.putExtra("name", deviceFriendlyName)
                     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                    context.startActivity(intent)
+                    appContext.startActivity(intent)
                 } else {
-                    val device = ipAddress?.let { deviceDao.getDeviceByAddress(it) }
-                    device!!.lastDateConnect = currentTime
+                    val device = deviceIpAddress?.let { deviceDao.getDeviceByAddress(it) }
+                    device!!.lastDateConnect = getCurrentTime()
                     device.typeConnect = "handwork"
                     deviceDao.update(device)
                     Log.d("#####", "Device updated successfully")
-                    val intent = Intent(context, MainActivity::class.java)
-                    intent.putExtra("name", friendlyName)
+                    val intent = Intent(appContext, MainActivity::class.java)
+                    intent.putExtra("name", deviceFriendlyName)
                     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                    context.startActivity(intent)
+                    appContext.startActivity(intent)
                 }
             } else {
                 Log.e("#####", "Token is empty")
@@ -113,12 +113,11 @@ class RelationshipWebSocket : WebSocketClient {
         Log.e("#####", "Error occurred: " + ex.message)
     }
 
-    private val currentTime: String
-        get() {
-            val currentTimeMillis = System.currentTimeMillis()
-            val currentTime = Date(currentTimeMillis)
-            val dateFormat = SimpleDateFormat("dd/MM/yyyy HH:mm:ss", Locale.getDefault())
-            return dateFormat.format(currentTime)
-        }
+    private fun getCurrentTime(): String {
+        val currentTimeMillis = System.currentTimeMillis()
+        val currentTime = Date(currentTimeMillis)
+        val dateFormat = SimpleDateFormat("dd/MM/yyyy HH:mm:ss", Locale.getDefault())
+        return dateFormat.format(currentTime)
+    }
 }
 

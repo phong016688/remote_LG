@@ -44,7 +44,7 @@ class PlayVideoActivity : AppCompatActivity() {
     private var server = DLNAHttpServer()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_play_video)
+        setContentView(R.layout.activity_video)
         setUI()
         setEvent()
         handle()

@@ -17,21 +17,21 @@ import java.util.Locale
 
 
 class AutoConnectWebSocket : WebSocketClient {
-    private var name: String? = null
-    private var ipAddress: String? = null
-    var context: Context = MainApplication.getAppContext()!!
+    private var deviceName: String? = null
+    private var deviceIpAddress: String? = null
+    private val appContext: Context = MainApplication.getAppContext()!!
 
     constructor(serverUri: URI) : super(serverUri) {
         Log.d("####", "ConnectURI: $serverUri")
     }
 
-    constructor(serverUri: URI, deviceName: String?, ipAddress: String?) : super(serverUri) {
+    constructor(serverUri: URI, deviceName: String?, deviceIpAddress: String?) : super(serverUri) {
         Log.d("####", "Auto ConnectURI: $serverUri")
-        name = deviceName
-        this.ipAddress = ipAddress
+        this.deviceName = deviceName
+        this.deviceIpAddress = deviceIpAddress
     }
 
-    override fun onOpen(handshakedata: ServerHandshake) {
+    override fun onOpen(handshakeData: ServerHandshake) {
         Log.d("#####", "Auto connection opened")
     }
 
@@ -39,10 +39,10 @@ class AutoConnectWebSocket : WebSocketClient {
         Log.d("#####", "onMessage: $message")
         val gson = Gson()
         try {
-            val json = gson.fromJson(message, JsonObject::class.java)
-            val data = json.getAsJsonObject("data")
-            if (data != null && data.has("clients")) {
-                val clientsArray = data.getAsJsonArray("clients")
+            val jsonObject = gson.fromJson(message, JsonObject::class.java)
+            val dataObject = jsonObject.getAsJsonObject("data")
+            if (dataObject != null && dataObject.has("clients")) {
+                val clientsArray = dataObject.getAsJsonArray("clients")
                 if (clientsArray.size() != 0) {
                     val firstClient = clientsArray[0].getAsJsonObject()
                     if (firstClient != null && firstClient.has("attributes")) {
@@ -50,11 +50,11 @@ class AutoConnectWebSocket : WebSocketClient {
                         if (attributes != null && attributes.has("token")) {
                             val token = attributes["token"].asString
                             if (token.isNotEmpty()) {
-                                val deviceDao = AppDatabase.getDatabase(context).deviceDao()
+                                val deviceDao = AppDatabase.getDatabase(appContext).deviceDao()
                                 val singleton = Singleton.getInstance()
-                                val device = ipAddress?.let { deviceDao.getDeviceByAddress(it) }
+                                val device = deviceIpAddress?.let { deviceDao.getDeviceByAddress(it) }
                                 singleton.setConnected(true)
-                                device!!.lastDateConnect = currentTime
+                                device!!.lastDateConnect = getCurrentTime()
                                 device.typeConnect = "auto"
                                 deviceDao.update(device)
                                 Log.d("#####", "Device auto successfully")
@@ -94,12 +94,11 @@ class AutoConnectWebSocket : WebSocketClient {
         singleton.isConnectedCustom = false
     }
 
-    private val currentTime: String
-        get() {
-            val currentTimeMillis = System.currentTimeMillis()
-            val currentTime = Date(currentTimeMillis)
-            val dateFormat = SimpleDateFormat("dd/MM/yyyy HH:mm:ss", Locale.getDefault())
-            return dateFormat.format(currentTime)
-        }
+    private fun getCurrentTime(): String {
+        val currentTimeMillis = System.currentTimeMillis()
+        val currentTime = Date(currentTimeMillis)
+        val dateFormat = SimpleDateFormat("dd/MM/yyyy HH:mm:ss", Locale.getDefault())
+        return dateFormat.format(currentTime)
+    }
 }
 

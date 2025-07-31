@@ -46,7 +46,7 @@ class PlayAudioFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View? {
-        val view = inflater.inflate(R.layout.fragment_play_audio, container, false)
+        val view = inflater.inflate(R.layout.fragment_audio_player, container, false)
         setUI(view)
         viewModel.audioList.observe(viewLifecycleOwner, Observer { list ->
             Log.d("audioAList##", "onCreate: $list")

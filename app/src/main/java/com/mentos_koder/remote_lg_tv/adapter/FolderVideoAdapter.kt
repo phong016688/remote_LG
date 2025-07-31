@@ -19,7 +19,7 @@ class FolderVideoAdapter(private val context: Context, private val folderList: L
         folderClickListener = listener
     }
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): VideoFolderViewHolder {
-        val itemView = LayoutInflater.from(parent.context).inflate(R.layout.item_folder_image, parent, false)
+                    val itemView = LayoutInflater.from(parent.context).inflate(R.layout.item_folder, parent, false)
         return VideoFolderViewHolder(itemView)
     }
 

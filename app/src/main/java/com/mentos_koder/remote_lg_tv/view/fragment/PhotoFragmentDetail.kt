@@ -34,7 +34,7 @@ import java.io.IOException
 
 
 class PhotoFragmentDetail : Fragment() {
-    private lateinit var imgBack: ImageView
+    private lateinit var backButton: ImageView
     private lateinit var recyclerPhoto: RecyclerView
     private lateinit var adapterPhoto: PhotoAdapter
     private lateinit var imageList: List<String>
@@ -59,10 +59,10 @@ class PhotoFragmentDetail : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val rootView = inflater.inflate(R.layout.fragment_photo_detail, container, false)
+        val rootView = inflater.inflate(R.layout.fragment_photo_view, container, false)
         recyclerPhoto = rootView.findViewById(R.id.recycler_photo)
         photoViewModel= ViewModelProvider(requireActivity())[PhotoViewModel::class.java]
-        imgBack = rootView.findViewById(R.id.img_back)
+        backButton = rootView.findViewById(R.id.img_back)
         val imageListJson = arguments?.getString(ARG_FOLDER_PATH) ?: ""
         val type = object : TypeToken<List<String>>() {}.type
         imageList= Gson().fromJson(imageListJson, type)
@@ -81,7 +81,7 @@ class PhotoFragmentDetail : Fragment() {
             }
 
         })
-        imgBack.setOnClickListener{
+        backButton.setOnClickListener{
             requireActivity().supportFragmentManager.popBackStack()
         }
         recyclerPhoto.layoutManager = GridLayoutManager(requireContext(), 3)

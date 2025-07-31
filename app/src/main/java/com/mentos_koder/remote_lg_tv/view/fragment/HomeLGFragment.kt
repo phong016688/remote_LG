@@ -40,76 +40,76 @@ import kotlin.math.abs
 import androidx.core.content.edit
 
 
-class HomeLGFragment : Fragment(), GestureDetector.OnGestureListener {
+class homeFragment : Fragment(), GestureDetector.OnGestureListener {
 
     private lateinit var dpadView: DPadView
-    private lateinit var cvPower: FrameLayout
-    private lateinit var cvCast: FrameLayout
-    private lateinit var imgVolumeUp: ImageView
-    private lateinit var imgVolumeDown: ImageView
-    private lateinit var linearChList: LinearLayout
-    private lateinit var linearHome: LinearLayout
-    private lateinit var linearMute: LinearLayout
-    private lateinit var linearInfo: LinearLayout
-    private lateinit var imgChUp: ImageView
-    private lateinit var imgChDown: ImageView
-    private lateinit var linearMenu: LinearLayout
-    private lateinit var linearHdmi: LinearLayout
-    private lateinit var linearMic: LinearLayout
-    private lateinit var linearKeyboard: LinearLayout
-    private lateinit var linearRewind: LinearLayout
-    private lateinit var linearPlay: LinearLayout
-    private lateinit var linearStop: LinearLayout
-    private lateinit var linearForward: LinearLayout
-    private lateinit var cvYoutube: FrameLayout
-    private lateinit var cvNetflix: FrameLayout
-    private lateinit var cvPrimeVideo: FrameLayout
-    private lateinit var cvTabControl: CardView
-    private lateinit var cvTabNumber: CardView
-    private lateinit var cvTabTouchPad: CardView
-    private lateinit var imgTabControl: ImageView
-    private lateinit var imgTabNumber: ImageView
-    private lateinit var imgTabTouchPad: ImageView
-    private lateinit var linearBack: LinearLayout
-    private lateinit var linearExit: LinearLayout
-    private lateinit var linearSetting: LinearLayout
-    private lateinit var linearTv: LinearLayout
-    private lateinit var cvA: CardView
-    private lateinit var cvB: CardView
-    private lateinit var cvC: CardView
-    private lateinit var cvD: CardView
-    private lateinit var linearOne: LinearLayout
-    private lateinit var linearTwo: LinearLayout
-    private lateinit var linearThree: LinearLayout
-    private lateinit var linearFour: LinearLayout
-    private lateinit var linearFive: LinearLayout
-    private lateinit var linearSix: LinearLayout
-    private lateinit var linearSeven: LinearLayout
-    private lateinit var linearEight: LinearLayout
-    private lateinit var linearNine: LinearLayout
-    private lateinit var linearZero: LinearLayout
-    private lateinit var constraintControl: ConstraintLayout
-    private lateinit var constraintNumber: ConstraintLayout
-    private lateinit var constraintTouchPad: ConstraintLayout
+    private lateinit var powerButton: FrameLayout
+    private lateinit var castButton: FrameLayout
+    private lateinit var volumeUpButton: ImageView
+    private lateinit var volumeDownButton: ImageView
+    private lateinit var channelListButton: LinearLayout
+    private lateinit var homeButton: LinearLayout
+    private lateinit var muteButton: LinearLayout
+    private lateinit var infoButton: LinearLayout
+    private lateinit var channelUpButton: ImageView
+    private lateinit var channelDownButton: ImageView
+    private lateinit var menuButton: LinearLayout
+    private lateinit var hdmiButton: LinearLayout
+    private lateinit var micButton: LinearLayout
+    private lateinit var keyboardButton: LinearLayout
+    private lateinit var rewindButton: LinearLayout
+    private lateinit var playButton: LinearLayout
+    private lateinit var stopButton: LinearLayout
+    private lateinit var forwardButton: LinearLayout
+    private lateinit var youtubeButton: FrameLayout
+    private lateinit var netflixButton: FrameLayout
+    private lateinit var primeVideoButton: FrameLayout
+    private lateinit var controlTab: CardView
+    private lateinit var numberTab: CardView
+    private lateinit var touchpadTab: CardView
+    private lateinit var controlTabIcon: ImageView
+    private lateinit var numberTabIcon: ImageView
+    private lateinit var touchpadTabIcon: ImageView
+    private lateinit var backButton: LinearLayout
+    private lateinit var exitButton: LinearLayout
+    private lateinit var settingsButton: LinearLayout
+    private lateinit var tvButton: LinearLayout
+    private lateinit var buttonA: CardView
+    private lateinit var buttonB: CardView
+    private lateinit var buttonC: CardView
+    private lateinit var buttonD: CardView
+    private lateinit var buttonOne: LinearLayout
+    private lateinit var buttonTwo: LinearLayout
+    private lateinit var buttonThree: LinearLayout
+    private lateinit var buttonFour: LinearLayout
+    private lateinit var buttonFive: LinearLayout
+    private lateinit var buttonSix: LinearLayout
+    private lateinit var buttonSeven: LinearLayout
+    private lateinit var buttonEight: LinearLayout
+    private lateinit var buttonNine: LinearLayout
+    private lateinit var buttonZero: LinearLayout
+    private lateinit var controlLayout: ConstraintLayout
+    private lateinit var numberLayout: ConstraintLayout
+    private lateinit var touchpadLayout: ConstraintLayout
     private lateinit var gestureDetector: GestureDetector
 
-    private var isAutoConnectCalled = true
-    private val primeVideoIdString = "amazon"
-    private val netflixIdString = "netflix"
-    private val youtubeIdString = "youtube.leanback.v4"
+    private var isAutoConnectEnabled = true
+    private val PRIME_VIDEO_ID = "amazon"
+    private val NETFLIX_ID = "netflix"
+    private val YOUTUBE_ID = "youtube.leanback.v4"
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
-        val view: View = inflater.inflate(R.layout.fragment_home_lg, container, false)
-        setupUI(view)
-        setEvenListenVisibility()
-        if (getTypeDevice() == "samsung" && isAutoConnectCalled) {
+        val view: View = inflater.inflate(R.layout.fragment_home, container, false)
+        initializeViews(view)
+        setupEventListeners()
+        setupEventListenersControl()
+        if (getTypeDevice() == "samsung" && isAutoConnectEnabled) {
             autoConnect()
-            isAutoConnectCalled = false
+            isAutoConnectEnabled = false
         }
         gestureDetector = GestureDetector(context, this)
-        setUpListener()
         return view
     }
 
@@ -178,69 +178,69 @@ class HomeLGFragment : Fragment(), GestureDetector.OnGestureListener {
         }
     }
 
-    private fun setupUI(view: View) {
+    private fun initializeViews(view: View) {
 
-        cvPower = view.findViewById(R.id.cv_power)
-        cvCast = view.findViewById(R.id.cv_cast)
-        imgVolumeUp = view.findViewById(R.id.img_volume_up)
-        imgVolumeDown = view.findViewById(R.id.img_volume_down)
-        linearChList = view.findViewById(R.id.linear_ch_list)
-        linearHome = view.findViewById(R.id.linear_home)
-        linearMute = view.findViewById(R.id.linear_mute)
-        linearInfo = view.findViewById(R.id.linear_info)
-        imgChUp = view.findViewById(R.id.img_ch_up)
-        imgChDown = view.findViewById(R.id.img_ch_down)
-        linearMenu = view.findViewById(R.id.linear_menu)
-        linearHdmi = view.findViewById(R.id.linear_hdmi)
-        linearMic = view.findViewById(R.id.linear_mic)
-        linearKeyboard = view.findViewById(R.id.linear_keyboard)
+        powerButton = view.findViewById(R.id.cv_power)
+        castButton = view.findViewById(R.id.cv_cast)
+        volumeUpButton = view.findViewById(R.id.img_volume_up)
+        volumeDownButton = view.findViewById(R.id.img_volume_down)
+        channelListButton = view.findViewById(R.id.linear_ch_list)
+        homeButton = view.findViewById(R.id.linear_home)
+        muteButton = view.findViewById(R.id.linear_mute)
+        infoButton = view.findViewById(R.id.linear_info)
+        channelUpButton = view.findViewById(R.id.img_ch_up)
+        channelDownButton = view.findViewById(R.id.img_ch_down)
+        menuButton = view.findViewById(R.id.linear_menu)
+        hdmiButton = view.findViewById(R.id.linear_hdmi)
+        micButton = view.findViewById(R.id.linear_mic)
+        keyboardButton = view.findViewById(R.id.linear_keyboard)
 
-        linearRewind = view.findViewById(R.id.linear_rewind)
-        linearPlay = view.findViewById(R.id.linear_play)
-        linearStop = view.findViewById(R.id.linear_stop)
-        linearForward = view.findViewById(R.id.linear_forward)
+        rewindButton = view.findViewById(R.id.linear_rewind)
+        playButton = view.findViewById(R.id.linear_play)
+        stopButton = view.findViewById(R.id.linear_stop)
+        forwardButton = view.findViewById(R.id.linear_forward)
 
-        cvYoutube = view.findViewById(R.id.cv_youtube)
-        cvNetflix = view.findViewById(R.id.cv_netflix)
-        cvPrimeVideo = view.findViewById(R.id.cv_prime_video)
+        youtubeButton = view.findViewById(R.id.cv_youtube)
+        netflixButton = view.findViewById(R.id.cv_netflix)
+        primeVideoButton = view.findViewById(R.id.cv_prime_video)
 
-        cvTabControl = view.findViewById(R.id.cv_tab_control)
-        cvTabNumber = view.findViewById(R.id.cv_tab_number)
-        cvTabTouchPad = view.findViewById(R.id.cv_tab_touch_pad)
-        imgTabControl = view.findViewById(R.id.img_tab_control)
-        imgTabNumber = view.findViewById(R.id.img_tab_number)
-        imgTabTouchPad = view.findViewById(R.id.img_tab_touch_pad)
+        controlTab = view.findViewById(R.id.cv_tab_control)
+        numberTab = view.findViewById(R.id.cv_tab_number)
+        touchpadTab = view.findViewById(R.id.cv_tab_touch_pad)
+        controlTabIcon = view.findViewById(R.id.img_tab_control)
+        numberTabIcon = view.findViewById(R.id.img_tab_number)
+        touchpadTabIcon = view.findViewById(R.id.img_tab_touch_pad)
 
-        linearBack = view.findViewById(R.id.linear_back)
-        linearExit = view.findViewById(R.id.linear_exit)
-        linearSetting = view.findViewById(R.id.linear_setting)
-        linearTv = view.findViewById(R.id.linear_tv)
+        backButton = view.findViewById(R.id.linear_back)
+        exitButton = view.findViewById(R.id.linear_exit)
+        settingsButton = view.findViewById(R.id.linear_setting)
+        tvButton = view.findViewById(R.id.linear_tv)
 
-        cvA = view.findViewById(R.id.cv_a)
-        cvB = view.findViewById(R.id.cv_b)
-        cvC = view.findViewById(R.id.cv_c)
-        cvD = view.findViewById(R.id.cv_d)
-        linearOne = view.findViewById(R.id.linear_one)
-        linearTwo = view.findViewById(R.id.linear_two)
-        linearThree = view.findViewById(R.id.linear_three)
-        linearFour = view.findViewById(R.id.linear_four)
-        linearFive = view.findViewById(R.id.linear_five)
-        linearSix = view.findViewById(R.id.linear_six)
-        linearSeven = view.findViewById(R.id.linear_seven)
-        linearEight = view.findViewById(R.id.linear_eight)
-        linearNine = view.findViewById(R.id.linear_nine)
-        linearZero = view.findViewById(R.id.linear_zero)
+        buttonA = view.findViewById(R.id.cv_a)
+        buttonB = view.findViewById(R.id.cv_b)
+        buttonC = view.findViewById(R.id.cv_c)
+        buttonD = view.findViewById(R.id.cv_d)
+        buttonOne = view.findViewById(R.id.linear_one)
+        buttonTwo = view.findViewById(R.id.linear_two)
+        buttonThree = view.findViewById(R.id.linear_three)
+        buttonFour = view.findViewById(R.id.linear_four)
+        buttonFive = view.findViewById(R.id.linear_five)
+        buttonSix = view.findViewById(R.id.linear_six)
+        buttonSeven = view.findViewById(R.id.linear_seven)
+        buttonEight = view.findViewById(R.id.linear_eight)
+        buttonNine = view.findViewById(R.id.linear_nine)
+        buttonZero = view.findViewById(R.id.linear_zero)
 
-        constraintControl = view.findViewById(R.id.constraint_control)
-        constraintNumber = view.findViewById(R.id.constraint_number)
-        constraintTouchPad = view.findViewById(R.id.constraint_touch_pad)
+        controlLayout = view.findViewById(R.id.constraint_control)
+        numberLayout = view.findViewById(R.id.constraint_number)
+        touchpadLayout = view.findViewById(R.id.constraint_touch_pad)
 
         dpadView = view.findViewById(R.id.dPadView_remote_control)
     }
 
     @SuppressLint("ClickableViewAccessibility")
-    private fun setUpListener() {
-        constraintTouchPad.setOnTouchListener { v: View?, event: MotionEvent? ->
+    private fun setupEventListeners() {
+        touchpadLayout.setOnTouchListener { v: View?, event: MotionEvent? ->
             performVibrateAction()
             gestureDetector.onTouchEvent(
                 event!!
@@ -290,39 +290,39 @@ class HomeLGFragment : Fragment(), GestureDetector.OnGestureListener {
             }
         }
 
-        setViewClickListener(cvPower, KeycodeLG.POWER)
-        setViewClickListener(linearMenu, KeycodeLG.MENU)
-        setViewClickListener(linearHome, KeycodeLG.HOME)
-        setViewClickListener(linearBack, KeycodeLG.BACK)
-        setViewClickListener(linearInfo, KeycodeLG.INFO)
-        setViewClickListener(linearHdmi, KeycodeLG.HDMI)
-        setViewClickListener(imgVolumeUp, KeycodeLG.VOLUMEUP)
-        setViewClickListener(imgVolumeDown, KeycodeLG.VOLUMEDOWN)
-        setViewClickListener(linearExit, KeycodeLG.EXIT)
-        setViewClickListener(linearMute, KeycodeLG.MUTE)
-        setViewClickListener(imgChUp, KeycodeLG.CHANNELUP)
-        setViewClickListener(imgChDown, KeycodeLG.CHANNELDOWN)
-        setViewClickListener(linearChList, KeycodeLG.LIST)
-        setViewClickListener(linearRewind, KeycodeLG.LEFT)
-        setViewClickListener(linearForward, KeycodeLG.RIGHT)
-        setViewClickListener(linearPlay, KeycodeLG.PLAY)
-        setViewClickListener(linearStop, KeycodeLG.PAUSE)
-        setViewClickListener(linearSetting, KeycodeLG.SETTING)
-        setViewClickListener(cvA, KeycodeLG.RED)
-        setViewClickListener(cvB, KeycodeLG.GREEN)
-        setViewClickListener(cvC, KeycodeLG.YELLOW)
-        setViewClickListener(cvD, KeycodeLG.BLUE)
-        setViewClickListener(linearOne, KeycodeLG.ONE)
-        setViewClickListener(linearTwo, KeycodeLG.TWO)
-        setViewClickListener(linearThree, KeycodeLG.THREE)
-        setViewClickListener(linearFour, KeycodeLG.FOUR)
-        setViewClickListener(linearFive, KeycodeLG.FIVE)
-        setViewClickListener(linearSix, KeycodeLG.SIX)
-        setViewClickListener(linearSeven, KeycodeLG.SEVEN)
-        setViewClickListener(linearEight, KeycodeLG.EIGHT)
-        setViewClickListener(linearNine, KeycodeLG.NINE)
-        setViewClickListener(linearZero, KeycodeLG.ZERO)
-        linearMic.clicks {
+        setViewClickListener(powerButton, KeycodeLG.POWER)
+        setViewClickListener(menuButton, KeycodeLG.MENU)
+        setViewClickListener(homeButton, KeycodeLG.HOME)
+        setViewClickListener(backButton, KeycodeLG.BACK)
+        setViewClickListener(infoButton, KeycodeLG.INFO)
+        setViewClickListener(hdmiButton, KeycodeLG.HDMI)
+        setViewClickListener(volumeUpButton, KeycodeLG.VOLUMEUP)
+        setViewClickListener(volumeDownButton, KeycodeLG.VOLUMEDOWN)
+        setViewClickListener(exitButton, KeycodeLG.EXIT)
+        setViewClickListener(muteButton, KeycodeLG.MUTE)
+        setViewClickListener(channelUpButton, KeycodeLG.CHANNELUP)
+        setViewClickListener(channelDownButton, KeycodeLG.CHANNELDOWN)
+        setViewClickListener(channelListButton, KeycodeLG.LIST)
+        setViewClickListener(rewindButton, KeycodeLG.LEFT)
+        setViewClickListener(forwardButton, KeycodeLG.RIGHT)
+        setViewClickListener(playButton, KeycodeLG.PLAY)
+        setViewClickListener(stopButton, KeycodeLG.PAUSE)
+        setViewClickListener(settingsButton, KeycodeLG.SETTING)
+        setViewClickListener(buttonA, KeycodeLG.RED)
+        setViewClickListener(buttonB, KeycodeLG.GREEN)
+        setViewClickListener(buttonC, KeycodeLG.YELLOW)
+        setViewClickListener(buttonD, KeycodeLG.BLUE)
+        setViewClickListener(buttonOne, KeycodeLG.ONE)
+        setViewClickListener(buttonTwo, KeycodeLG.TWO)
+        setViewClickListener(buttonThree, KeycodeLG.THREE)
+        setViewClickListener(buttonFour, KeycodeLG.FOUR)
+        setViewClickListener(buttonFive, KeycodeLG.FIVE)
+        setViewClickListener(buttonSix, KeycodeLG.SIX)
+        setViewClickListener(buttonSeven, KeycodeLG.SEVEN)
+        setViewClickListener(buttonEight, KeycodeLG.EIGHT)
+        setViewClickListener(buttonNine, KeycodeLG.NINE)
+        setViewClickListener(buttonZero, KeycodeLG.ZERO)
+        micButton.clicks {
             performVibrateAction()
             if (isConnected) {
                 handleMicro()
@@ -331,33 +331,33 @@ class HomeLGFragment : Fragment(), GestureDetector.OnGestureListener {
             }
         }
 
-        cvYoutube.clicks {
+        youtubeButton.clicks {
             performVibrateAction()
             if (isConnected) {
-                handleApp(youtubeIdString)
+                handleApp(YOUTUBE_ID)
             } else {
                 showFragmentDevice()
             }
         }
-        cvPrimeVideo.clicks {
+        primeVideoButton.clicks {
             performVibrateAction()
             if (isConnected) {
-                handleApp(primeVideoIdString)
-            } else {
-                showFragmentDevice()
-            }
-        }
-
-        cvNetflix.clicks {
-            performVibrateAction()
-            if (isConnected) {
-                handleApp(netflixIdString)
+                handleApp(PRIME_VIDEO_ID)
             } else {
                 showFragmentDevice()
             }
         }
 
-        cvCast.clicks {
+        netflixButton.clicks {
+            performVibrateAction()
+            if (isConnected) {
+                handleApp(NETFLIX_ID)
+            } else {
+                showFragmentDevice()
+            }
+        }
+
+        castButton.clicks {
             performVibrateAction()
             if (isConnected) {
                 showAlertDialogDisconnected("LG")
@@ -366,7 +366,7 @@ class HomeLGFragment : Fragment(), GestureDetector.OnGestureListener {
             }
         }
 
-        linearKeyboard.clicks {
+        keyboardButton.clicks {
             performVibrateAction()
             if (isConnected) {
                 val intent = Intent(activity, KeyboardActivity::class.java)
@@ -418,84 +418,84 @@ class HomeLGFragment : Fragment(), GestureDetector.OnGestureListener {
             }
         })
 
-    private fun setEvenListenVisibility() {
-        cvTabControl.clicks {
-            constraintControl.visibility = View.VISIBLE
-            constraintNumber.visibility = View.GONE
-            constraintTouchPad.visibility = View.GONE
+    private fun setupEventListenersControl() {
+        controlTab.clicks {
+            controlLayout.visibility = View.VISIBLE
+            numberLayout.visibility = View.GONE
+            touchpadLayout.visibility = View.GONE
 
-            cvTabControl.setCardBackgroundColor(
+            controlTab.setCardBackgroundColor(
                 ContextCompat.getColor(
                     requireContext(), R.color.white
                 )
             )
-            imgTabControl.setColorFilter(ContextCompat.getColor(requireContext(), R.color.pink))
+            controlTabIcon.setColorFilter(ContextCompat.getColor(requireContext(), R.color.pink))
 
-            cvTabNumber.setCardBackgroundColor(
+            numberTab.setCardBackgroundColor(
                 ContextCompat.getColor(
                     requireContext(), R.color.bgr_btn_lg
                 )
             )
-            imgTabNumber.setColorFilter(ContextCompat.getColor(requireContext(), R.color.white))
+            numberTabIcon.setColorFilter(ContextCompat.getColor(requireContext(), R.color.white))
 
-            cvTabTouchPad.setCardBackgroundColor(
+            touchpadTab.setCardBackgroundColor(
                 ContextCompat.getColor(
                     requireContext(), R.color.bgr_btn_lg
                 )
             )
-            imgTabTouchPad.setColorFilter(ContextCompat.getColor(requireContext(), R.color.white))
+            touchpadTabIcon.setColorFilter(ContextCompat.getColor(requireContext(), R.color.white))
         }
-        cvTabNumber.clicks {
-            constraintControl.visibility = View.GONE
-            constraintNumber.visibility = View.VISIBLE
-            constraintTouchPad.visibility = View.GONE
+        numberTab.clicks {
+            controlLayout.visibility = View.GONE
+            numberLayout.visibility = View.VISIBLE
+            touchpadLayout.visibility = View.GONE
 
-            cvTabControl.setCardBackgroundColor(
+            controlTab.setCardBackgroundColor(
                 ContextCompat.getColor(
                     requireContext(), R.color.bgr_btn_lg
                 )
             )
-            imgTabControl.setColorFilter(ContextCompat.getColor(requireContext(), R.color.white))
+            controlTabIcon.setColorFilter(ContextCompat.getColor(requireContext(), R.color.white))
 
-            cvTabNumber.setCardBackgroundColor(
+            numberTab.setCardBackgroundColor(
                 ContextCompat.getColor(
                     requireContext(), R.color.white
                 )
             )
-            imgTabNumber.setColorFilter(ContextCompat.getColor(requireContext(), R.color.pink))
+            numberTabIcon.setColorFilter(ContextCompat.getColor(requireContext(), R.color.pink))
 
-            cvTabTouchPad.setCardBackgroundColor(
+            touchpadTab.setCardBackgroundColor(
                 ContextCompat.getColor(
                     requireContext(), R.color.bgr_btn_lg
                 )
             )
-            imgTabTouchPad.setColorFilter(ContextCompat.getColor(requireContext(), R.color.white))
+            touchpadTabIcon.setColorFilter(ContextCompat.getColor(requireContext(), R.color.white))
         }
-        cvTabTouchPad.clicks {
-            constraintControl.visibility = View.GONE
-            constraintNumber.visibility = View.GONE
-            constraintTouchPad.visibility = View.VISIBLE
+        touchpadTab.clicks {
+            controlLayout.visibility = View.GONE
+            numberLayout.visibility = View.GONE
+            touchpadLayout.visibility = View.VISIBLE
 
-            cvTabControl.setCardBackgroundColor(
+            controlTab.setCardBackgroundColor(
                 ContextCompat.getColor(
                     requireContext(), R.color.bgr_btn_lg
                 )
             )
-            imgTabControl.setColorFilter(ContextCompat.getColor(requireContext(), R.color.white))
+            controlTabIcon.setColorFilter(ContextCompat.getColor(requireContext(), R.color.white))
 
-            cvTabNumber.setCardBackgroundColor(
+            numberTab.setCardBackgroundColor(
                 ContextCompat.getColor(
                     requireContext(), R.color.bgr_btn_lg
                 )
             )
-            imgTabNumber.setColorFilter(ContextCompat.getColor(requireContext(), R.color.white))
+            numberTabIcon.setColorFilter(ContextCompat.getColor(requireContext(), R.color.white))
 
-            cvTabTouchPad.setCardBackgroundColor(
+            touchpadTab.setCardBackgroundColor(
                 ContextCompat.getColor(
                     requireContext(), R.color.white
                 )
             )
-            imgTabTouchPad.setColorFilter(ContextCompat.getColor(requireContext(), R.color.pink))
+            touchpadTabIcon.setColorFilter(ContextCompat.getColor(requireContext(), R.color.pink))
         }
     }
 

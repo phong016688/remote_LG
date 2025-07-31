@@ -19,7 +19,7 @@ class FolderImageAdapter(private val context: Context, private var folderList: L
         folderClickListener = listener
     }
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ImageFolderViewHolder {
-        val itemView = LayoutInflater.from(parent.context).inflate(R.layout.item_folder_image, parent, false)
+                    val itemView = LayoutInflater.from(parent.context).inflate(R.layout.item_folder, parent, false)
         return ImageFolderViewHolder(itemView)
     }
 
