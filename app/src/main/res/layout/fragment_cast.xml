@@ -28,7 +28,7 @@
                     android:layout_centerVertical="true"
                     android:text="@string/cast"
                     android:textColor="@color/white"
-                    android:textSize="18sp"
+                    android:textSize="24sp"
                     android:textStyle="bold" />
 
                 <ImageView
