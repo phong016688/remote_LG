@@ -13,13 +13,16 @@ import com.mentos_koder.remote_lg_tv.event.OnFolderClickListener
 import com.mentos_koder.remote_lg_tv.model.ImageFolder
 import java.io.File
 
-class FolderImageAdapter(private val context: Context, private var folderList: List<ImageFolder>) : RecyclerView.Adapter<FolderImageAdapter.ImageFolderViewHolder>() {
+class FolderImageAdapter(private val context: Context, private var folderList: List<ImageFolder>) :
+    RecyclerView.Adapter<FolderImageAdapter.ImageFolderViewHolder>() {
     private var folderClickListener: OnFolderClickListener? = null
     fun setOnFolderClickListener(listener: OnFolderClickListener) {
         folderClickListener = listener
     }
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ImageFolderViewHolder {
-                    val itemView = LayoutInflater.from(parent.context).inflate(R.layout.item_folder, parent, false)
+        val itemView =
+            LayoutInflater.from(parent.context).inflate(R.layout.item_folder, parent, false)
         return ImageFolderViewHolder(itemView)
     }
 
@@ -31,32 +34,35 @@ class FolderImageAdapter(private val context: Context, private var folderList: L
     override fun getItemCount() = folderList.size
 
     inner class ImageFolderViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        private var imageFolder: ImageFolder? = null
         private val folderNameTextView: TextView = itemView.findViewById(R.id.tv_nameFolder)
         private val folderQuantityTextView: TextView = itemView.findViewById(R.id.tv_quantity_img)
         private val imgPhoto: ImageView = itemView.findViewById(R.id.img_photo)
         private val imgPhoto2: ImageView = itemView.findViewById(R.id.img_photo_2)
         private val imgPhoto3: ImageView = itemView.findViewById(R.id.img_photo_3)
+
+        init {
+            itemView.setOnClickListener {
+                imageFolder?.let { folderClickListener?.onFolderClick(it) }
+            }
+        }
+
         fun bind(imageFolder: ImageFolder) {
-            folderNameTextView.text = imageFolder.folderName
+            this.imageFolder = imageFolder
             val imageList = imageFolder.imageList
-             folderQuantityTextView.text = imageFolder.quantity.toString()
+            folderNameTextView.text = imageFolder.folderName
+            folderQuantityTextView.text = imageFolder.quantity.toString()
             if (imageList.isNotEmpty()) {
                 if (imageList.size >= 3) {
                     val firstImagePath = imageList[imageList.size - 1].absolutePath
                     val secondImagePath = imageList[imageList.size - 2].absolutePath
                     val thirdImagePath = imageList[imageList.size - 3].absolutePath
 
-                    Glide.with(context)
-                        .load(File(firstImagePath))
-                        .into(imgPhoto)
+                    Glide.with(context).load(File(firstImagePath)).into(imgPhoto)
 
-                    Glide.with(context)
-                        .load(File(secondImagePath))
-                        .into(imgPhoto2)
+                    Glide.with(context).load(File(secondImagePath)).into(imgPhoto2)
 
-                    Glide.with(context)
-                        .load(File(thirdImagePath))
-                        .into(imgPhoto3)
+                    Glide.with(context).load(File(thirdImagePath)).into(imgPhoto3)
                 } else {
                     for (i in imageList.indices) {
                         val imagePath = imageList[i].absolutePath
@@ -71,10 +77,6 @@ class FolderImageAdapter(private val context: Context, private var folderList: L
                 imgPhoto.setImageResource(R.color.white)
                 imgPhoto2.setImageResource(R.color.white)
                 imgPhoto3.setImageResource(R.color.white)
-            }
-
-            itemView.setOnClickListener {
-                folderClickListener?.onFolderClick(imageFolder)
             }
         }
     }

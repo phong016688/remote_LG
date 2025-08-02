@@ -41,7 +41,7 @@ class AudioAdapter(
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
                 .into(holder.audioAlbumArt)
         } else {
-            holder.audioAlbumArt.setImageResource(R.drawable.ic_audio)
+            holder.audioAlbumArt.setImageResource(R.drawable.ic_audio1)
         }
 
         holder.itemView.setOnClickListener {

@@ -1,6 +1,7 @@
 package com.mentos_koder.remote_lg_tv.adapter
 
 import android.content.Context
+import android.graphics.Bitmap
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -14,6 +15,7 @@ import com.bumptech.glide.request.RequestOptions
 import com.mentos_koder.remote_lg_tv.R
 import com.mentos_koder.remote_lg_tv.event.OnMediaClickListener
 import com.mentos_koder.remote_lg_tv.util.Singleton
+import com.mentos_koder.remote_lg_tv.view.MainActivity
 import com.mentos_koder.remote_lg_tv.view.fragment.DeviceFragment
 
 class PhotoAdapter(private var images: MutableList<String>?, val context: Context) :
@@ -30,40 +32,28 @@ class PhotoAdapter(private var images: MutableList<String>?, val context: Contex
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ImageViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.item_photo, parent, false)
-        return ImageViewHolder(view)
+        return ImageViewHolder(view).apply {
+            itemView.setOnClickListener {
+                val imagePath = this.imagePath ?: return@setOnClickListener
+                if (Singleton.getInstance().isConnected()) {
+                    onClick?.onMediaClick(position, imagePath)
+                } else if (context is MainActivity) {
+                    context.showFragmentDevice()
+                }
+            }
+        }
     }
 
     override fun onBindViewHolder(holder: ImageViewHolder, position: Int) {
         val imageBitmap = images?.get(position)
-        Glide.with(holder.itemView.context)
-            .load(imageBitmap)
+        Glide.with(holder.itemView.context).load(imageBitmap)
             .apply(RequestOptions().placeholder(R.drawable.ic_app).error(R.drawable.ic_setting))
-            .diskCacheStrategy(DiskCacheStrategy.ALL)
-            .into(holder.imageView)
+            .diskCacheStrategy(DiskCacheStrategy.ALL).into(holder.imageView)
 
         if (!imageBitmap?.let { Singleton.getInstance().containsBitmap(it) }!!) {
-            Log.d("#AAAA###", "addd: $imageBitmap" )
             Singleton.getInstance().addBitmap(imageBitmap)
-        }else{
-            Log.d("observeBitmap###", "no adđ: $imageBitmap" )
         }
-        holder.itemView.setOnClickListener {
-            if (Singleton.getInstance().isConnected()) {
-                onClick?.onMediaClick(position,imageBitmap)
-            } else {
-                val deviceFrag = DeviceFragment()
-                if (context is FragmentActivity) {
-                    val transaction = context.supportFragmentManager.beginTransaction()
-                        .setCustomAnimations(
-                            R.anim.slide_in_right,
-                            R.anim.slide_out_left
-                        )
-                    transaction.replace(R.id.fragment_container, deviceFrag, "findThisFragment")
-                    transaction.addToBackStack("findThisFragment")
-                    transaction.commit()
-                }
-            }
-        }
+        holder.imagePath = images?.get(position)
     }
 
     override fun getItemCount(): Int {
@@ -72,6 +62,7 @@ class PhotoAdapter(private var images: MutableList<String>?, val context: Contex
 
 
     class ImageViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        var imagePath: String? = null
         val imageView: ImageView = itemView.findViewById(R.id.img_photo)
     }
 }

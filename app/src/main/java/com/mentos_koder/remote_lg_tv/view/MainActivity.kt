@@ -14,7 +14,6 @@ import androidx.work.Data
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
 import com.connectsdk.device.ConnectableDevice
-import com.connectsdk.device.DevicePicker
 import com.connectsdk.discovery.DiscoveryManager
 import com.connectsdk.discovery.provider.CastDiscoveryProvider
 import com.connectsdk.discovery.provider.FireTVDiscoveryProvider
@@ -30,7 +29,6 @@ import com.connectsdk.service.roku.AndroidService
 import com.connectsdk.service.roku.NewAndroidService
 import com.connectsdk.service.roku.VizioService
 import com.google.android.material.bottomnavigation.BottomNavigationView
-import com.google.android.ump.ConsentInformation
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.mentos_koder.remote_lg_tv.R
 import com.mentos_koder.remote_lg_tv.util.Constants
@@ -40,14 +38,14 @@ import com.mentos_koder.remote_lg_tv.util.PermissionUtils
 import com.mentos_koder.remote_lg_tv.util.Singleton
 import com.mentos_koder.remote_lg_tv.view.fragment.AppsFragment
 import com.mentos_koder.remote_lg_tv.view.fragment.CastFragment
-import com.mentos_koder.remote_lg_tv.view.fragment.homeFragment
+import com.mentos_koder.remote_lg_tv.view.fragment.DeviceFragment
+import com.mentos_koder.remote_lg_tv.view.fragment.HomeFragment
 import com.mentos_koder.remote_lg_tv.view.fragment.SettingsFragment
 import java.time.LocalDate
 import java.time.ZoneId
 import java.time.temporal.ChronoUnit
 import java.util.Date
 import java.util.concurrent.TimeUnit
-import java.util.concurrent.atomic.AtomicBoolean
 
 
 class MainActivity : AppCompatActivity(), OnBack {
@@ -81,11 +79,18 @@ class MainActivity : AppCompatActivity(), OnBack {
             override fun handleOnBackPressed() {
                 val currentFragment =
                     supportFragmentManager.findFragmentById(R.id.fragment_container)
+                when (currentFragment) {
+                    is HomeFragment -> {
+                        finish()
+                    }
 
-                if (currentFragment !is homeFragment) {
-                    bottomNavView?.selectedItemId = R.id.menu_home
-                } else {
-                    finish()
+                    is CastFragment, is AppsFragment, is SettingsFragment -> {
+                        bottomNavView?.selectedItemId = R.id.menu_home
+                    }
+
+                    else -> {
+                        supportFragmentManager.popBackStack()
+                    }
                 }
             }
         })
@@ -105,6 +110,15 @@ class MainActivity : AppCompatActivity(), OnBack {
         bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, "Done connected")
         bundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE, "image")
         firebaseAnalytics.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, bundle)
+    }
+
+    fun showFragmentDevice() {
+        val deviceFrag = DeviceFragment()
+        supportFragmentManager.beginTransaction().setCustomAnimations(
+            R.anim.slide_in_right,  // enter
+            R.anim.slide_out_left // exit
+        ).replace(R.id.fragment_container, deviceFrag, "findThisFragment")
+            .addToBackStack("findThisFragment").commit()
     }
 
     override fun onRequestPermissionsResult(
@@ -178,7 +192,7 @@ class MainActivity : AppCompatActivity(), OnBack {
         castFragment = CastFragment()
         deviceListFragment = AppsFragment()
         settingsFragment = SettingsFragment()
-        homeFragment = homeFragment()
+        homeFragment = HomeFragment()
     }
 
     private fun setupBottomNavigationView() {
@@ -211,7 +225,7 @@ class MainActivity : AppCompatActivity(), OnBack {
     }
 
     private fun displayDefaultFragment() {
-        val fragment: Fragment = homeFragment()
+        val fragment: Fragment = HomeFragment()
         supportFragmentManager.beginTransaction().replace(R.id.fragment_container, fragment)
             .commit()
     }

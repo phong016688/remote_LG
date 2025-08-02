@@ -32,7 +32,7 @@ class GoToSettingFragment(private val name: String) : Fragment(){
             tvStep3.visibility = View.GONE
             tvStep4.visibility = View.GONE
             tvStepMicro.visibility = View.VISIBLE
-            fragment = homeFragment()
+            fragment = HomeFragment()
         }else if(name == "photo") {
             fragment = CastFragment()
         }

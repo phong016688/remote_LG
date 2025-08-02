@@ -27,7 +27,6 @@ class PlayImageActivity : AppCompatActivity() {
     private lateinit var tvQuantityImg: TextView
     private lateinit var forward: LinearLayout
     private lateinit var play: LinearLayout
-    private lateinit var imgShare: ImageView
     private lateinit var backButton: ImageView
     private lateinit var toolbar: Toolbar
     private val Duration = 8000
@@ -54,96 +53,107 @@ class PlayImageActivity : AppCompatActivity() {
         imgViewPhoto = findViewById(R.id.img_viewPhoto)
         seekbarTimePlay = findViewById(R.id.seekbar_time_play)
         seekbarTimePlay.visibility = View.GONE
-        backward = findViewById(R.id.liner_backward)
-        forward = findViewById(R.id.liner_forward)
-        play = findViewById(R.id.liner_resume)
+        backward = findViewById(R.id.img_backward)
+        forward = findViewById(R.id.img_forward)
+        play = findViewById(R.id.img_play)
         toolbar = findViewById(R.id.toolbar)
         backButton = findViewById(R.id.img_back)
         tvQuantityImg = findViewById(R.id.tv_quantity_img)
-        imgShare = findViewById(R.id.img_share)
     }
 
     private fun observeBitmap() {
         server = DLNAHttpServer()
         position = intent.getIntExtra("position", 0)
-        Log.d("nextSocket", "observeBitmap: " + position)
         path = intent.getStringExtra("path").toString()
         pathList = Singleton.getInstance().getPathList()
-        Log.d("observeBitmap", "nextSocket: $position")
-        Log.d("pathList", "nextSocket: " + pathList.size)
-        Log.d("pathList", "nextSocket: " +  pathList.getOrNull(position))
-       // setImage(imgViewPhoto,pathList[position])
         val path = "file://$path"
-        Log.d("nextSocket", "setImage: " + path)
         Glide.with(this).load(path).into(imgViewPhoto)
         if (!server.isRunning) {
             Util.runInBackground {
-                server.start(path,this)
-                Log.d("#DLNA", "run: addSubscription ")
+                server.start(path, this)
             }
         }
         val ipAddress = getLocalIpAddress()
         UtilsHttp.setIpAddress(ipAddress)
-        Singleton.getInstance().showMediaImage(UtilsHttp.mediaURL,path,UtilsHttp.mimeType,UtilsHttp.title,UtilsHttp.iconURL,UtilsHttp.description)
+        Singleton.getInstance().showMediaImage(
+            UtilsHttp.mediaURL,
+            path,
+            UtilsHttp.mimeType,
+            UtilsHttp.title,
+            UtilsHttp.iconURL,
+            UtilsHttp.description
+        )
 
     }
 
-    fun setImage(img : ImageView,url : String){
+    fun setImage(img: ImageView, url: String) {
         val path = "file://$url"
-        Log.d("nextSocket", "setImage: " + path)
         Glide.with(this).load(path).into(img)
     }
 
-    fun getLocalIpAddress(): String {
-        val wifiManager =
-            applicationContext.getSystemService(Context.WIFI_SERVICE) as WifiManager
+    private fun getLocalIpAddress(): String {
+        val wifiManager = applicationContext.getSystemService(Context.WIFI_SERVICE) as WifiManager
         val wifiInfo = wifiManager.connectionInfo
         val ipAddress = wifiInfo.getIpAddress()
         return String.format(
             "%d.%d.%d.%d",
-            ipAddress and 0xff, ipAddress shr 8 and 0xff,
-            ipAddress shr 16 and 0xff, ipAddress shr 24 and 0xff
+            ipAddress and 0xff,
+            ipAddress shr 8 and 0xff,
+            ipAddress shr 16 and 0xff,
+            ipAddress shr 24 and 0xff
         )
     }
+
     override fun onDestroy() {
         super.onDestroy()
-        if (server.isRunning){
+        if (server.isRunning) {
             server.stop()
         }
     }
-    private fun nextSocket(pathLocation :String){
-        Log.d("nextSocket", "nextSocket: " + pathLocation)
-        setImage(imgViewPhoto,pathLocation)
+
+    private fun nextSocket(pathLocation: String) {
+        setImage(imgViewPhoto, pathLocation)
         if (!server.isRunning) {
             Util.runInBackground {
                 val ipAddress = getLocalIpAddress()
                 UtilsHttp.setIpAddress(ipAddress)
-                server.start(pathLocation,this)
-                Singleton.getInstance().showMediaImage(UtilsHttp.mediaURL,pathLocation,UtilsHttp.mimeType,UtilsHttp.title,UtilsHttp.iconURL,UtilsHttp.description)
-                Log.d("#DLNA", "run: addSubscription ")
+                server.start(pathLocation, this)
+                Singleton.getInstance().showMediaImage(
+                    UtilsHttp.mediaURL,
+                    pathLocation,
+                    UtilsHttp.mimeType,
+                    UtilsHttp.title,
+                    UtilsHttp.iconURL,
+                    UtilsHttp.description
+                )
             }
-        }else{
+        } else {
             val ipAddress = getLocalIpAddress()
             UtilsHttp.setIpAddress(ipAddress)
             server.stop()
-            server.start(pathLocation,this)
-            Singleton.getInstance().showMediaImage(UtilsHttp.mediaURL,pathLocation,UtilsHttp.mimeType,UtilsHttp.title,UtilsHttp.iconURL,UtilsHttp.description)
-            Log.d("#DLNA", "run: nextSocket $pathLocation")
-
+            server.start(pathLocation, this)
+            Singleton.getInstance().showMediaImage(
+                UtilsHttp.mediaURL,
+                pathLocation,
+                UtilsHttp.mimeType,
+                UtilsHttp.title,
+                UtilsHttp.iconURL,
+                UtilsHttp.description
+            )
         }
     }
+
     private fun setEvent() {
-        backButton.setOnClickListener {onBackPressed() }
+        backButton.setOnClickListener { onBackPressed() }
         currentIndex = position
-        Log.d("nextSocket", "setEvent: " + position)
         play.setOnClickListener {
-            if (!isCheckPlay){
+            if (!isCheckPlay) {
                 seekbarTimePlay.visibility = View.VISIBLE
                 val ipAddress = getLocalIpAddress()
                 UtilsHttp.setIpAddress(ipAddress)
                 setTimeSeekbar()
                 isCheckPlay = true
-            }else{
+            } else {
                 seekbarTimePlay.visibility = View.GONE
                 countDownTimer.cancel()
                 isCheckPlay = false
@@ -151,7 +161,6 @@ class PlayImageActivity : AppCompatActivity() {
 
         }
         backward.setOnClickListener {
-            Log.d("nextSocket", "setEvent back: " + currentIndex)
             if (currentIndex > 0) {
                 setQuantityImage(currentIndex)
                 currentIndex--
@@ -159,7 +168,6 @@ class PlayImageActivity : AppCompatActivity() {
             }
         }
         forward.setOnClickListener {
-            Log.d("nextSocket", "setEvent forward: " + currentIndex)
             if (currentIndex < pathList.size - 1) {
                 setQuantityImage(currentIndex)
                 currentIndex++
@@ -177,32 +185,33 @@ class PlayImageActivity : AppCompatActivity() {
             }
         }
     }
-    private fun setQuantityImage(positionCurrent : Int){
+
+    private fun setQuantityImage(positionCurrent: Int) {
         val currentPosition = positionCurrent + 1
         val positionMax = pathList.size
-        tvQuantityImg.text =  "$currentPosition of $positionMax"
+        tvQuantityImg.text = "$currentPosition of $positionMax"
     }
+
     private fun setTimeSeekbar() {
         seekbarTimePlay.max = Duration
-        countDownTimer =
-            object : CountDownTimer(Duration.toLong(), UPDATE_INTERVAL.toLong()) {
-                override fun onTick(millisUntilFinished: Long) {
-                    seekbarTimePlay.progress = (Duration - millisUntilFinished).toInt()
-                }
+        countDownTimer = object : CountDownTimer(Duration.toLong(), UPDATE_INTERVAL.toLong()) {
+            override fun onTick(millisUntilFinished: Long) {
+                seekbarTimePlay.progress = (Duration - millisUntilFinished).toInt()
+            }
 
-                override fun onFinish() {
-                    if (currentIndex < pathList.size - 1) {
-                        currentIndex++
-                        setImage(imgViewPhoto,pathList[currentIndex])
-                        val path = pathList[currentIndex]
-                        nextSocket(path)
-                        setQuantityImage(currentIndex)
-                        setTimeSeekbar()
-                    } else {
-                        seekbarTimePlay.visibility = View.GONE
-                    }
+            override fun onFinish() {
+                if (currentIndex < pathList.size - 1) {
+                    currentIndex++
+                    setImage(imgViewPhoto, pathList[currentIndex])
+                    val path = pathList[currentIndex]
+                    nextSocket(path)
+                    setQuantityImage(currentIndex)
+                    setTimeSeekbar()
+                } else {
+                    seekbarTimePlay.visibility = View.GONE
                 }
             }
+        }
         countDownTimer.start()
     }
 }

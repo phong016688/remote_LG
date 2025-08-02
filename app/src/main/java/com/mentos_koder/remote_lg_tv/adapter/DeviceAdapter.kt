@@ -46,7 +46,8 @@ class DeviceAdapter(
 
     private class ViewHolder {
         var txtIpAddress: TextView? = null
-        var txtBrand: TextView? = null
+        var txtName: TextView? = null
+        var txtType: TextView? = null
         var logoTv: ImageView? = null
         var linearItem: LinearLayout? = null
     }
@@ -60,8 +61,9 @@ class DeviceAdapter(
         if (view == null) {
             view = LayoutInflater.from(context).inflate(R.layout.item_device, parent, false)
             holder = ViewHolder()
-            holder.txtIpAddress = view.findViewById(R.id.tv_ip_address)
-            holder.txtBrand = view.findViewById(R.id.tv_brand)
+            holder.txtIpAddress = view.findViewById(R.id.tv_ip_value)
+            holder.txtName = view.findViewById(R.id.tv_name_value)
+            holder.txtType = view.findViewById(R.id.tv_type_value)
             holder.logoTv = view.findViewById(R.id.img_logo)
             holder.linearItem = view.findViewById(R.id.linear_item)
             view.tag = holder
@@ -75,11 +77,12 @@ class DeviceAdapter(
         val manufacturer: String = device.manufacturer?.lowercase(Locale.ROOT) ?: ""
 
         holder.txtIpAddress!!.text = view?.context?.getString(R.string.universal_remote)
-        holder.txtBrand!!.text = device.friendlyName
+        holder.txtName!!.text = device.friendlyName
 
         if (name.contains("lg") || serviceName.contains("lg") || manufacturer.contains("lg")) {
             device.logo = R.drawable.ic_tv
             holder.txtIpAddress!!.text = device.ipAddress
+            holder.txtType?.text = "LG"
         }
 
         holder.logoTv!!.setImageResource(device.logo)

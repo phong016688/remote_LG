@@ -2,7 +2,6 @@ package com.mentos_koder.remote_lg_tv.view.fragment
 
 import android.annotation.SuppressLint
 import android.app.Activity
-import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
@@ -14,13 +13,10 @@ import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
 import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.LinearLayout
-import android.widget.TextView
 import android.widget.Toast
-import androidx.activity.result.ActivityResultCallback
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.cardview.widget.CardView
 import androidx.constraintlayout.widget.ConstraintLayout
@@ -40,9 +36,10 @@ import kotlin.math.abs
 import androidx.core.content.edit
 import com.mentos_koder.remote_lg_tv.util.Constants
 import com.mentos_koder.remote_lg_tv.util.showDialogDisconnect
+import com.mentos_koder.remote_lg_tv.view.MainActivity
 
 
-class homeFragment : Fragment(), GestureDetector.OnGestureListener {
+class HomeFragment : Fragment(), GestureDetector.OnGestureListener {
 
     private lateinit var dpadView: DPadView
     private lateinit var powerButton: FrameLayout
@@ -401,7 +398,9 @@ class homeFragment : Fragment(), GestureDetector.OnGestureListener {
             ).show()
         }
         val intent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH).apply {
-            putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM)
+            putExtra(
+                RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM
+            )
             putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault())
             putExtra(RecognizerIntent.EXTRA_PROMPT, "Speak to text")
         }
@@ -413,10 +412,10 @@ class homeFragment : Fragment(), GestureDetector.OnGestureListener {
     }
 
     private val speechResultLauncher = registerForActivityResult(
-        ActivityResultContracts.StartActivityForResult()) { result ->
+        ActivityResultContracts.StartActivityForResult()
+    ) { result ->
         if (result.resultCode == Activity.RESULT_OK && result.data != null) {
-            val speechResult =
-                result.data?.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS)
+            val speechResult = result.data?.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS)
             if (!speechResult.isNullOrEmpty()) {
                 val singleton = Singleton.getInstance()
                 singleton.sendText(speechResult[0])
@@ -506,20 +505,14 @@ class homeFragment : Fragment(), GestureDetector.OnGestureListener {
     }
 
     private fun showFragmentDevice() {
-        val deviceFrag = DeviceFragment()
-        requireActivity().supportFragmentManager.beginTransaction().setCustomAnimations(
-            R.anim.slide_in_right, R.anim.slide_out_left
-        ).replace(R.id.fragment_container, deviceFrag, "findThisFragment")
-            .addToBackStack("findThisFragment").commit()
+        (activity as? MainActivity)?.showFragmentDevice()
     }
 
     override fun onDown(p0: MotionEvent): Boolean {
-        Log.d("TAG", "onDown: ")
         return false
     }
 
     override fun onShowPress(p0: MotionEvent) {
-        Log.d("TAG", "onShowPress: ")
     }
 
     override fun onSingleTapUp(p0: MotionEvent): Boolean {
@@ -532,7 +525,6 @@ class homeFragment : Fragment(), GestureDetector.OnGestureListener {
     }
 
     override fun onLongPress(p0: MotionEvent) {
-        Log.d("TAG", "onLongPress: ")
     }
 
     override fun onFling(p0: MotionEvent?, p1: MotionEvent, p2: Float, p3: Float): Boolean {

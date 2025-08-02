@@ -18,11 +18,6 @@
             android:layout_weight="1"
             android:background="@drawable/background"
             android:layout_height="0dp" />
-<!--        <FrameLayout-->
-<!--            android:layout_width="match_parent"-->
-<!--            android:background="?android:attr/windowBackground"-->
-<!--            android:id="@+id/frameLayout_bannerAdmob"-->
-<!--            android:layout_height="60dp" />-->
     </LinearLayout>
 
 

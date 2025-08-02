@@ -7,44 +7,47 @@
 
     <ImageView
         android:id="@+id/audio_album_art"
-        android:layout_width="60dp"
-        android:layout_height="60dp"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
         android:layout_marginEnd="16dp"
         android:scaleType="centerCrop" />
 
     <LinearLayout
-        android:layout_gravity="center"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_gravity="center"
         android:layout_weight="1"
         android:orientation="vertical">
 
         <TextView
-            android:textColor="@color/white"
             android:id="@+id/tv_audio_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Audio Name"
+            android:text="@string/audio_name"
+            android:textColor="@color/white"
             android:textSize="16sp" />
+
         <RelativeLayout
-            android:layout_marginEnd="20dp"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="20dp">
+
             <TextView
-                android:textColor="@color/white"
                 android:id="@+id/tv_artist"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentStart="true"
                 android:text="00:00"
-                android:textSize="14sp" />
-            <TextView
                 android:textColor="@color/white"
-                android:layout_alignParentEnd="true"
+                android:textSize="14sp" />
+
+            <TextView
                 android:id="@+id/tv_audio_duration"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
                 android:text="00:00"
+                android:textColor="@color/white"
                 android:textSize="14sp" />
         </RelativeLayout>
 

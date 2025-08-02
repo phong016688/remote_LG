@@ -70,7 +70,7 @@ class PlayAudioFragment : Fragment() {
                         ).diskCacheStrategy(DiskCacheStrategy.ALL).into(img_view_audio)
                     }
                 } else {
-                    img_view_audio.setImageResource(R.drawable.ic_audio)
+                    img_view_audio.setImageResource(R.drawable.ic_audio1)
                 }
                 position = audioList.indexOfFirst { it.id == audioFile.id }
                 playAudio(audioFile)
@@ -119,7 +119,6 @@ class PlayAudioFragment : Fragment() {
     }
 
     private fun getListAudioForPosition(pos: Int): AudioFile {
-        Log.d("audioA##", "getListAudioForPosition: " + audioList[pos])
         tv_quantity_img.text = audioList[pos].name
         return audioList[pos]
     }
@@ -128,8 +127,6 @@ class PlayAudioFragment : Fragment() {
         val ipAddress = getLocalIpAddress()
         UtilsHttp.setIpAddress(ipAddress)
         currentIndex = position
-        Log.d("audioA", "setEvent currentIndex: $currentIndex ")
-        Log.d("audioA", "setEvent position: $position ")
         img_back.setOnClickListener {
             requireActivity().supportFragmentManager.popBackStack()
         }

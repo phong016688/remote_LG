@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/background"
+    android:background="@color/bgr_lg"
     tools:context=".view.fragment.PhotoFragment">
 
     <Toolbar
@@ -31,7 +31,7 @@
                 android:layout_centerVertical="true"
                 android:text="@string/device"
                 android:textColor="@color/white"
-                android:textSize="18sp"
+                android:textSize="24sp"
                 android:textStyle="bold" />
 
             <ImageView
@@ -40,7 +40,8 @@
                 android:layout_height="30dp"
                 android:layout_alignParentEnd="true"
                 android:layout_marginEnd="20dp"
-                android:src="@drawable/ic_cast" />
+                android:src="@drawable/ic_cast"
+                android:visibility="gone" />
         </RelativeLayout>
     </Toolbar>
 
@@ -48,5 +49,6 @@
         android:id="@+id/recycler_audio"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/toolbar" />
+        android:layout_below="@id/toolbar"
+        android:padding="8dp" />
 </RelativeLayout>

@@ -26,11 +26,11 @@ import com.mentos_koder.remote_lg_tv.util.Singleton
 import com.mentos_koder.remote_lg_tv.util.clicks
 import com.mentos_koder.remote_lg_tv.util.restoreSwitchState
 import com.mentos_koder.remote_lg_tv.util.showDialogDisconnect
+import com.mentos_koder.remote_lg_tv.view.MainActivity
 
 class CastFragment : Fragment()  {
     private lateinit var adapterCast : CastAdapter
     private lateinit var castRecyclerView : RecyclerView
-    private lateinit var viewPager: ViewPager
     private lateinit var viewPagerContainer: LinearLayout
     private lateinit var linerCast: LinearLayout
     private lateinit var mActivity: Activity
@@ -44,7 +44,6 @@ class CastFragment : Fragment()  {
 
         castRecyclerView = view.findViewById(R.id.recycler_cast)
         castButton = view.findViewById(R.id.img_cast)
-        viewPager = view.findViewById(R.id.viewpager)
         viewPagerContainer = view.findViewById(R.id.viewPagerContainer)
         linerCast = view.findViewById(R.id.liner_cast)
         castRecyclerView.setLayoutManager(GridLayoutManager(context, 2))
@@ -69,7 +68,7 @@ class CastFragment : Fragment()  {
                     singleton.disconnect()
                 }
             } else {
-                showFragmentDevice()
+                (activity as? MainActivity)?.showFragmentDevice()
             }
         }
 
@@ -84,7 +83,6 @@ class CastFragment : Fragment()  {
     }
 
     private fun setupViewPager(typeCast: String) {
-        val adapter = ViewPagerAdapter(childFragmentManager)
         val photoFragment = PhotoFragment()
         val videoFragment = VideoFragment()
         val audioFragment = AudioListFragment()
@@ -92,26 +90,22 @@ class CastFragment : Fragment()  {
             "Photo" -> {
                 requireActivity().supportFragmentManager.beginTransaction()
                     .replace(R.id.fragment_container, photoFragment)
-                    .addToBackStack(null)
+                    .addToBackStack("photoFragment")
                     .commit()
             }
             "Video" -> {
                 requireActivity().supportFragmentManager.beginTransaction()
                     .replace(R.id.fragment_container, videoFragment)
-                    .addToBackStack(null)
+                    .addToBackStack("videoFragment")
                     .commit()
             }
             "Audio" -> {
                 requireActivity().supportFragmentManager.beginTransaction()
                     .replace(R.id.fragment_container, audioFragment)
-                    .addToBackStack(null)
+                    .addToBackStack("audioFragment")
                     .commit()
             }
-            else -> {
-                adapter.addFragment(photoFragment,"photo")
-            }
         }
-        viewPager.adapter = adapter
     }
 
     private val isConnected: Boolean
@@ -138,17 +132,4 @@ class CastFragment : Fragment()  {
             vibrator.vibrate(100)
         }
     }
-
-    private fun showFragmentDevice() {
-        val deviceFrag = DeviceFragment()
-        requireActivity().supportFragmentManager.beginTransaction()
-            .setCustomAnimations(
-                R.anim.slide_in_right,  // enter
-                R.anim.slide_out_left // exit
-            )
-            .replace(R.id.fragment_container, deviceFrag, "findThisFragment")
-            .addToBackStack("findThisFragment")
-            .commit()
-    }
-
 }

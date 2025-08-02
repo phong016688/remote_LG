@@ -1,6 +1,5 @@
 package com.mentos_koder.remote_lg_tv.view.fragment
 
-import android.app.AlertDialog
 import android.content.Context
 import android.os.Bundle
 import android.util.Log
@@ -12,26 +11,27 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.ProgressBar
 import android.widget.TextView
+import androidx.core.content.edit
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.connectsdk.core.AppInfo
 import com.connectsdk.service.command.ServiceCommandError
-import com.mentos_koder.remote_lg_tv.event.OnItemClickListener
 import com.mentos_koder.remote_lg_tv.R
 import com.mentos_koder.remote_lg_tv.adapter.AppAdapter
 import com.mentos_koder.remote_lg_tv.adapter.AppLGAdapter
 import com.mentos_koder.remote_lg_tv.adapter.FavouriteAppAdapter
 import com.mentos_koder.remote_lg_tv.database.AppDatabase
+import com.mentos_koder.remote_lg_tv.event.OnItemClickListener
 import com.mentos_koder.remote_lg_tv.model.Favorite
+import com.mentos_koder.remote_lg_tv.util.Constants
 import com.mentos_koder.remote_lg_tv.util.Singleton
 import com.mentos_koder.remote_lg_tv.util.Singleton.GetImageCallback
+import com.mentos_koder.remote_lg_tv.util.showDialogDisconnect
+import com.mentos_koder.remote_lg_tv.view.MainActivity
 import org.json.JSONArray
 import java.util.Locale
-import androidx.core.content.edit
-import com.mentos_koder.remote_lg_tv.util.Constants
-import com.mentos_koder.remote_lg_tv.util.showDialogDisconnect
 
 
 class AppsFragment : Fragment(), OnItemClickListener {
@@ -69,7 +69,6 @@ class AppsFragment : Fragment(), OnItemClickListener {
         if (singleton.isConnectedCustom) {
             visibleConnect()
             val type = Singleton.getInstance().getTypeDevice().lowercase(Locale.ROOT)
-            Log.d("####", "displayDefaultFragment: $type")
             if (type == "lg") {
                 tvChannel?.text = getString(R.string.all_apps)
                 tvFavourite?.text = getString(R.string.favourite_apps)
@@ -81,7 +80,7 @@ class AppsFragment : Fragment(), OnItemClickListener {
         } else {
             visibleNoConnect()
             btnConnect?.setOnClickListener {
-                showFragmentDevice()
+                (activity as? MainActivity)?.showFragmentDevice()
             }
         }
     }
@@ -123,7 +122,7 @@ class AppsFragment : Fragment(), OnItemClickListener {
                     visibleNoConnect()
                 }
             } else {
-                showFragmentDevice()
+                (activity as? MainActivity)?.showFragmentDevice()
             }
         }
     }
@@ -135,17 +134,6 @@ class AppsFragment : Fragment(), OnItemClickListener {
             )
         )
         val gridLayoutManager = GridLayoutManager(context, 3)
-        gridLayoutManager.spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
-            override fun getSpanSize(position: Int): Int {
-                return when {
-                    appAdapter != null && appAdapter!!.getItemViewType(position) == AppAdapter.VIEW_TYPE_APP -> 1
-                    appLGAdapter != null && appLGAdapter!!.getItemViewType(position) == appLGAdapter!!.VIEW_TYPE_APP -> 1
-                    appAdapter != null && appAdapter!!.getItemViewType(position) == AppAdapter.VIEW_TYPE_TEMPLATE -> 3
-                    appLGAdapter != null && appLGAdapter!!.getItemViewType(position) == appLGAdapter!!.VIEW_TYPE_TEMPLATE -> 3
-                    else -> 1
-                }
-            }
-        }
         channelRecyclerView!!.layoutManager = gridLayoutManager
     }
 
@@ -166,7 +154,6 @@ class AppsFragment : Fragment(), OnItemClickListener {
             }
 
             override fun onError(error: ServiceCommandError, ipAddress: String, name: String) {
-                Log.e("####", "onError: ", error)
                 progressBar!!.visibility = View.GONE
             }
         })
@@ -224,18 +211,9 @@ class AppsFragment : Fragment(), OnItemClickListener {
             checkConnect(singleton)
             loadFavouriteApps()
         } else {
-            showFragmentDevice()
+            (activity as? MainActivity)?.showFragmentDevice()
         }
 
-    }
-
-    private fun showFragmentDevice() {
-        val deviceFragment = DeviceFragment()
-        requireActivity().supportFragmentManager.beginTransaction().setCustomAnimations(
-            R.anim.slide_in_right,  // enter
-            R.anim.slide_out_left // exit
-        ).replace(R.id.fragment_container, deviceFragment, "findThisFragment")
-            .addToBackStack("findThisFragment").commit()
     }
 
     private fun getFavourites(ipAddress: String): MutableList<Favorite> {

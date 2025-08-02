@@ -63,15 +63,9 @@
             android:id="@+id/viewPagerContainer"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@color/white"
+            android:background="@color/bgr_lg"
             android:orientation="vertical"
-            android:visibility="gone">
-
-            <androidx.viewpager.widget.ViewPager
-                android:id="@+id/viewpager"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent" />
-        </LinearLayout>
+            android:visibility="visible" />
 
         <LinearLayout
             android:id="@+id/linear_no_connect"

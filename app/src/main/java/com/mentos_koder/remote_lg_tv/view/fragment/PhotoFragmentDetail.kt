@@ -7,14 +7,12 @@ import android.graphics.BitmapFactory
 import android.graphics.Matrix
 import android.media.ExifInterface
 import android.os.Bundle
-import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.common.reflect.TypeToken
@@ -23,10 +21,11 @@ import com.mentos_koder.remote_lg_tv.R
 import com.mentos_koder.remote_lg_tv.adapter.PhotoAdapter
 import com.mentos_koder.remote_lg_tv.event.OnMediaClickListener
 import com.mentos_koder.remote_lg_tv.util.Singleton
+import com.mentos_koder.remote_lg_tv.util.clicks
+import com.mentos_koder.remote_lg_tv.view.MainActivity
 import com.mentos_koder.remote_lg_tv.view.PlayImageActivity
 import com.mentos_koder.remote_lg_tv.viewmodel.PhotoViewModel
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.File
 import java.io.FileOutputStream
@@ -42,6 +41,7 @@ class PhotoFragmentDetail : Fragment() {
     private val photo = mutableListOf<String>()
     private var isDataLoaded = false
     private var isDataLoadedR = false
+
     companion object {
         private const val ARG_FOLDER_PATH = "folder_path"
 
@@ -56,16 +56,18 @@ class PhotoFragmentDetail : Fragment() {
     }
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
+        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View? {
         val rootView = inflater.inflate(R.layout.fragment_photo_view, container, false)
         recyclerPhoto = rootView.findViewById(R.id.recycler_photo)
-        photoViewModel= ViewModelProvider(requireActivity())[PhotoViewModel::class.java]
+        photoViewModel = ViewModelProvider(requireActivity())[PhotoViewModel::class.java]
         backButton = rootView.findViewById(R.id.img_back)
+        rootView.findViewById<ImageView>(R.id.img_back).clicks {
+            (activity as? MainActivity)?.showFragmentDevice()
+        }
         val imageListJson = arguments?.getString(ARG_FOLDER_PATH) ?: ""
         val type = object : TypeToken<List<String>>() {}.type
-        imageList= Gson().fromJson(imageListJson, type)
+        imageList = Gson().fromJson(imageListJson, type)
         adapterPhoto = PhotoAdapter(photo, requireContext())
         adapterPhoto.setOnImageClickListener(object : OnMediaClickListener {
             override fun onMediaClick(position: Int, path: String) {
@@ -77,24 +79,26 @@ class PhotoFragmentDetail : Fragment() {
             }
 
             override fun onMediaClick(position: Int) {
-                TODO("Not yet implemented")
             }
 
         })
-        backButton.setOnClickListener{
+        backButton.setOnClickListener {
             requireActivity().supportFragmentManager.popBackStack()
         }
-        recyclerPhoto.layoutManager = GridLayoutManager(requireContext(), 3)
-        recyclerPhoto.adapter = adapterPhoto
-        val imageListFile: List<File> = imageList.map { File(it) }
-        imageListFile.forEach {image->
-            lifecycleScope.launch {
-                image.checkAndRotateIfNeeded(requireContext())
-            }
+        rootView.findViewById<ImageView>(R.id.img_cast).setOnClickListener {
+            (activity as? MainActivity)?.showFragmentDevice()
         }
+        recyclerPhoto.layoutManager = GridLayoutManager(requireContext(), 2)
+        recyclerPhoto.adapter = adapterPhoto
+//        val imageListFile: List<File> = imageList.map { File(it) }
+//        imageListFile.forEach {image->
+//            lifecycleScope.launch {
+//                image.checkAndRotateIfNeeded(requireContext())
+//            }
+//        }
         if (!isDataLoaded) {
             imageList.forEach { path ->
-                if (!isDataLoadedR){
+                if (!isDataLoadedR) {
                     adapterPhoto.addPhoto(path)
                 }
             }
@@ -102,16 +106,16 @@ class PhotoFragmentDetail : Fragment() {
         }
         return rootView
     }
+
     override fun onDestroyView() {
         super.onDestroyView()
         Singleton.getInstance()._pathList.clear()
-        Log.d("#AAAA", "onDestroyView: " + Singleton.getInstance()._pathList.size)
     }
 
     private suspend fun File.checkAndRotateIfNeeded(context: Context): String? = try {
-        Log.d("folderImageAdapter", "checkAndRotateIfNeeded start: " )
         val exif = ExifInterface(absolutePath)
-        val orientation = exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL)
+        val orientation =
+            exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL)
         val rotationNeeded = when (orientation) {
             ExifInterface.ORIENTATION_ROTATE_90 -> 90f
             ExifInterface.ORIENTATION_ROTATE_180 -> 180f
@@ -125,7 +129,6 @@ class PhotoFragmentDetail : Fragment() {
     }
 
     private suspend fun File.rotateImageAndGetPath(degrees: Float, context: Context): String? {
-        Log.d("folderImageAdapter", "rotateImageAndxGetPath start: " )
         if (!exists()) return null
         val tempDir = context.cacheDir
         val rotatedFileName = if (tempDir.listFiles()?.any { it.name.contains(name) } == true) {

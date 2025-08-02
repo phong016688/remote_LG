@@ -27,6 +27,7 @@ import com.mentos_koder.remote_lg_tv.util.Singleton
 import com.mentos_koder.remote_lg_tv.util.restoreSwitchState
 import com.mentos_koder.remote_lg_tv.util.showDialogDisconnect
 import com.mentos_koder.remote_lg_tv.view.HelpActivity
+import com.mentos_koder.remote_lg_tv.view.MainActivity
 import com.mentos_koder.remote_lg_tv.view.PrivatePolicyActivity
 
 
@@ -83,7 +84,6 @@ class SettingsFragment : Fragment() {
 
 
     private fun setupEventListeners() {
-
         ring.setOnCheckedChangeListener { _, isChecked ->
             saveSwitchState(isChecked)
             if (isChecked) {
@@ -102,7 +102,7 @@ class SettingsFragment : Fragment() {
                     singleton.disconnect()
                 }
             } else {
-                showFragmentDevice()
+                (activity as? MainActivity)?.showFragmentDevice()
             }
         }
         linearFeedback!!.setOnClickListener {
@@ -182,15 +182,6 @@ class SettingsFragment : Fragment() {
         } catch (e: PackageManager.NameNotFoundException) {
             e.printStackTrace()
         }
-    }
-
-    private fun showFragmentDevice() {
-        val deviceFrag = DeviceFragment()
-        requireActivity().supportFragmentManager.beginTransaction().setCustomAnimations(
-            R.anim.slide_in_right,  // enter
-            R.anim.slide_out_left // exit
-        ).replace(R.id.fragment_container, deviceFrag, "findThisFragment")
-            .addToBackStack("findThisFragment").commit()
     }
 
     private val isConnected: Boolean
