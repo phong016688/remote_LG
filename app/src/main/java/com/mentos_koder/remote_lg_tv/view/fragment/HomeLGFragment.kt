@@ -38,6 +38,8 @@ import com.mentos_koder.remote_lg_tv.view.KeyboardActivity
 import java.util.Locale
 import kotlin.math.abs
 import androidx.core.content.edit
+import com.mentos_koder.remote_lg_tv.util.Constants
+import com.mentos_koder.remote_lg_tv.util.showDialogDisconnect
 
 
 class homeFragment : Fragment(), GestureDetector.OnGestureListener {
@@ -164,17 +166,19 @@ class homeFragment : Fragment(), GestureDetector.OnGestureListener {
                 val ip = device.address
                 val name = device.typeDevice
                 val token = device.token
-                singleton.AutoConnectURI(name, ip, token)
-                val sharedPref = requireActivity().getSharedPreferences("MyPreferences", Context.MODE_PRIVATE)
+                singleton.autoConnectURI(name, ip, token)
+                val sharedPref = requireActivity().getSharedPreferences(
+                    Constants.PREFERENCE_NAME, Context.MODE_PRIVATE
+                )
                 sharedPref.edit {
-                    putString("nameDevice", device.name)
+                    putString(Constants.DEVICE_NAME, device.name)
                 }
                 singleton.setConnected(true)
             } else {
                 singleton.setConnected(false)
             }
         } catch (e: Exception) {
-            Log.e("####", "autoConnect: " + e.message)
+
         }
     }
 
@@ -360,7 +364,11 @@ class homeFragment : Fragment(), GestureDetector.OnGestureListener {
         castButton.clicks {
             performVibrateAction()
             if (isConnected) {
-                showAlertDialogDisconnected("LG")
+                context?.showDialogDisconnect {
+                    val singleton: Singleton = Singleton.getInstance()
+                    singleton.setConnected(false)
+                    singleton.disconnect()
+                }
             } else {
                 showFragmentDevice()
             }
@@ -388,14 +396,12 @@ class homeFragment : Fragment(), GestureDetector.OnGestureListener {
         if (!PermissionUtils.isNetworkAvailable(requireContext())) {
             Toast.makeText(
                 requireContext(),
-                "No internet connection. Please try again later.",
+                getString(R.string.no_internet_connection_please_try_again_later),
                 Toast.LENGTH_SHORT
             ).show()
         }
         val intent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH).apply {
-            putExtra(
-                RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM
-            )
+            putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM)
             putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault())
             putExtra(RecognizerIntent.EXTRA_PROMPT, "Speak to text")
         }
@@ -407,16 +413,16 @@ class homeFragment : Fragment(), GestureDetector.OnGestureListener {
     }
 
     private val speechResultLauncher = registerForActivityResult(
-        ActivityResultContracts.StartActivityForResult(), ActivityResultCallback { result ->
-            if (result.resultCode == Activity.RESULT_OK && result.data != null) {
-                val speechResult =
-                    result.data?.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS)
-                if (!speechResult.isNullOrEmpty()) {
-                    val singleton = Singleton.getInstance()
-                    singleton.sendText(speechResult[0])
-                }
+        ActivityResultContracts.StartActivityForResult()) { result ->
+        if (result.resultCode == Activity.RESULT_OK && result.data != null) {
+            val speechResult =
+                result.data?.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS)
+            if (!speechResult.isNullOrEmpty()) {
+                val singleton = Singleton.getInstance()
+                singleton.sendText(speechResult[0])
             }
-        })
+        }
+    }
 
     private fun setupEventListenersControl() {
         controlTab.clicks {
@@ -502,32 +508,9 @@ class homeFragment : Fragment(), GestureDetector.OnGestureListener {
     private fun showFragmentDevice() {
         val deviceFrag = DeviceFragment()
         requireActivity().supportFragmentManager.beginTransaction().setCustomAnimations(
-                R.anim.slide_in_right, R.anim.slide_out_left
-            ).replace(R.id.fragment_container, deviceFrag, "findThisFragment")
+            R.anim.slide_in_right, R.anim.slide_out_left
+        ).replace(R.id.fragment_container, deviceFrag, "findThisFragment")
             .addToBackStack("findThisFragment").commit()
-    }
-
-    private fun showAlertDialogDisconnected(txtDevice: String): AlertDialog {
-        val alertDialogBuilder = AlertDialog.Builder(
-            activity
-        )
-        val view = getLayoutInflater().inflate(R.layout.item_cast, null)
-        alertDialogBuilder.setView(view)
-        val textName = view.findViewById<TextView>(R.id.textNameDevice)
-        val btnDisconnect = view.findViewById<Button>(R.id.btnDisconnect)
-        val btnCancel = view.findViewById<Button>(R.id.btn_cancel)
-        textName.text = txtDevice
-        val alertDialog = alertDialogBuilder.create()
-        btnDisconnect.clicks {
-            val singleton = Singleton.getInstance()
-            singleton.setConnected(false)
-            singleton.disconnect()
-            //txtDevice.text = ""
-            alertDialog.dismiss()
-        }
-        btnCancel.clicks { alertDialog.dismiss() }
-        alertDialog.show()
-        return alertDialog
     }
 
     override fun onDown(p0: MotionEvent): Boolean {

@@ -6,6 +6,7 @@ import android.content.Context
 import android.content.SharedPreferences
 import android.util.Log
 import android.widget.Toast
+import androidx.core.content.edit
 import com.connectsdk.core.AppInfo
 import com.connectsdk.core.MediaInfo
 import com.connectsdk.core.SubtitleInfo
@@ -54,8 +55,6 @@ import javax.net.ssl.KeyManagerFactory
 import javax.net.ssl.SSLContext
 import javax.net.ssl.TrustManager
 import javax.net.ssl.X509TrustManager
-import androidx.core.content.edit
-import com.mentos_koder.remote_lg_tv.R
 
 class Singleton {
     private var relationshipWebSocket: RelationshipWebSocket? = null
@@ -66,23 +65,14 @@ class Singleton {
     private var nameDevice = ""
     private val contextApp: Context = MainApplication.getAppContext()
     val lG = "lg"
-    var isLoaderDataApi = false
     var checkIpAddress = ""
     private lateinit var sharedPreferences: SharedPreferences
     var mLaunchSession: LaunchSession? = null
     var mMediaControl: MediaControl? = null
     val _pathList = mutableListOf<String>()
     var subtitles: SubtitleInfo? = null
-    var pos = 0
     private var activity: Activity? = null
     val duplicateDevicesList = ArrayList<ConnectableDevice>()
-    val client = OkHttpClient.Builder()
-        .sslSocketFactory(
-            TrustConnection.createUnsafeSSLSocketFactory(),
-            TrustConnection.TrustAllCerts()
-        )
-        .hostnameVerifier { _, _ -> true }
-        .build()
 
     fun addBitmap(path: String) {
         _pathList.add(path)
@@ -98,89 +88,67 @@ class Singleton {
 
     val deviceListenerPinCode = object : DeviceService.DeviceServiceListener {
         override fun onConnectionRequired(service: DeviceService?) {
-            Log.d("####Singleton", "onConnectionRequired")
         }
 
         override fun onConnectionSuccess(service: DeviceService?) {
-            Log.d("####Singleton", "onConnectionSuccess")
             setConnected(true)
         }
 
         override fun onCapabilitiesUpdated(
-            service: DeviceService?,
-            added: MutableList<String>?,
-            removed: MutableList<String>?
+            service: DeviceService?, added: MutableList<String>?, removed: MutableList<String>?
         ) {
-            Log.d("####Singleton", "onCapabilitiesUpdated")
         }
 
         override fun onDisconnect(service: DeviceService?, error: Error?) {
-            Log.d("####Singleton", "onDisconnect")
             setConnected(false)
         }
 
         override fun onConnectionFailure(service: DeviceService?, error: Error?) {
-            Log.d("####Singleton", "onConnectionFailure")
             setConnected(false)
         }
 
         override fun onPairingRequired(
-            service: DeviceService?,
-            pairingType: PairingType?,
-            pairingData: Any?
+            service: DeviceService?, pairingType: PairingType?, pairingData: Any?
         ) {
-            Log.d("####Singleton", "onPairingRequired")
         }
 
         override fun onPairingSuccess(service: DeviceService?) {
-            Log.d("####Singleton", "onPairingSuccess")
         }
 
         override fun onPairingFailed(service: DeviceService?, error: Error?) {
-            Log.d("####Singleton", "onPairingFailed")
         }
 
     }
 
     private val deviceListener = object : ConnectableDeviceListener {
         override fun onPairingRequired(
-            device: ConnectableDevice,
-            service: DeviceService,
-            pairingType: PairingType
+            device: ConnectableDevice, service: DeviceService, pairingType: PairingType
         ) {
-            Log.d("####", "onPairingRequired Connected to " + deviceConnected!!.ipAddress)
             if (pairingType == PairingType.PIN_CODE) {
                 showDialog(deviceConnected!!)
                 service.listener = deviceListenerPinCode
             } else {
-                Log.d("####", "Pin Code wrong: " + pairingType)
                 setConnected(false)
             }
         }
 
         override fun onConnectionFailed(device: ConnectableDevice, error: ServiceCommandError) {
-            Log.d("####", "onConnectFailed")
+            Toast.makeText(activity, error.message, Toast.LENGTH_SHORT).show()
         }
 
         override fun onDeviceReady(device: ConnectableDevice) {
             try {
-                Log.d("####", "onDeviceReady getFriendlyName: " + device.friendlyName)
                 saveRoku()
-            } catch (e: NullPointerException) {
-                Log.e("####", "Error occurred: " + e.message)
+            } catch (_: NullPointerException) {
             }
         }
 
         override fun onDeviceDisconnected(device: ConnectableDevice) {
-            Log.d("###", "Device Disconnected")
         }
 
         override fun onCapabilityUpdated(
-            device: ConnectableDevice,
-            added: List<String>,
-            removed: List<String>
+            device: ConnectableDevice, added: List<String>, removed: List<String>
         ) {
-            Log.d("###", "onCapabilityUpdated")
         }
     }
 
@@ -198,7 +166,6 @@ class Singleton {
             device.typeDevice = deviceConnected?.serviceName ?: ""
             device.typeConnect = "handwork"
             deviceDao.insert(device)
-            Log.d("#####", "Device saved successfully")
         } else {
             val device = deviceDao.getDeviceByAddress(deviceConnected?.ipAddress ?: "")
             if (device != null) {
@@ -208,7 +175,6 @@ class Singleton {
             if (device != null) {
                 deviceDao.update(device)
             }
-            Log.d("#####", "Device updated successfully")
         }
     }
 
@@ -218,14 +184,6 @@ class Singleton {
 
     fun isConnected(): Boolean {
         return isConnectedCustom
-    }
-
-    fun setLoaderDataApiFlag(loaderApi: Boolean) {
-        isLoaderDataApi = loaderApi
-    }
-
-    fun getLoaderDataApi(): Boolean {
-        return isLoaderDataApi
     }
 
     fun setIpAddressFlag(ipAddress: String) {
@@ -249,28 +207,6 @@ class Singleton {
         }
     }
 
-    fun getCommandByKey(eventName: String) {
-        val jsonString = convertEventToJson(eventName)
-        Log.d("####", "getCommandByKey: $jsonString")
-        sendKeyPromise(jsonString)
-    }
-
-    private fun convertEventToJson(eventName: String): JSONObject {
-        val command = JSONObject()
-        try {
-            val params = JSONObject()
-            params.put("Cmd", "Click")
-            params.put("DataOfCmd", eventName)
-            params.put("Option", "false")
-            params.put("TypeOfRemote", "SendRemoteKey")
-            command.put("method", "ms.remote.control")
-            command.put("params", params)
-        } catch (e: JSONException) {
-            e.printStackTrace()
-        }
-        return command
-    }
-
     private fun sendKeyPromise(jsonString: JSONObject) {
         if (relationshipWebSocket != null) {
             relationshipWebSocket?.send(jsonString.toString())
@@ -281,7 +217,6 @@ class Singleton {
 
     fun getCommandByInput(eventName: String?) {
         val jsonString: JSONObject? = eventName?.let { convertEventInputToJson(it) }
-        Log.d("####", "getCommandByKey: $jsonString")
         if (jsonString != null) {
             sendKeyPromise(jsonString)
         }
@@ -311,40 +246,7 @@ class Singleton {
         }
     }
 
-    fun ConnectURI(
-        model: String?,
-        friendlyName: String?,
-        deviceName: String?,
-        ipAddress: String,
-        token: String?
-    ) {
-        val base64Name: String? = deviceName?.let { getStringBase64From(it) }
-        var tokenn = ""
-        if (!token.isNullOrEmpty()) {
-            tokenn = "&token=$token"
-        }
-        val path =
-            "wss://$ipAddress:8002/api/v2/channels/samsung.remote.control?name=$base64Name$tokenn"
-        val uri = createWebSocketURI(path)
-        if (relationshipWebSocket != null && relationshipWebSocket!!.isOpen) {
-            relationshipWebSocket!!.close()
-        }
-        try {
-            val sslContext = createSSLContext()
-            val sslSocketFactory = sslContext.socketFactory
-            relationshipWebSocket =
-                RelationshipWebSocket(uri!!, model, friendlyName, deviceName, ipAddress)
-            relationshipWebSocket!!.setSocketFactory(sslSocketFactory)
-            relationshipWebSocket!!.connectionLostTimeout = 60
-            relationshipWebSocket!!.connect()
-        } catch (e: NoSuchAlgorithmException) {
-            e.printStackTrace()
-        } catch (e: KeyManagementException) {
-            e.printStackTrace()
-        }
-    }
-
-    fun AutoConnectURI(deviceName: String?, ipAddress: String, token: String?) {
+    fun autoConnectURI(deviceName: String?, ipAddress: String, token: String?) {
         var tokenDevice = token
         val base64Name: String? = deviceName?.let { getStringBase64From(it) }
         if (!token.isNullOrEmpty()) {
@@ -381,16 +283,10 @@ class Singleton {
                 ipAdd = ipAddress
                 idApp = appid
                 val baseUrl = "http://$ipAddress:8001/api/v2/$appid"
-                val okHttpClient = OkHttpClient.Builder()
-                    .connectTimeout(30, TimeUnit.SECONDS)
-                    .readTimeout(30, TimeUnit.SECONDS)
-                    .writeTimeout(30, TimeUnit.SECONDS)
-                    .build()
-                retrofit = Retrofit.Builder()
-                    .baseUrl(baseUrl)
-                    .client(okHttpClient)
-                    .addConverterFactory(GsonConverterFactory.create())
-                    .build()
+                val okHttpClient = OkHttpClient.Builder().connectTimeout(30, TimeUnit.SECONDS)
+                    .readTimeout(30, TimeUnit.SECONDS).writeTimeout(30, TimeUnit.SECONDS).build()
+                retrofit = Retrofit.Builder().baseUrl(baseUrl).client(okHttpClient)
+                    .addConverterFactory(GsonConverterFactory.create()).build()
             }
             return retrofit!!
         }
@@ -421,27 +317,23 @@ class Singleton {
         try {
             val ks = KeyStore.getInstance(KeyStore.getDefaultType())
             ks.load(null, null)
-            val trustAllCerts = arrayOf<TrustManager>(
-                object : X509TrustManager {
-                    override fun checkClientTrusted(
-                        chain: Array<X509Certificate>,
-                        authType: String
-                    ) {
-                        Log.d("checkClientTrusted", "checkClientTrusted: ")
-                    }
-
-                    override fun checkServerTrusted(
-                        chain: Array<X509Certificate>,
-                        authType: String
-                    ) {
-                        Log.d("checkServerTrusted", "checkServerTrusted: ")
-                    }
-
-                    override fun getAcceptedIssuers(): Array<X509Certificate> {
-                        return arrayOf()
-                    }
+            val trustAllCerts = arrayOf<TrustManager>(object : X509TrustManager {
+                override fun checkClientTrusted(
+                    chain: Array<X509Certificate>, authType: String
+                ) {
+                    Log.d("checkClientTrusted", "checkClientTrusted: ")
                 }
-            )
+
+                override fun checkServerTrusted(
+                    chain: Array<X509Certificate>, authType: String
+                ) {
+                    Log.d("checkServerTrusted", "checkServerTrusted: ")
+                }
+
+                override fun getAcceptedIssuers(): Array<X509Certificate> {
+                    return arrayOf()
+                }
+            })
             val kmf = KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm())
             kmf.init(ks, null)
             sslContext.init(null, trustAllCerts, SecureRandom())
@@ -485,9 +377,7 @@ class Singleton {
     }
 
     fun handelTypeTV(
-        device: ConnectableDevice?,
-        context: Context,
-        onBack: OnBack?
+        device: ConnectableDevice?, context: Context, onBack: OnBack?
     ) {
         deviceConnected = device
         val type = getTypeTV(deviceConnected).lowercase(Locale.ROOT)
@@ -497,13 +387,14 @@ class Singleton {
         setIpAddressFlag(deviceConnected!!.ipAddress)
         when (type) {
             "lg" -> {
-                sharedPreferences = context.getSharedPreferences("pinCheck", Context.MODE_PRIVATE)
-                val isFirstLogin = sharedPreferences.getBoolean("is_first_login", true)
+                sharedPreferences =
+                    context.getSharedPreferences(Constants.PREFERENCE_NAME, Context.MODE_PRIVATE)
+                val isFirstLogin = sharedPreferences.getBoolean(Constants.IS_FIRST_LOGIN, true)
                 if (isFirstLogin) {
                     deviceConnected!!.setPairingType(PairingType.PIN_CODE)
                     connectDeviceHandle(type, onBack)
                     sharedPreferences.edit {
-                        putBoolean("is_first_login", false)
+                        putBoolean(Constants.IS_FIRST_LOGIN, false)
                     }
                 } else {
                     connectDeviceHandle(type, onBack)
@@ -519,9 +410,10 @@ class Singleton {
 
     fun showDialog(device: ConnectableDevice) {
         val context = activity ?: return
-        val pairingDialog = PairingDialog(context, device)
-        val pairing: AlertDialog = pairingDialog.getPairingDialog("Enter Pairing Code on TV")
-        pairing.show()
+        context.showDialogPairing {
+            for (service in device.services)
+                service.sendPairingKey(it)
+        }
     }
 
     private fun connectDeviceHandle(type: String, onBack: OnBack?) {
@@ -573,9 +465,7 @@ class Singleton {
                 override fun onError(error: ServiceCommandError) {
                     Log.d("####", "onError: $error")
                     callback.onError(
-                        error,
-                        deviceConnected?.ipAddress ?: "",
-                        deviceConnected?.friendlyName ?: ""
+                        error, deviceConnected?.ipAddress ?: "", deviceConnected?.friendlyName ?: ""
                     )
                 }
             })
@@ -591,9 +481,7 @@ class Singleton {
                 override fun onError(error: ServiceCommandError) {
                     Log.d("####", "onError: $error")
                     callback.onError(
-                        error,
-                        deviceConnected?.ipAddress ?: "",
-                        deviceConnected?.friendlyName ?: ""
+                        error, deviceConnected?.ipAddress ?: "", deviceConnected?.friendlyName ?: ""
                     )
                 }
 
@@ -615,11 +503,9 @@ class Singleton {
         if (isConnectedCustom) {
             deviceConnected?.launcher?.launchApp(idLaunchApp, object : Launcher.AppLaunchListener {
                 override fun onSuccess(session: LaunchSession) {
-                    Log.d("####", "onSuccess LaunchSession: ")
                 }
 
                 override fun onError(error: ServiceCommandError) {
-                    Log.d("####", "onError LaunchSession: $error")
                 }
             })
         }
@@ -634,11 +520,8 @@ class Singleton {
         description: String
     ) {
         val pathRP = path.replace(" ", "")
-        val mediaInfo: MediaInfo = MediaInfo.Builder(mediaURL + pathRP, mimeType)
-            .setTitle(title)
-            .setDescription(description)
-            .setIcon(iconURL)
-            .build()
+        val mediaInfo: MediaInfo = MediaInfo.Builder(mediaURL + pathRP, mimeType).setTitle(title)
+            .setDescription(description).setIcon(iconURL).build()
         Log.d("AppTag###", "showMediaImage: " + mediaURL + pathRP)
         val launchListener = object : MediaPlayer.LaunchListener {
             override fun onSuccess(`object`: MediaLaunchObject) {
@@ -679,17 +562,10 @@ class Singleton {
 
         subtitles =
             SubtitleInfo.Builder("http://ec2-54-201-108-205.us-west-2.compute.amazonaws.com/samples/media/sintel_en.vtt")
-                .setMimeType("text/vtt")
-                .setLanguage("en")
-                .setLabel("English subtitles")
-                .build()
+                .setMimeType("text/vtt").setLanguage("en").setLabel("English subtitles").build()
 
-        val mediaInfo: MediaInfo = MediaInfo.Builder(mediaURL + pathRP, mimeType)
-            .setTitle(title)
-            .setDescription(description)
-            .setIcon(iconURL)
-            .setSubtitleInfo(subtitles!!)
-            .build()
+        val mediaInfo: MediaInfo = MediaInfo.Builder(mediaURL + pathRP, mimeType).setTitle(title)
+            .setDescription(description).setIcon(iconURL).setSubtitleInfo(subtitles!!).build()
         val launchListener = object : MediaPlayer.LaunchListener {
             override fun onSuccess(`object`: MediaLaunchObject) {
                 mLaunchSession = `object`.launchSession

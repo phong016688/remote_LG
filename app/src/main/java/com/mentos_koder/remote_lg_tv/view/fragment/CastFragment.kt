@@ -25,6 +25,7 @@ import com.mentos_koder.remote_lg_tv.util.PermissionUtils
 import com.mentos_koder.remote_lg_tv.util.Singleton
 import com.mentos_koder.remote_lg_tv.util.clicks
 import com.mentos_koder.remote_lg_tv.util.restoreSwitchState
+import com.mentos_koder.remote_lg_tv.util.showDialogDisconnect
 
 class CastFragment : Fragment()  {
     private lateinit var adapterCast : CastAdapter
@@ -62,7 +63,11 @@ class CastFragment : Fragment()  {
         castButton?.clicks {
             performVibrateAction()
             if (isConnected) {
-                showAlertDialogDisconnected()
+                context?.showDialogDisconnect {
+                    val singleton: Singleton = Singleton.getInstance()
+                    singleton.setConnected(false)
+                    singleton.disconnect()
+                }
             } else {
                 showFragmentDevice()
             }
@@ -132,29 +137,6 @@ class CastFragment : Fragment()  {
         if (checkRing() == true) {
             vibrator.vibrate(100)
         }
-    }
-
-    private fun showAlertDialogDisconnected(): AlertDialog {
-        val alertDialogBuilder = AlertDialog.Builder(
-            activity
-        )
-        val view: View = getLayoutInflater().inflate(R.layout.item_cast, null)
-        alertDialogBuilder.setView(view)
-        val textName = view.findViewById<TextView>(R.id.textNameDevice)
-        val btnDisconnect = view.findViewById<Button>(R.id.btnDisconnect)
-        val btnCancel = view.findViewById<Button>(R.id.btn_cancel)
-        textName.text = getString(R.string.tv_device)
-        val alertDialog = alertDialogBuilder.create()
-        btnDisconnect.setOnClickListener {
-            val singleton: Singleton =
-                Singleton.getInstance()
-            singleton.setConnected(false)
-            singleton.disconnect()
-            alertDialog.dismiss()
-        }
-        btnCancel.setOnClickListener { alertDialog.dismiss() }
-        alertDialog.show()
-        return alertDialog
     }
 
     private fun showFragmentDevice() {

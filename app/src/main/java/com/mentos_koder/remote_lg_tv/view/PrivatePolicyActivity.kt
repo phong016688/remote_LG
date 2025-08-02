@@ -30,11 +30,13 @@ class PrivatePolicyActivity : AppCompatActivity() {
 
         val url = "https://aaaaaa.blogspot.com/2024/02/privacy-policy.html"
 
-        if (isTrustedUrl(url)) {
-            webViewHelp.loadUrl(url)
-        } else {
-            webViewHelp.loadData("<h1>Untrusted URL</h1>", "text/html", "UTF-8")
-        }
+       kotlin.runCatching {
+           if (isTrustedUrl(url)) {
+               webViewHelp.loadUrl(url)
+           } else {
+               webViewHelp.loadData("<h1>Untrusted URL</h1>", "text/html", "UTF-8")
+           }
+       }
     }
 
     private fun isTrustedUrl(url: String): Boolean {

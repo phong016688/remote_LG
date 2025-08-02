@@ -85,7 +85,7 @@ public class RemoteCameraApi {
 
         try {
             if (context == null) throw new Exception("Invalid arguments");
-            if (RemoteCameraControl.isRunning(context) == false) throw new Exception("Remote Camera is NOT running");
+            if (!RemoteCameraControl.isRunning(context)) throw new Exception("Remote Camera is NOT running");
 
             mLocalBroadcastEx.registerOnce(context, CameraServiceIF.ACTION_STOP_RESPONSE, intent -> {
                 boolean result = intent.getBooleanExtra(CameraServiceIF.EXTRA_RESULT, false);

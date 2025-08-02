@@ -83,6 +83,7 @@ media3Exoplayer = "1.5.1"
 ksp = "2.0.20-1.0.25"
 google-service = "4.4.2"
 crashlytics = "3.0.3"
+lottie = "6.6.3"
 
 [libraries]
 android-spinkit = { module = "com.github.ybq:Android-SpinKit", version.ref = "androidSpinkit" }
@@ -171,6 +172,7 @@ androidx-cardview = { group = "androidx.cardview", name = "cardview", version.re
 androidx-media3-datasource = { group = "androidx.media3", name = "media3-datasource", version.ref = "media3Datasource" }
 androidx-media3-extractor = { group = "androidx.media3", name = "media3-extractor", version.ref = "media3Extractor" }
 androidx-media3-exoplayer = { group = "androidx.media3", name = "media3-exoplayer", version.ref = "media3Exoplayer" }
+lottie = { module = "com.airbnb.android:lottie", version.ref = "lottie" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }

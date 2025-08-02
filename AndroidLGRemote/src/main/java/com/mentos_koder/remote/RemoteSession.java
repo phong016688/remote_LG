@@ -114,9 +114,6 @@ public class RemoteSession {
                 }
             }).start();
 
-            Remotemessage.RemoteMessage remoteMessage = waitForMessage();
-//            logger.info(remoteMessage.toString());
-
             byte[] remoteConfigure = mMessageManager.createRemoteConfigure(622, "ROG Strix G531GT_G531GT", "ASUSTeK COMPUTER INC.", 1, "1");
 
             outputStream.write(remoteConfigure);

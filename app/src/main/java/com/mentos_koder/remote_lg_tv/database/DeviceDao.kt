@@ -6,7 +6,7 @@ import androidx.room.Insert
 import androidx.room.Query
 import androidx.room.Update
 import com.mentos_koder.remote_lg_tv.model.Device
-import com.mentos_koder.remote_lg_tv.model.Favourite
+import com.mentos_koder.remote_lg_tv.model.Favorite
 @Dao
 interface DeviceDao {
     @Query("SELECT COUNT(*) FROM devices WHERE address = :address")
@@ -22,20 +22,20 @@ interface DeviceDao {
     @Insert
     fun insert(device: Device)
 
-    @Query("SELECT COUNT(*) FROM favourite WHERE id = :id")
+    @Query("SELECT COUNT(*) FROM favorite WHERE id = :id")
     fun countFavouriteWithId(id: String?): Int
 
-    @Query("SELECT * FROM favourite WHERE isFavourite = 1 AND ipAddress = :ipAddress")
-    fun getFavouritesByIp(ipAddress: String?): MutableList<Favourite?>?
+    @Query("SELECT * FROM favorite WHERE isFavourite = 1 AND ipAddress = :ipAddress")
+    fun getFavouritesByIp(ipAddress: String?): MutableList<Favorite?>?
 
     @Insert
-    fun insertFavourite(favourite: Favourite)
+    fun insertFavourite(favorite: Favorite)
 
 
-    @Query("UPDATE favourite SET isFavourite = :isFavourite WHERE id = :id")
+    @Query("UPDATE favorite SET isFavourite = :isFavourite WHERE id = :id")
     fun updateFavourite(isFavourite: Boolean, id: String?)
 
-    @Query("DELETE from favourite WHERE id = :id")
+    @Query("DELETE from favorite WHERE id = :id")
     fun deleteFavourite(id: String?)
 
     @Update

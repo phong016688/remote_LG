@@ -1,6 +1,6 @@
 package com.mentos_koder.remote_lg_tv.view.fragment
 
-import android.app.AlertDialog
+import android.Manifest
 import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
@@ -8,28 +8,29 @@ import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
 import android.os.Vibrator
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
 import android.widget.ImageButton
 import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
-import androidx.core.content.ContextCompat
-import android.Manifest
 import androidx.appcompat.widget.SwitchCompat
 import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
+import androidx.core.content.edit
+import androidx.core.net.toUri
 import androidx.fragment.app.Fragment
 import com.mentos_koder.remote_lg_tv.R
+import com.mentos_koder.remote_lg_tv.util.Constants
 import com.mentos_koder.remote_lg_tv.util.Singleton
 import com.mentos_koder.remote_lg_tv.util.restoreSwitchState
+import com.mentos_koder.remote_lg_tv.util.showDialogDisconnect
 import com.mentos_koder.remote_lg_tv.view.HelpActivity
 import com.mentos_koder.remote_lg_tv.view.PrivatePolicyActivity
 
 
-class settingsFragment : Fragment() {
+class SettingsFragment : Fragment() {
     private var castSettingButton: ImageButton? = null
     private var linearShareApp: LinearLayout? = null
     private var linearFeedback: LinearLayout? = null
@@ -40,7 +41,7 @@ class settingsFragment : Fragment() {
     private var tvVersion: TextView? = null
     private lateinit var ring: SwitchCompat
     private val VIBRATE_PERMISSION_REQUEST_CODE = 1001
-    private val SHARED_PREFS_NAME = "MyPrefs"
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
@@ -48,10 +49,10 @@ class settingsFragment : Fragment() {
         initializeViews(view)
         ring.isChecked = context?.let { restoreSwitchState(it) } == true
         val sharedPreferences =
-            requireContext().getSharedPreferences("MyPrefs", Context.MODE_PRIVATE)
-        val switchState = sharedPreferences.getBoolean("switchState", true)
+            requireContext().getSharedPreferences(Constants.PREFERENCE_NAME, Context.MODE_PRIVATE)
+        val switchState = sharedPreferences.getBoolean(Constants.SWITCH_STATE, true)
         ring.isChecked = switchState
-        VersionName()
+        versionName()
         setupEventListeners()
         return view
     }
@@ -76,8 +77,8 @@ class settingsFragment : Fragment() {
 
     private fun saveSwitchState(isChecked: Boolean) {
         val sharedPreferences =
-            requireContext().getSharedPreferences(SHARED_PREFS_NAME, Context.MODE_PRIVATE)
-        sharedPreferences.edit().putBoolean("switchState", isChecked).apply()
+            requireContext().getSharedPreferences(Constants.PREFERENCE_NAME, Context.MODE_PRIVATE)
+        sharedPreferences.edit { putBoolean(Constants.SWITCH_STATE, isChecked) }
     }
 
 
@@ -87,17 +88,19 @@ class settingsFragment : Fragment() {
             saveSwitchState(isChecked)
             if (isChecked) {
                 requestVibratePermissionIfNeeded()
-                Log.d("SwitchRing", "Switch đã được bật")
             } else {
                 revokeVibratePermission()
-                Log.d("SwitchRing", "Switch đã được tắt")
             }
         }
 
         castSettingButton!!.setOnClickListener {
             performVibrateAction()
             if (isConnected) {
-                showAlertDialogDisconnected()
+                context?.showDialogDisconnect {
+                    val singleton: Singleton = Singleton.getInstance()
+                    singleton.setConnected(false)
+                    singleton.disconnect()
+                }
             } else {
                 showFragmentDevice()
             }
@@ -150,9 +153,7 @@ class settingsFragment : Fragment() {
         if (requestCode == VIBRATE_PERMISSION_REQUEST_CODE) {
             if (grantResults.isNotEmpty() && grantResults[0] != PackageManager.PERMISSION_GRANTED) {
                 Toast.makeText(
-                    activity,
-                    "Ứng dụng cần quyền rung để thực hiện chức năng này",
-                    Toast.LENGTH_SHORT
+                    activity, getString(R.string.app_need_vibrate_permission), Toast.LENGTH_SHORT
                 ).show()
             }
         }
@@ -172,13 +173,12 @@ class settingsFragment : Fragment() {
     }
 
 
-    private fun VersionName() {
+    private fun versionName() {
         try {
             val packageInfo =
                 requireActivity().packageManager.getPackageInfo(requireContext().packageName, 0)
             versionName = packageInfo.versionName
-            tvVersion!!.text = "Version: $versionName"
-            Log.d("456464", "VersionName: $versionName")
+            tvVersion!!.text = "${getString(R.string.version_app)}: $versionName"
         } catch (e: PackageManager.NameNotFoundException) {
             e.printStackTrace()
         }
@@ -187,32 +187,10 @@ class settingsFragment : Fragment() {
     private fun showFragmentDevice() {
         val deviceFrag = DeviceFragment()
         requireActivity().supportFragmentManager.beginTransaction().setCustomAnimations(
-                R.anim.slide_in_right,  // enter
-                R.anim.slide_out_left // exit
-            ).replace(R.id.fragment_container, deviceFrag, "findThisFragment")
+            R.anim.slide_in_right,  // enter
+            R.anim.slide_out_left // exit
+        ).replace(R.id.fragment_container, deviceFrag, "findThisFragment")
             .addToBackStack("findThisFragment").commit()
-    }
-
-    private fun showAlertDialogDisconnected(): AlertDialog {
-        val alertDialogBuilder = AlertDialog.Builder(
-            activity
-        )
-        val view: View = getLayoutInflater().inflate(R.layout.item_cast, null)
-        alertDialogBuilder.setView(view)
-        val textName = view.findViewById<TextView>(R.id.textNameDevice)
-        val btnDisconnect = view.findViewById<Button>(R.id.btnDisconnect)
-        val btnCancel = view.findViewById<Button>(R.id.btn_cancel)
-        textName.text = "TV Device"
-        val alertDialog = alertDialogBuilder.create()
-        btnDisconnect.setOnClickListener {
-            val singleton: Singleton = Singleton.getInstance()
-            singleton.setConnected(false)
-            singleton.disconnect()
-            alertDialog.dismiss()
-        }
-        btnCancel.setOnClickListener { alertDialog.dismiss() }
-        alertDialog.show()
-        return alertDialog
     }
 
     private val isConnected: Boolean
@@ -225,11 +203,10 @@ class settingsFragment : Fragment() {
         val appName = getString(R.string.app_name)
         val emailSubject = "Report Bug issue & suggested - Version: $versionName $appName"
         val emailBody = "Please describe your issue or suggested here"
-        val uri = Uri.parse(
-            "mailto:@gmail.com" + "?subject=" + Uri.encode(emailSubject) + "&body=" + Uri.encode(
+        val uri =
+            ("mailto:personpick11@gmail.com" + "?subject=" + Uri.encode(emailSubject) + "&body=" + Uri.encode(
                 emailBody
-            )
-        )
+            )).toUri()
         val emailIntent = Intent(Intent.ACTION_SENDTO, uri)
         try {
             startActivity(emailIntent)
@@ -239,28 +216,27 @@ class settingsFragment : Fragment() {
     }
 
     private fun shareApp() {
-        val packageName = "com.mentos_koder.universalremote"
+        val packageName = "com.mentos_koder.remote_lg_tv"
         val appName = getString(R.string.app_name)
-        val emailSubject = appName
         val emailBody =
-            ("I am using " + appName + "to plan my day, It's really a convenientnt to-do list. Share it with you now." + "Download it here:" + " https://play.google.com/store/apps/details?id=" + packageName)
+            ("I am using " + appName + "to plan my day, It's really a convenient to-do list. Share it with you now." + "Download it here:" + " https://play.google.com/store/apps/details?id=" + packageName)
         val emailIntent = Intent(Intent.ACTION_SEND)
         emailIntent.setType("message/rfc822")
         emailIntent.putExtra(Intent.EXTRA_EMAIL, arrayOf(" "))
-        emailIntent.putExtra(Intent.EXTRA_SUBJECT, emailSubject)
+        emailIntent.putExtra(Intent.EXTRA_SUBJECT, appName)
         emailIntent.putExtra(Intent.EXTRA_TEXT, emailBody)
         startActivity(Intent.createChooser(emailIntent, "Send email..."))
     }
 
     private fun openPlayStore() {
-        val packageName = "com.mentos_koder.universalremote"
+        val packageName = "com.mentos_koder.remote_lg_tv"
         try {
-            startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=$packageName")))
+            startActivity(Intent(Intent.ACTION_VIEW, "market://details?id=$packageName".toUri()))
         } catch (e: ActivityNotFoundException) {
             startActivity(
                 Intent(
                     Intent.ACTION_VIEW,
-                    Uri.parse("https://play.google.com/store/apps/details?id=$packageName")
+                    "https://play.google.com/store/apps/details?id=$packageName".toUri()
                 )
             )
         }

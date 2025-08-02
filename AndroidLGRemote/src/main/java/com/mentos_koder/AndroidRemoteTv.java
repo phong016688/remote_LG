@@ -54,17 +54,14 @@ public class AndroidRemoteTv extends BaseAndroidRemoteTv {
             mPairingSession.pair(ip, 6467, new PairingListener() {
                 @Override
                 public void onSessionCreated() {
-                    Log.d("AndroidRemoteTv", "onSessionCreated: ");
                 }
 
                 @Override
                 public void onPerformInputDeviceRole() {
-                    Log.d("AndroidRemoteTv", "onPerformInputDeviceRole: ");
                 }
 
                 @Override
                 public void onPerformOutputDeviceRole(byte[] gamma) {
-                    Log.d("AndroidRemoteTv", "onPerformOutputDeviceRole: " + gamma);
                 }
 
                 @Override
@@ -74,12 +71,10 @@ public class AndroidRemoteTv extends BaseAndroidRemoteTv {
 
                 @Override
                 public void onSessionEnded() {
-                    Log.d("AndroidRemoteTv", "onSessionEnded: " );
                 }
 
                 @Override
                 public void onError(String message) {
-                    Log.e("AndroidRemoteTv", "onError: " + message );
                 }
 
                 @Override

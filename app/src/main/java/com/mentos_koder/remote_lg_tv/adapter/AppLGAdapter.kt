@@ -16,7 +16,8 @@ import com.mentos_koder.remote_lg_tv.event.OnItemClickListener
 import com.mentos_koder.remote_lg_tv.R
 import com.mentos_koder.remote_lg_tv.database.AppDatabase
 import com.mentos_koder.remote_lg_tv.database.DeviceDao
-import com.mentos_koder.remote_lg_tv.model.Favourite
+import com.mentos_koder.remote_lg_tv.model.Favorite
+import com.mentos_koder.remote_lg_tv.util.Constants
 import com.mentos_koder.remote_lg_tv.util.Singleton
 import com.mentos_koder.remote_lg_tv.util.restoreSwitchState
 import org.json.JSONArray
@@ -50,17 +51,22 @@ class AppLGAdapter(
                 val view: View = inflater.inflate(R.layout.item_app, parent, false)
                 ViewHolder(view)
             }
+
             VIEW_TYPE_TEMPLATE -> {
-                    val view: View = inflater.inflate(R.layout.item_app, parent, false)
-                    ViewHolder(view)
+                val view: View = inflater.inflate(R.layout.item_app, parent, false)
+                ViewHolder(view)
             }
+
             else -> throw IllegalArgumentException("Invalid view type")
         }
     }
 
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-        Log.d("Adapter", "onBindViewHolder - position: $position, viewType: ${getItemViewType(position)}")
+        Log.d(
+            "Adapter",
+            "onBindViewHolder - position: $position, viewType: ${getItemViewType(position)}"
+        )
         when (getItemViewType(position)) {
             VIEW_TYPE_APP -> {
                 val app = listApp.getJSONObject(position)
@@ -72,18 +78,15 @@ class AppLGAdapter(
 
 
     private fun insertDevice(
-        favourite: Favourite,
-        app: JSONObject,
-        ip: String,
-        deviceDao: DeviceDao
+        favorite: Favorite, app: JSONObject, ip: String, deviceDao: DeviceDao
     ) {
-        favourite.id = app.getString("id")
-        favourite.name = app.getString("title")
-        favourite.iconLink = ip
-        favourite.ipAddress = ipAddress
-        favourite.recentDate = currentTime
-        favourite.favourite = true
-        deviceDao.insertFavourite(favourite)
+        favorite.id = app.getString("id")
+        favorite.name = app.getString("title")
+        favorite.iconLink = ip
+        favorite.ipAddress = ipAddress
+        favorite.recentDate = currentTime
+        favorite.favourite = true
+        deviceDao.insertFavourite(favorite)
     }
 
     private val currentTime: String
@@ -111,7 +114,7 @@ class AppLGAdapter(
         private var txtNameChannel: TextView = itemView.findViewById(R.id.txt_NameChannel)
         private var imgChannel: ImageView = itemView.findViewById(R.id.img_Channel)
         private var imgFavourite: ImageView = itemView.findViewById(R.id.img_favourite)
-        fun bind(app: JSONObject){
+        fun bind(app: JSONObject) {
             val appName = app.getString("title")
             val iconUrl = app.getString("icon")
             val id = app.getString("id")
@@ -122,32 +125,30 @@ class AppLGAdapter(
             val bitmapLoaderTask = BitmapLoaderTask(imgChannel)
             bitmapLoaderTask.execute(iconUrl)
 
-            val preferences = context.getSharedPreferences("MyPrefsFile", Context.MODE_PRIVATE)
-            val isFavourite = preferences.getBoolean("isFavourite_" + id, false)
+            val preferences =
+                context.getSharedPreferences(Constants.PREFERENCE_NAME, Context.MODE_PRIVATE)
+            val isFavourite = preferences.getBoolean(Constants.KEY_FAVORITE + id, false)
 
             imgFavourite.isSelected = isFavourite
             imgFavourite.setOnClickListener { _: View? ->
                 performVibrateAction()
-                val isFavouriteCheck =
-                    preferences.getBoolean("isFavourite_" + id, false)
+                val isFavouriteCheck = preferences.getBoolean(Constants.KEY_FAVORITE + id, false)
                 val editor = preferences.edit()
                 val deviceDao = AppDatabase.getDatabase(context).deviceDao()
-                val favourite = Favourite()
+                val favorite = Favorite()
                 val count = deviceDao.countFavouriteWithId(id)
 
                 if (isFavouriteCheck) {
                     imgFavourite.isSelected = false
-                    editor.putBoolean("isFavourite_" + id, false).apply()
+                    editor.putBoolean(Constants.KEY_FAVORITE + id, false).apply()
                     deviceDao.deleteFavourite(id)
                 } else {
                     imgFavourite.isSelected = true
-                    editor.putBoolean("isFavourite_" + id, true).apply()
+                    editor.putBoolean(Constants.KEY_FAVORITE + id, true).apply()
                     if (count > 0) {
                         deviceDao.updateFavourite(true, id)
-                        Log.d("####", "update")
                     } else {
-                        insertDevice(favourite, app, iconUrl, deviceDao)
-                        Log.d("####", "insert")
+                        insertDevice(favorite, app, iconUrl, deviceDao)
                     }
                 }
                 itemClickListener.onItemClicked()
@@ -159,23 +160,28 @@ class AppLGAdapter(
         }
 
     }
-    private fun checkRing() : Boolean {
-        val boolean =  context.let { restoreSwitchState(it) }
+
+    private fun checkRing(): Boolean {
+        val boolean = restoreSwitchState(context)
         return boolean
     }
+
     private fun performVibrateAction() {
         val vibrator = context.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
-        if (checkRing() == true) {
+        if (checkRing()) {
             vibrator.vibrate(100)
         }
     }
-    inner class TemplateViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-    }
+
     private object CustomTrustManager : X509TrustManager {
-        override fun checkClientTrusted(chain: Array<java.security.cert.X509Certificate>, authType: String) {
+        override fun checkClientTrusted(
+            chain: Array<java.security.cert.X509Certificate>, authType: String
+        ) {
         }
 
-        override fun checkServerTrusted(chain: Array<java.security.cert.X509Certificate>, authType: String) {
+        override fun checkServerTrusted(
+            chain: Array<java.security.cert.X509Certificate>, authType: String
+        ) {
         }
 
         override fun getAcceptedIssuers(): Array<java.security.cert.X509Certificate> {
@@ -200,7 +206,9 @@ class AppLGAdapter(
             e.printStackTrace()
         }
     }
-    private inner class BitmapLoaderTask(private val imgChannel: ImageView) : AsyncTask<String, Void, Bitmap?>() {
+
+    private inner class BitmapLoaderTask(private val imgChannel: ImageView) :
+        AsyncTask<String, Void, Bitmap?>() {
         override fun doInBackground(vararg params: String): Bitmap? {
             val urlString = params[0]
             return loadBitmapFromUrl(urlString) { url ->
@@ -218,7 +226,9 @@ class AppLGAdapter(
         }
     }
 
-    private fun loadBitmapFromUrl(urlString: String, trustManagerFunction: (String) -> Unit): Bitmap? {
+    private fun loadBitmapFromUrl(
+        urlString: String, trustManagerFunction: (String) -> Unit
+    ): Bitmap? {
         var connection: HttpURLConnection? = null
         var inputStream: InputStream? = null
         var bitmap: Bitmap? = null
@@ -233,17 +243,12 @@ class AppLGAdapter(
             if (connection.responseCode == HttpURLConnection.HTTP_OK) {
                 inputStream = BufferedInputStream(connection.inputStream)
                 bitmap = BitmapFactory.decodeStream(inputStream)
-            } else {
-                Log.e("LoadBitmapFromUrl", "Failed to load bitmap from URL. Response code: ${connection.responseCode}")
-                Log.e("LoadBitmapFromUrl", "Failed to load bitmap from URL. Response Message: ${connection.responseMessage}")
             }
-        } catch (e: Exception) {
-            Log.e("LoadBitmapFromUrl", "Error loading bitmap from URL: ${e.message}", e)
+        } catch (_: Exception) {
         } finally {
             inputStream?.close()
             connection?.disconnect()
         }
-
         return bitmap
     }
 }

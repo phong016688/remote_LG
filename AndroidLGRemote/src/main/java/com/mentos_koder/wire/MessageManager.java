@@ -19,8 +19,6 @@ public abstract class MessageManager {
         byte[] buf = new byte[mPacketBuffer.position()];
         System.arraycopy(mPacketBuffer.array(), mPacketBuffer.arrayOffset(), buf, 0, mPacketBuffer.position());
         mPacketBuffer.clear();
-//        logger.debug("Sending bytes {}", Arrays.toString(buf));
-        Log.d("AndroidRemoteTv", "addLengthAndCreate: "+Arrays.toString(buf));
         return buf;
     }
 

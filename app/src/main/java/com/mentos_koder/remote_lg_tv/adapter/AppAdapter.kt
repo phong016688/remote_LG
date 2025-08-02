@@ -2,7 +2,6 @@ package com.mentos_koder.remote_lg_tv.adapter
 
 import android.content.Context
 import android.os.Vibrator
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -15,7 +14,9 @@ import com.mentos_koder.remote_lg_tv.event.OnItemClickListener
 import com.mentos_koder.remote_lg_tv.R
 import com.mentos_koder.remote_lg_tv.database.AppDatabase
 import com.mentos_koder.remote_lg_tv.database.DeviceDao
-import com.mentos_koder.remote_lg_tv.model.Favourite
+import com.mentos_koder.remote_lg_tv.model.Favorite
+import com.mentos_koder.remote_lg_tv.util.Constants.KEY_FAVORITE
+import com.mentos_koder.remote_lg_tv.util.Constants.PREFERENCE_NAME
 import com.mentos_koder.remote_lg_tv.util.Singleton
 import com.mentos_koder.remote_lg_tv.util.restoreSwitchState
 import java.text.SimpleDateFormat
@@ -27,18 +28,21 @@ class AppAdapter(
     private val listApp: List<AppInfo>,
     private val ipAddress: String,
     private val itemClickListener: OnItemClickListener
-) :
-    RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
-    val VIEW_TYPE_APP = 1
-    val VIEW_TYPE_TEMPLATE = 2
+    companion object {
+        const val VIEW_TYPE_APP = 1
+        const val VIEW_TYPE_TEMPLATE = 2
+    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return when (viewType) {
             VIEW_TYPE_APP -> {
-                val view: View = LayoutInflater.from(parent.context).inflate(R.layout.item_app, parent, false)
+                val view: View =
+                    LayoutInflater.from(parent.context).inflate(R.layout.item_app, parent, false)
                 AppViewHolder(view)
             }
+
             else -> throw IllegalArgumentException("Invalid view type")
         }
     }
@@ -67,18 +71,15 @@ class AppAdapter(
     }
 
     private fun insertDevice(
-        favourite: Favourite,
-        device: AppInfo,
-        ip: String,
-        deviceDao: DeviceDao
+        favorite: Favorite, device: AppInfo, ip: String, deviceDao: DeviceDao
     ) {
-        favourite.id = device.id
-        favourite.name = device.name
-        favourite.iconLink = ip
-        favourite.ipAddress = ipAddress
-        favourite.recentDate = currentTime
-        favourite.favourite = true
-        deviceDao.insertFavourite(favourite)
+        favorite.id = device.id
+        favorite.name = device.name
+        favorite.iconLink = ip
+        favorite.ipAddress = ipAddress
+        favorite.recentDate = currentTime
+        favorite.favourite = true
+        deviceDao.insertFavourite(favorite)
     }
 
     private val currentTime: String
@@ -90,48 +91,39 @@ class AppAdapter(
         }
 
     inner class AppViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        var txtNameChannel: TextView
-        var imgChannel: ImageView
-        var imgFavourite: ImageView
-
-        init {
-            txtNameChannel = itemView.findViewById<TextView>(R.id.txt_NameChannel)
-            imgChannel = itemView.findViewById<ImageView>(R.id.img_Channel)
-            imgFavourite = itemView.findViewById<ImageView>(R.id.img_favourite)
-        }
+        private var txtNameChannel: TextView = itemView.findViewById(R.id.txt_NameChannel)
+        private var imgChannel: ImageView = itemView.findViewById(R.id.img_Channel)
+        private var imgFavourite: ImageView = itemView.findViewById(R.id.img_favourite)
 
         fun bind(device: AppInfo) {
             txtNameChannel.text = device.name
-            val ip = "http://" + ipAddress + ":8060/query/icon/" + device.id
+            val ip = getIp(device)
 
             Glide.with(context).load(ip).into(imgChannel)
 
-            val preferences = context.getSharedPreferences("MyPrefsFile", Context.MODE_PRIVATE)
-            val isFavourite = preferences.getBoolean("isFavourite_" + device.id, false)
+            val preferences = context.getSharedPreferences(PREFERENCE_NAME, Context.MODE_PRIVATE)
+            val isFavourite = preferences.getBoolean(KEY_FAVORITE + device.id, false)
 
             imgFavourite.isSelected = isFavourite
             imgFavourite.setOnClickListener {
                 performVibrateAction()
-                val isFavouriteCheck =
-                    preferences.getBoolean("isFavourite_" + device.id, false)
+                val isFavouriteCheck = preferences.getBoolean(KEY_FAVORITE + device.id, false)
                 val editor = preferences.edit()
                 val deviceDao = AppDatabase.getDatabase(context).deviceDao()
-                val favourite = Favourite()
+                val favorite = Favorite()
                 val count = deviceDao.countFavouriteWithId(device.id)
 
                 if (isFavouriteCheck) {
                     imgFavourite.isSelected = false
-                    editor.putBoolean("isFavourite_" + device.id, false).apply()
+                    editor.putBoolean(KEY_FAVORITE + device.id, false).apply()
                     deviceDao.deleteFavourite(device.id)
                 } else {
                     imgFavourite.isSelected = true
-                    editor.putBoolean("isFavourite_" + device.id, true).apply()
+                    editor.putBoolean(KEY_FAVORITE + device.id, true).apply()
                     if (count > 0) {
                         deviceDao.updateFavourite(true, device.id)
-                        Log.d("####", "update")
                     } else {
-                        insertDevice(favourite, device, ip, deviceDao)
-                        Log.d("####", "insert")
+                        insertDevice(favorite, device, ip, deviceDao)
                     }
                 }
                 itemClickListener.onItemClicked()
@@ -141,17 +133,19 @@ class AppAdapter(
                 Singleton.getInstance().openAppOnTV(device.id)
             }
         }
+
+        private fun getIp(device: AppInfo) = "http://" + ipAddress + ":8060/query/icon/" + device.id
     }
-    private fun checkRing() : Boolean {
-        val boolean =  context.let { restoreSwitchState(it) }
+
+    private fun checkRing(): Boolean {
+        val boolean = restoreSwitchState(context)
         return boolean
     }
+
     private fun performVibrateAction() {
         val vibrator = context.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
-        if (checkRing() == true) {
+        if (checkRing()) {
             vibrator.vibrate(100)
         }
-    }
-    inner class TemplateViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
     }
 }

@@ -18,20 +18,20 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.connectsdk.core.AppInfo
 import com.connectsdk.service.command.ServiceCommandError
-import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
 import com.mentos_koder.remote_lg_tv.event.OnItemClickListener
 import com.mentos_koder.remote_lg_tv.R
 import com.mentos_koder.remote_lg_tv.adapter.AppAdapter
 import com.mentos_koder.remote_lg_tv.adapter.AppLGAdapter
 import com.mentos_koder.remote_lg_tv.adapter.FavouriteAppAdapter
 import com.mentos_koder.remote_lg_tv.database.AppDatabase
-import com.mentos_koder.remote_lg_tv.model.LGAppInfo
-import com.mentos_koder.remote_lg_tv.model.Favourite
+import com.mentos_koder.remote_lg_tv.model.Favorite
 import com.mentos_koder.remote_lg_tv.util.Singleton
 import com.mentos_koder.remote_lg_tv.util.Singleton.GetImageCallback
 import org.json.JSONArray
 import java.util.Locale
+import androidx.core.content.edit
+import com.mentos_koder.remote_lg_tv.util.Constants
+import com.mentos_koder.remote_lg_tv.util.showDialogDisconnect
 
 
 class AppsFragment : Fragment(), OnItemClickListener {
@@ -52,8 +52,7 @@ class AppsFragment : Fragment(), OnItemClickListener {
 
     lateinit var ipAddress: String
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
+        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
         val view: View = inflater.inflate(R.layout.fragment_apps, container, false)
         initializeViews(view)
@@ -118,7 +117,11 @@ class AppsFragment : Fragment(), OnItemClickListener {
     private fun setDisconnect(singleton: Singleton) {
         castButton?.setOnClickListener {
             if (singleton.isConnectedCustom) {
-                showAlertDialogDisconnected(nameDV)
+                context?.showDialogDisconnect {
+                    singleton.setConnected(false)
+                    singleton.disconnectDevice()
+                    visibleNoConnect()
+                }
             } else {
                 showFragmentDevice()
             }
@@ -128,25 +131,17 @@ class AppsFragment : Fragment(), OnItemClickListener {
     private fun setupRecyclerViews() {
         favouriteRecyclerView!!.setLayoutManager(
             LinearLayoutManager(
-                context,
-                LinearLayoutManager.HORIZONTAL,
-                false
+                context, LinearLayoutManager.HORIZONTAL, false
             )
         )
         val gridLayoutManager = GridLayoutManager(context, 3)
         gridLayoutManager.spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
             override fun getSpanSize(position: Int): Int {
                 return when {
-                    appAdapter != null && appAdapter!!.getItemViewType(position) == appAdapter!!.VIEW_TYPE_APP -> 1
-                    //appInfoSamsungAdapter != null && appInfoSamsungAdapter!!.getItemViewType(position) == appInfoSamsungAdapter!!.VIEW_TYPE_APP -> 1
+                    appAdapter != null && appAdapter!!.getItemViewType(position) == AppAdapter.VIEW_TYPE_APP -> 1
                     appLGAdapter != null && appLGAdapter!!.getItemViewType(position) == appLGAdapter!!.VIEW_TYPE_APP -> 1
-//                    appVizioAdapter != null && appVizioAdapter!!.getItemViewType(position) == appVizioAdapter!!.VIEW_TYPE_APP -> 1
-//                    appFireTVAdapter != null && appFireTVAdapter!!.getItemViewType(position) == appFireTVAdapter!!.VIEW_TYPE_APP -> 1
-                    appAdapter != null && appAdapter!!.getItemViewType(position) == appAdapter!!.VIEW_TYPE_TEMPLATE -> 3
-                    // appInfoSamsungAdapter != null && appInfoSamsungAdapter!!.getItemViewType(position) == appInfoSamsungAdapter!!.VIEW_TYPE_TEMPLATE -> 3
+                    appAdapter != null && appAdapter!!.getItemViewType(position) == AppAdapter.VIEW_TYPE_TEMPLATE -> 3
                     appLGAdapter != null && appLGAdapter!!.getItemViewType(position) == appLGAdapter!!.VIEW_TYPE_TEMPLATE -> 3
-//                    appVizioAdapter != null && appVizioAdapter!!.getItemViewType(position) == appVizioAdapter!!.VIEW_TYPE_TEMPLATE -> 3
-//                    appFireTVAdapter != null && appFireTVAdapter!!.getItemViewType(position) == appFireTVAdapter!!.VIEW_TYPE_TEMPLATE -> 3
                     else -> 1
                 }
             }
@@ -179,12 +174,13 @@ class AppsFragment : Fragment(), OnItemClickListener {
 
     private fun loadAppsLG(singleton: Singleton) {
         progressBar!!.visibility = View.VISIBLE
-        val sharedPreferences = context?.getSharedPreferences("MyPrefs", Context.MODE_PRIVATE)
-        val savedData = sharedPreferences?.getString("appList", null)
+        val sharedPreferences =
+            context?.getSharedPreferences(Constants.PREFERENCE_NAME, Context.MODE_PRIVATE)
+        val savedData = sharedPreferences?.getString(Constants.APP_LIST, null)
 
         if (savedData != null) {
             val jsonArray = JSONArray(savedData)
-            val ipAddress = sharedPreferences.getString("ipAddress", "") ?: ""
+            val ipAddress = sharedPreferences.getString(Constants.IP_ADDRESS, "") ?: ""
             appLGAdapter = AppLGAdapter(requireContext(), jsonArray, ipAddress, this)
             channelRecyclerView!!.adapter = appLGAdapter
             progressBar!!.visibility = View.GONE
@@ -192,19 +188,20 @@ class AppsFragment : Fragment(), OnItemClickListener {
             progressBar!!.visibility = View.VISIBLE
             singleton.getImageLG(object : Singleton.GetImageCallbackLG {
                 override fun onSuccess(objectLG: JSONArray?, ipAddress: String, name: String) {
-                    appLGAdapter = objectLG?.let { AppLGAdapter(requireContext(), it, ipAddress, this@AppsFragment) }
+                    appLGAdapter = objectLG?.let {
+                        AppLGAdapter(requireContext(), it, ipAddress, this@AppsFragment)
+                    }
                     channelRecyclerView!!.adapter = appLGAdapter
 
-                    val editor = sharedPreferences?.edit()
-                    editor?.putString("appList", objectLG?.toString())
-                    editor?.putString("ipAddress", ipAddress)
-                    editor?.apply()
+                    sharedPreferences?.edit {
+                        this.putString(Constants.APP_LIST, objectLG?.toString())
+                        this.putString(Constants.IP_ADDRESS, ipAddress)
+                    }
 
                     progressBar!!.visibility = View.GONE
                 }
 
                 override fun onError(error: ServiceCommandError, ipAddress: String, name: String) {
-                    Log.e("####", "onError: ", error)
                     progressBar!!.visibility = View.GONE
                 }
             })
@@ -212,9 +209,9 @@ class AppsFragment : Fragment(), OnItemClickListener {
     }
 
     private fun loadFavouriteApps() {
-        val favourites: MutableList<Favourite> = getFavourites(ipAddress)
-        if (favourites.isNotEmpty()) {
-            favouriteAppAdapter = FavouriteAppAdapter(requireContext(), favourites, ipAddress)
+        val favorites: MutableList<Favorite> = getFavourites(ipAddress)
+        if (favorites.isNotEmpty()) {
+            favouriteAppAdapter = FavouriteAppAdapter(requireContext(), favorites, ipAddress)
             favouriteRecyclerView?.adapter = favouriteAppAdapter
             linerFavourite?.visibility = View.VISIBLE
         } else {
@@ -234,92 +231,41 @@ class AppsFragment : Fragment(), OnItemClickListener {
 
     private fun showFragmentDevice() {
         val deviceFragment = DeviceFragment()
-        requireActivity().supportFragmentManager.beginTransaction()
-            .setCustomAnimations(
-                R.anim.slide_in_right,  // enter
-                R.anim.slide_out_left // exit
-            )
-            .replace(R.id.fragment_container, deviceFragment, "findThisFragment")
-            .addToBackStack("findThisFragment")
-            .commit()
+        requireActivity().supportFragmentManager.beginTransaction().setCustomAnimations(
+            R.anim.slide_in_right,  // enter
+            R.anim.slide_out_left // exit
+        ).replace(R.id.fragment_container, deviceFragment, "findThisFragment")
+            .addToBackStack("findThisFragment").commit()
     }
 
-    private fun showAlertDialogDisconnected(txtDevice: TextView?): AlertDialog {
-        val alertDialogBuilder = AlertDialog.Builder(
-            activity
-        )
-        val view: View = getLayoutInflater().inflate(R.layout.item_cast, null)
-        alertDialogBuilder.setView(view)
-        val textName = view.findViewById<TextView>(R.id.textNameDevice)
-        val btnDisconnect = view.findViewById<Button>(R.id.btnDisconnect)
-        val btnCancel = view.findViewById<Button>(R.id.btn_cancel)
-        textName.text = txtDevice!!.text
-        val alertDialog = alertDialogBuilder.create()
-        btnDisconnect.setOnClickListener { _: View? ->
-            val singleton =
-                Singleton.getInstance()
-            singleton.setConnected(false)
-            singleton.disconnectDevice()
-            txtDevice.text = " "
-            alertDialog.dismiss()
-            visibleNoConnect()
-        }
-        btnCancel.setOnClickListener { _: View? -> alertDialog.dismiss() }
-        alertDialog.show()
-        return alertDialog
-    }
-
-    private fun getFavourites(ipAddress: String): MutableList<Favourite> {
+    private fun getFavourites(ipAddress: String): MutableList<Favorite> {
         val deviceDao = AppDatabase.getDatabase(requireContext()).deviceDao()
-        return deviceDao.getFavouritesByIp(ipAddress)?.filterNotNull()?.toMutableList() ?: mutableListOf()
+        return deviceDao.getFavouritesByIp(ipAddress)?.filterNotNull()?.toMutableList()
+            ?: mutableListOf()
     }
 
-
-    private fun saveDataToSharedPreferences(appInfoList: MutableList<LGAppInfo>) {
-        val gson = Gson()
-        val jsonString = gson.toJson(appInfoList)
-
-        val sharedPreferences =
-            requireContext().getSharedPreferences("MyPrefs", Context.MODE_PRIVATE)
-        val editor = sharedPreferences.edit()
-        editor.putString("appInfoList", jsonString)
-        editor.apply()
-    }
-
-    private fun loadDataFromSharedPreferences(): MutableList<LGAppInfo>? {
-        val sharedPreferences =
-            requireContext().getSharedPreferences("MyPrefs", Context.MODE_PRIVATE)
-        val jsonString = sharedPreferences.getString("appInfoList", null)
-
-        if (jsonString != null) {
-            val gson = Gson()
-            val type = object : TypeToken<MutableList<LGAppInfo>>() {}.type
-            return gson.fromJson(jsonString, type)
-
-        }
-        return null
-    }
 
     override fun onDestroy() {
         super.onDestroy()
         clearSharedPreferencesData()
-        clearloadData()
+        clearLoadData()
     }
 
 
     private fun clearSharedPreferencesData() {
         val sharedPreferences =
-            requireContext().getSharedPreferences("MyPrefs", Context.MODE_PRIVATE)
-        val editor = sharedPreferences.edit()
-        editor.remove("appInfoList")
-        editor.apply()
+            requireContext().getSharedPreferences(Constants.PREFERENCE_NAME, Context.MODE_PRIVATE)
+        sharedPreferences.edit {
+            remove(Constants.APP_INFO_LIST)
+        }
     }
 
-    private fun clearloadData() {
-        val sharedPreferences = context?.getSharedPreferences("MyPrefs", Context.MODE_PRIVATE)
-        val editor = sharedPreferences?.edit()
-        editor?.clear()
-        editor?.apply()
+    private fun clearLoadData() {
+        val sharedPreferences =
+            context?.getSharedPreferences(Constants.PREFERENCE_NAME, Context.MODE_PRIVATE)
+        sharedPreferences?.edit {
+            this.clear()
+        }
     }
 
     override fun onItemClicked() {

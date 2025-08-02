@@ -105,4 +105,5 @@ dependencies {
     implementation(libs.clickshrinkeffectlibrary)
     implementation libs.protobuf.java
     implementation(libs.user.messaging.platform)
+    implementation(libs.lottie)
 }

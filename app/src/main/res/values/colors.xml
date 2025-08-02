@@ -18,6 +18,7 @@
     <color name="lightsteelblue">#b0c4de</color>
     <color name="colorText">#0F012E</color>
     <color name="bgr_lg">#191919</color>
+    <color name="color_4e4e4e">#4E4E4E</color>
     <color name="bgr_btn_lg">#222222</color>
     <color name="icon_menu">#6D6D6D</color>
     <color name="transparent">#00000000</color>
@@ -27,5 +28,7 @@
     <color name="color_bb3fff">#BB3FFF</color>
     <color name="color_4d4d4d">#4D4D4D</color>
     <color name="color_f8f9fb">#f8f9fb</color>
-
+    <color name="color_aaaaaa">#AAAAAA</color>
+    <color name="color_2196f3">#2196F3</color>
+    <color name="color_d3caca">#D3CACA</color>
 </resources>

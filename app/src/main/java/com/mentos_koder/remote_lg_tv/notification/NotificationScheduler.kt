@@ -9,6 +9,8 @@ import android.content.Context
 import android.content.Intent
 import androidx.core.app.NotificationCompat
 import com.mentos_koder.remote_lg_tv.R
+import com.mentos_koder.remote_lg_tv.adapter.AppAdapter
+import com.mentos_koder.remote_lg_tv.util.Constants
 
 
 object NotificationScheduler {
@@ -51,7 +53,7 @@ object NotificationScheduler {
 
         private fun showNotification(context: Context) {
             createNotificationChannel(context)
-            val sharedPref = context.getSharedPreferences("MyPreferences", Context.MODE_PRIVATE)
+            val sharedPref = context.getSharedPreferences(Constants.PREFERENCE_NAME, Context.MODE_PRIVATE)
             var url = sharedPref.getString("nameDevice", "")
             if (url!!.isEmpty()) {
                 url = "TVs"

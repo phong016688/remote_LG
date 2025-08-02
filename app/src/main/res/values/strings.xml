@@ -11,7 +11,7 @@
     <string name="feedback">Feedback</string>
     <string name="privacy_policy">Privacy Policy</string>
     <string name="term_of_use">Term of Use</string>
-    <string name="version_app">Version 1.0</string>
+    <string name="version_app">Version</string>
     <string name="finder_required">Make sure your Smart TV connected to the same WiFi Network as your device.</string>
     <string name="finder_unable_device">Unable to find device? Enter IP address manually</string>
     <string name="connected_device">Connected device</string>
@@ -109,4 +109,16 @@
     <string name="tv_device">TV Device</string>
     <string name="please_use_your_physical_remote_control_to_accept_the_connection_to_the_tv">Please use your physical remote control to accept the connection to the TV</string>
     <string name="tv_is_not_lg">TV is not LG</string>
+    <string name="app_need_vibrate_permission">Application need vibrate permission</string>
+    <string name="device_list">Device List</string>
+    <string name="pairing_with_tv">Pairing with TV</string>
+    <string name="please_confirm_the_connection_on_your_tv">Please confirm the connection on your TV</string>
+    <string name="okay">Okay</string>
+    <string name="enter_pairing_code_on_tv">Enter Pairing Code on TV</string>
+    <string name="reminder_channel">Reminder Channel</string>
+    <string name="channel_for_reminder_notifications">Channel for reminder notifications</string>
+    <string name="connection_successful">Connection successful</string>
+    <string name="connecting">Connecting</string>
+    <string name="enter_the_code_shown_on_your_tv">Enter the code shown on your TV</string>
+    <string name="no_internet_connection_please_try_again_later">No internet connection. Please try again later.</string>
 </resources>

@@ -1,6 +1,6 @@
 package com.mentos_koder.remote_lg_tv.view
 
-import android.app.AlertDialog
+import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Bundle
 import android.os.Vibrator
@@ -13,17 +13,16 @@ import android.view.KeyEvent
 import android.view.MotionEvent
 import android.view.View
 import android.view.inputmethod.InputMethodManager
-import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.LinearLayout
-import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.tabs.TabLayout
 import com.mentos_koder.remote_lg_tv.R
 import com.mentos_koder.remote_lg_tv.util.KeycodeLG
 import com.mentos_koder.remote_lg_tv.util.Singleton
 import com.mentos_koder.remote_lg_tv.util.restoreSwitchState
+import com.mentos_koder.remote_lg_tv.util.showDialogDisconnect
 import com.mentos_koder.remote_lg_tv.view.fragment.DeviceFragment
 import java.util.Locale
 import kotlin.math.abs
@@ -89,10 +88,7 @@ class KeyboardActivity : AppCompatActivity(), GestureDetector.OnGestureListener 
     }
 
     override fun onScroll(
-        motionEvent: MotionEvent?,
-        motionEvent1: MotionEvent,
-        v: Float,
-        v1: Float
+        motionEvent: MotionEvent?, motionEvent1: MotionEvent, v: Float, v1: Float
     ): Boolean {
         return false
     }
@@ -146,11 +142,10 @@ class KeyboardActivity : AppCompatActivity(), GestureDetector.OnGestureListener 
         val type = Singleton.getInstance().getTypeDevice().lowercase(Locale.ROOT)
         when (type) {
             "lg" -> handleEventButtonLG(keyLG)
-//            "fire","amazon" -> handleEventButtonFireTv(keycodeFireTv)
-            else -> Log.d("######", "handleType: Smart ")
         }
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     fun setupEventListeners() {
         tabLayout.setOnTouchListener { v: View?, event: MotionEvent? ->
             performVibrateAction()
@@ -184,8 +179,7 @@ class KeyboardActivity : AppCompatActivity(), GestureDetector.OnGestureListener 
                     if (key.isNotEmpty()) {
                         handleTextInput(key)
                     }
-                } catch (e: Exception) {
-                    Log.e("###", "afterTextChanged: ", e)
+                } catch (_: Exception) {
                 }
             }
 
@@ -194,8 +188,7 @@ class KeyboardActivity : AppCompatActivity(), GestureDetector.OnGestureListener 
                     if (keyCode == KeyEvent.KEYCODE_DEL && event.action == KeyEvent.ACTION_DOWN) {
                         try {
                             handleTextDelete()
-                        } catch (e: java.lang.Exception) {
-                            Log.e("###", "onKey: Error", e)
+                        } catch (_: java.lang.Exception) {
                         }
                     }
                     false
@@ -204,75 +197,47 @@ class KeyboardActivity : AppCompatActivity(), GestureDetector.OnGestureListener 
 
             }
         })
-        castButton.setOnClickListener { showAlertDialogDisconnected() }
+        castButton.setOnClickListener {
+            showDialogDisconnect {
+                val singleton: Singleton = Singleton.getInstance()
+                singleton.setConnected(false)
+                singleton.disconnect()
+            }
+        }
         backButton.setOnClickListener { finish() }
     }
 
     fun handleTextInput(key: String) {
         val type = Singleton.getInstance().getTypeDevice().lowercase(Locale.ROOT)
         when (type) {
-            "samsung" -> textInputSamsung(key)
-            "roku", "lg" -> {
+            "lg" -> {
                 textInput(key)
                 deviceNameEditText.setText("")
             }
-
-            else -> Log.d("######", "handleType: Smart ")
         }
     }
 
     fun handleTextDelete() {
         val type = Singleton.getInstance().getTypeDevice().lowercase(Locale.ROOT)
         when (type) {
-//            "samsung" -> handleEventButtonSamsung(KeycodeSamsung.KEY_BACKSPACE)
-            "roku", "lg" -> {
+            "lg" -> {
                 Log.d("sendDelete", "handleTextDelete: ")
                 Singleton.getInstance().deleteText()
             }
-
-            else -> Log.d("######", "handleType: Smart ")
         }
     }
 
-    fun textInputSamsung(text: String) {
-        val singleton = Singleton.getInstance()
-        singleton.getCommandByInput(text)
-    }
-
-    fun textInput(text: String) {
+    private fun textInput(text: String) {
         val singleton = Singleton.getInstance()
         singleton.sendText(text)
     }
 
-    fun showFragmentDevice() {
+    private fun showFragmentDevice() {
         val deviceFrag = DeviceFragment()
-        this.supportFragmentManager.beginTransaction()
-            .setCustomAnimations(
-                R.anim.slide_in_right,  // enter
-                R.anim.slide_out_left // exit
-            )
-            .replace(R.id.fragment_container, deviceFrag, "findThisFragment")
-            .addToBackStack("findThisFragment")
-            .commit()
-    }
-
-    fun showAlertDialogDisconnected() {
-        val alertDialogBuilder = AlertDialog.Builder(this)
-        val view: View = layoutInflater.inflate(R.layout.item_cast, null)
-        alertDialogBuilder.setView(view)
-        val textName = view.findViewById<TextView>(R.id.textNameDevice)
-        val btnDisconnect = view.findViewById<Button>(R.id.btnDisconnect)
-        val btnCancel = view.findViewById<Button>(R.id.btn_cancel)
-        textName.text = "Device"
-        val alertDialog = alertDialogBuilder.create()
-        btnDisconnect.setOnClickListener {
-            val singleton =
-                Singleton.getInstance()
-            singleton.setConnected(false)
-            singleton.disconnect()
-            alertDialog.dismiss()
-        }
-        btnCancel.setOnClickListener { alertDialog.dismiss() }
-        alertDialog.show()
+        this.supportFragmentManager.beginTransaction().setCustomAnimations(
+            R.anim.slide_in_right,  // enter
+            R.anim.slide_out_left // exit
+        ).replace(R.id.fragment_container, deviceFrag, "findThisFragment")
+            .addToBackStack("findThisFragment").commit()
     }
 }

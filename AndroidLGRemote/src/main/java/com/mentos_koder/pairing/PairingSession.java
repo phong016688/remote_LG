@@ -131,13 +131,7 @@ public class PairingSession {
         }
     }
 
-//    void logSendMessage(String message) {
-//        logger.info("Send Message : {}", message);
-//    }
-
     void logReceivedMessage(String message) {
-//        logger.info("Received Message : {}", message);
-        Log.d("AndroidRemoteTv", "Received Message: "+ message);
     }
 
 }

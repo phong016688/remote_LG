@@ -36,23 +36,19 @@ class DeviceFragment : Fragment(), DiscoveryManagerListener {
     private var onBack: OnBack? = null
     private var deviceMap = HashMap<String, ConnectableDevice>()
 
-    init {
-        deviceMap = java.util.HashMap()
-        DiscoveryManager.getInstance().addListener(this)
-    }
-
     override fun onAttach(context: Context) {
         super.onAttach(context)
-        if(context is OnBack){
+        DiscoveryManager.getInstance().addListener(this)
+        if (context is OnBack) {
             onBack = context
         }
-        if(context is FragmentActivity){
+        if (context is FragmentActivity) {
             mActivity = context
         }
     }
+
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
+        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
         val rootView: View = inflater.inflate(R.layout.fragment_device, container, false)
         onBack()
@@ -71,12 +67,14 @@ class DeviceFragment : Fragment(), DiscoveryManagerListener {
         closeButton = rootView.findViewById(R.id.btn_close_device)
         deviceList = rootView.findViewById(R.id.device_list)
     }
-    private fun onBack(){
-        mActivity?.onBackPressedDispatcher?.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true){
-            override fun handleOnBackPressed() {
-                onBack?.back(0)
-            }
-        })
+
+    private fun onBack() {
+        mActivity?.onBackPressedDispatcher?.addCallback(
+            viewLifecycleOwner, object : OnBackPressedCallback(true) {
+                override fun handleOnBackPressed() {
+                    onBack?.back(0)
+                }
+            })
     }
 
     private fun setupEventListeners() {
@@ -119,30 +117,10 @@ class DeviceFragment : Fragment(), DiscoveryManagerListener {
 
     override fun onDeviceAdded(manager: DiscoveryManager?, device: ConnectableDevice?) {
         if (device != null) {
-            val manufacturer = device.manufacturer?.lowercase(Locale.ROOT) ?: ""
-            val friendlyName = device.friendlyName?.lowercase(Locale.ROOT) ?: ""
-            val servicedevice = device.toJSONObject()
             val ip = device.ipAddress
-            Log.d("####", "onDeviceAdded manufacturer: $manufacturer")
-            Log.d("####", "onDeviceAdded friendlyName: $friendlyName")
-            Log.d("####", "onDeviceAdded serviceName: $servicedevice")
-            Log.d("####", "onDeviceUpdated serviceName: $ip")
-
-//            deviceMapCheck[ip] = device
-//            for ((existingIP, existingDevice) in deviceMapCheck) {
-//                if (existingDevice.friendlyName?.lowercase(Locale.ROOT) == friendlyName && existingIP != ip) {
-//                    if (!Singleton.getInstance().duplicateDevicesList.contains(existingDevice)) {
-//                        Singleton.getInstance().duplicateDevicesList.add(existingDevice)
-//                    }
-//                    if (!Singleton.getInstance().duplicateDevicesList.contains(device)) {
-//                        Singleton.getInstance().duplicateDevicesList.add(device)
-//                    }
-//                }
-//            }
-
             if (isValidIPv4(ip) || isValidIPv6(ip)) {
                 deviceMap[ip] = device
-            }else{
+            } else {
                 Singleton.getInstance().duplicateDevicesList.add(device)
             }
         }
@@ -150,29 +128,19 @@ class DeviceFragment : Fragment(), DiscoveryManagerListener {
 
     override fun onDeviceUpdated(manager: DiscoveryManager?, device: ConnectableDevice?) {
         if (device != null) {
-            val manufacturer = device.manufacturer?.lowercase(Locale.ROOT) ?: ""
-            val friendlyName = device.friendlyName?.lowercase(Locale.ROOT) ?: ""
-            val servicedevice =  device.toJSONObject()
-            val servicedeviceT =  device.ipAddress
-            Log.d("####", "onDeviceUpdated: $manufacturer")
-            Log.d("####", "onDeviceUpdated: $friendlyName")
-            Log.d("####", "onDeviceUpdated serviceName: $servicedevice")
-            Log.d("####", "onDeviceUpdated serviceName: $servicedeviceT")
             deviceMap[device.ipAddress] = device
             updateDeviceList()
         }
     }
 
     override fun onDeviceRemoved(manager: DiscoveryManager?, device: ConnectableDevice?) {
-        if (device != null)
-            Util.runOnUI {
-                deviceMap.remove(device.ipAddress)
-                updateDeviceList()
-            }
+        if (device != null) Util.runOnUI {
+            deviceMap.remove(device.ipAddress)
+            updateDeviceList()
         }
+    }
 
     override fun onDiscoveryFailed(manager: DiscoveryManager?, error: ServiceCommandError?) {
-        Util.runOnUI { Log.d("FailedDevice###", "FailedDevice: $error") }
     }
 
     private fun getDeviceMap(): HashMap<String, ConnectableDevice> {
@@ -186,8 +154,8 @@ class DeviceFragment : Fragment(), DiscoveryManagerListener {
         sortDevices(sortedDevices)
         deviceAdapter?.updateData(ArrayList(sortedDevices))
     }
-    // Hàm kiểm tra xem một chuỗi có phải là địa chỉ IPv4 hợp lệ không
-    fun isValidIPv4(ip: String): Boolean {
+
+    private fun isValidIPv4(ip: String): Boolean {
         try {
             val inetAddress = InetAddress.getByName(ip)
             return inetAddress is Inet4Address
@@ -196,8 +164,7 @@ class DeviceFragment : Fragment(), DiscoveryManagerListener {
         }
     }
 
-    // Hàm kiểm tra xem một chuỗi có phải là địa chỉ IPv6 hợp lệ không
-    fun isValidIPv6(ip: String): Boolean {
+    private fun isValidIPv6(ip: String): Boolean {
         try {
             val inetAddress = InetAddress.getByName(ip)
             return inetAddress is Inet6Address

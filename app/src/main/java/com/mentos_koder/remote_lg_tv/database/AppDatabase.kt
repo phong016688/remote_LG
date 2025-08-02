@@ -5,8 +5,8 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import com.mentos_koder.remote_lg_tv.model.Device
-import com.mentos_koder.remote_lg_tv.model.Favourite
-@Database(entities = [Device::class, Favourite::class], version = 2)
+import com.mentos_koder.remote_lg_tv.model.Favorite
+@Database(entities = [Device::class, Favorite::class], version = 2)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun deviceDao(): DeviceDao
 
